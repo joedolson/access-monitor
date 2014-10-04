@@ -1,0 +1,28 @@
+.tenon-result .certainty, .tenon-result .priority { padding: 2px; border-radius: 2px; text-shadow: 1px 1px #000; }
+
+.tenon-result .high {
+	font-weight: 700;
+	color: white;
+	background: red;
+}
+
+.tenon-result .medium {
+	font-weight: 700;
+	color: black;
+	background: yellow;
+	text-shadow: 1px 1px #fff;
+}
+
+.tenon-result .low {
+	color: white;
+	background: dark-green;
+}
+
+.tenon-result {
+	padding: 1em;
+	margin-bottom: 2em;
+}
+
+.tenon-result:nth-of-type(even) {
+	background: rgb( 250,250,250 );
+}
