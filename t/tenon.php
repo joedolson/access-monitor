@@ -40,9 +40,9 @@ class tenon
             echo '</pre>';
         }
 
-		$args = array( 'method'=>'POST', 'body' => $this -> opts, 'headers' => '', 'sslverify' => false, 'timeout' => 60 );
+		$args = array( 'method'=>'POST', 'body' => $this->opts, 'headers' => '', 'sslverify' => false, 'timeout' => 60 );
 		$result = wp_remote_post( $this->url, $args );
-
+		
         if ( true == $printInfo ) {
             echo '<h2>Query Info</h2><pre>';
             print_r( $result );

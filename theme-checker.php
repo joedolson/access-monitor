@@ -25,11 +25,11 @@ Version: 0.1.0
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly 2662dd6505e09fa0fb5c7b254fb485f5
 
-define( 'TENON_API_KEY', '2662dd6505e09fa0fb5c7b254fb485f5' );
+define( 'TENON_API_KEY', 'c630990d2999c17ee2c4600df0a67ec6' );
 //define('TENON_API_URL', 'https://www.tenon.io/api/');
-define( 'TENON_API_URL', 'http://beta.tenon.io:8080/api/' );
+define( 'TENON_API_URL', 'http://beta.tenon.io/api/' );
 define( 'DEBUG', false );
 
 define( 'WAVE_API_KEY', 'mw8fhDUr125' );
@@ -75,12 +75,19 @@ function tc_query_tenon( $post ) {
 
 function tc_format_tenon( $body ) {
 	$object = json_decode( $body );
+	if ( property_exists( $object, 'issues' ) ) {
+		// unchecked object references
+		$errors = $object->issues->totalIssues;
+	} else {
+		$errors = 0;
+	}
+	
 	if ( property_exists( $object, 'resultSet' ) ) {
 		$results = $object->resultSet;
 	} else {
 		$results = array();
 	}
-	$return = '';
+	$return = sprintf( __( '%s accessibility issues identified.', 'theme-checker' ), $errors );
 	$i = 0;
 	if ( !empty( $results ) ) {
 		foreach( $results as $result ) {
