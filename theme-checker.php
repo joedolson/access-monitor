@@ -25,9 +25,8 @@ Version: 0.1.0
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly 2662dd6505e09fa0fb5c7b254fb485f5
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-define( 'TENON_API_KEY', 'c630990d2999c17ee2c4600df0a67ec6' );
 //define('TENON_API_URL', 'https://www.tenon.io/api/');
 define( 'TENON_API_URL', 'http://beta.tenon.io/api/' );
 define( 'DEBUG', false );
@@ -63,21 +62,29 @@ function tc_query_tenon( $post ) {
 			}
 		}
 	}
-	
-	$opts['key'] = TENON_API_KEY;
-	$opts['level'] = 'AA';
-	$tenon = new tenon( TENON_API_URL, $opts );
-	$tenon->submit( DEBUG );
-	$body = $tenon->tenonResponse['body'];
-	$results = tc_format_tenon( $body );
-	return $results;
+	$settings = get_option( 'tc_settings' );
+	$key = $settings['tenon_api_key'];
+	if ( $key ) {
+		$opts['key'] = $key;
+		//$opts['level'] = 'AA'; -> this feature is currently broken; pending notice from Karl.
+		$tenon = new tenon( TENON_API_URL, $opts );
+		$tenon->submit( DEBUG );
+		$body = $tenon->tenonResponse['body'];
+		$results = tc_format_tenon( $body );
+		return $results;
+	} else {
+		return false;
+	}
 }
 
 function tc_format_tenon( $body ) {
+	if ( $body === false ) {
+		return __( 'No Tenon API Key provided', 'theme-checker' );
+	}
 	$object = json_decode( $body );
-	if ( property_exists( $object, 'issues' ) ) {
+	if ( property_exists( $object, 'resultSummary' ) ) {
 		// unchecked object references
-		$errors = $object->issues->totalIssues;
+		$errors = $object->resultSummary->issues->totalErrors;
 	} else {
 		$errors = 0;
 	}
@@ -87,7 +94,7 @@ function tc_format_tenon( $body ) {
 	} else {
 		$results = array();
 	}
-	$return = sprintf( __( '%s accessibility issues identified.', 'theme-checker' ), $errors );
+	$return = "<section><h1>".sprintf( __( '%s accessibility issues identified.', 'theme-checker' ), "<em>$errors</em>" )."</h1>";
 	$i = 0;
 	if ( !empty( $results ) ) {
 		foreach( $results as $result ) {
@@ -119,7 +126,7 @@ function tc_format_tenon( $body ) {
 	} else {
 		$return .= "<p><strong>Congratulations!</strong> Tenon didn't find any issues on this page.</p>";
 	}
-	return $return . "<hr />";
+	return $return . "</section><hr />";
 }
 
 add_action('admin_enqueue_scripts', 'tc_admin_enqueue_scripts');
@@ -224,4 +231,120 @@ function tc_format_wave( $body, $reporttype=1 ) {
 		$report
 	</div>";
 	return $report;
+}
+
+
+function tc_settings() {
+	if ( isset( $_POST['tc_settings'] ) ) {
+		$nonce=$_REQUEST['_wpnonce'];
+		if (! wp_verify_nonce($nonce,'theme-checker-nonce') ) die( "Security check failed" );	
+		$tenon_api_key = $_POST['tenon_api_key'];
+		update_option( 'tc_settings', array( 'tenon_api_key'=>$tenon_api_key ) );
+	}
+	$settings = array_merge( array( 'tenon_api_key'=>'' ), get_option( 'tc_settings' ) );
+
+	echo "
+	<form method='post' action='".admin_url('options-general.php?page=theme-checker/theme-checker.php')."'>
+		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('theme-checker-nonce')."' /></div>
+		<div><input type='hidden' name='tc_settings' value='update' /></div>
+		<p>
+			<label for='tenon_api_key'>".__( 'Tenon API Key', 'theme-checker' )."</label> <input type='text' name='tenon_api_key' id='tenon_api_key' value='". esc_attr( $settings['tenon_api_key'] ) ."' />
+		</p>
+		<div>";
+		echo tc_setup_report();
+		echo "<p>
+		<input type='submit' value='".__('Update Settings','theme-checker')."' name='tc_settings' class='button-primary' />
+		</p>
+		</div>
+	</form>";
+}
+
+
+function tc_setup_report() {
+	$return = "";
+	return $return;
+}
+
+
+function tc_support_page() {
+	?>
+	<div class="wrap" id="theme-checker">
+		<h2><?php _e('Theme Checker','theme-checker'); ?></h2>
+		<div id="tc_settings_page" class="postbox-container" style="width: 70%">
+			<div class='metabox-holder'>
+
+				<div class="tc-settings meta-box-sortables">
+					<div class="postbox" id="settings">
+						<h3><?php _e('Theme Checker Settings','theme-checker'); ?></h3>
+						<div class="inside">
+							<?php tc_settings(); ?>
+						</div>
+					</div>
+				</div>
+				<div class="tc-support meta-box-sortables">
+					<div class="postbox" id="get-support">
+						<h3><?php _e('Get Plug-in Support','theme-checker'); ?></h3>
+						<div class="inside">
+							<?php tc_get_support_form(); ?>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<?php tc_show_support_box(); ?>
+	</div>
+	<?php
+}
+
+function tc_show_support_box() {
+?>
+<div class="postbox-container" style="width:20%">
+<div class="metabox-holder">
+	<div class="meta-box-sortables">
+		<div class="postbox">
+		<h3><?php _e('Support this Plug-in','theme-checker'); ?></h3>
+		<div id="support" class="inside resources">
+		<ul>
+			<li>		
+			<p>
+				<a href="https://twitter.com/intent/follow?screen_name=joedolson" class="twitter-follow-button" data-size="small" data-related="joedolson">Follow @joedolson</a>
+				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+			</p>
+			</li>
+			<li><p><?php _e('<a href="http://www.joedolson.com/donate/">Make a donation today!</a> Every donation counts - donate $2, $10, or $100 and help me keep this plug-in running!','theme-checker'); ?></p>
+				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+					<div>
+					<input type="hidden" name="cmd" value="_s-xclick" />
+					<input type="hidden" name="hosted_button_id" value="8490399" />
+					<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" name="submit" alt="Donate" />
+					<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+					</div>
+				</form>
+			</li>
+			<li><a href="http://profiles.wordpress.org/users/joedolson/"><?php _e('Check out my other plug-ins','theme-checker'); ?></a></li>
+			<li><a href="http://wordpress.org/extend/plugins/theme-checker/"><?php _e('Rate this plug-in','theme-checker'); ?></a></li>		
+		</ul>
+		</div>
+		</div>
+	</div>
+</div>
+</div>
+<?php
+}
+
+add_action( 'admin_menu', 'tc_add_support_page' );
+// Add the administrative settings to the "Settings" menu.
+function tc_add_support_page() {
+    if ( function_exists( 'add_submenu_page' ) ) {
+		 $plugin_page = add_options_page( 'Theme Checker Support', 'Theme Checker', 'manage_options', __FILE__, 'tc_support_page' );
+		 add_action( 'admin_head-'. $plugin_page, 'tc_styles' );
+    }
+}
+
+function tc_styles() {
+	return;
+}
+
+function tc_get_support_form() {
+	return;
 }
