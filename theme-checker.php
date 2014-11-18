@@ -389,6 +389,10 @@ function tc_settings() {
 
 function tc_report() {
 	echo tc_setup_report();
+	$theme = wp_get_theme();
+	$theme_name = $theme->Name;
+	$theme_version = $theme->Version;		
+	$name = $theme_name . ' ' . $theme_version;
 	echo "
 	<form method='post' action='".admin_url('options-general.php?page=theme-checker/theme-checker.php')."'>
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('theme-checker-nonce')."' /></div>
@@ -396,12 +400,12 @@ function tc_report() {
 		echo "
 		<div>
 		<p>
-			<label for='tc_report_name'>".__( 'Report Name', 'theme-checker' )."</label> <input type='text' name='tc_report_name' id='tc_report_name' />
+			<label for='tc_report_name'>".__( 'Report Name', 'theme-checker' )."</label> <input type='text' name='tc_report_name' id='tc_report_name' value='". esc_attr( $name ) ."' />
 		</p>
 		<ul>
 			<li>
 			<label for='tc_report_pages1'>".__( 'URL or post ID to test (1)', 'theme-checker' )."</label>
-			<input type='text' id='tc_report_pages1' name='tc_report_pages[]' />
+			<input type='text' id='tc_report_pages1' name='tc_report_pages[]' value='".esc_url( home_url() )."' />
 			</li>
 			<li>
 			<label for='tc_report_pages2'>".__( 'URL or post ID to test (2)', 'theme-checker' )."</label>

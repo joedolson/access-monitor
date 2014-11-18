@@ -30,3 +30,5 @@
 }
 
 .tc_code { position: absolute; width: 16em; }
+
+.tenon-result code, .tenon-result pre { margin: 0!important; padding: .5em!important; }
