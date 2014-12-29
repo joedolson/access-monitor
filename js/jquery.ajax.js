@@ -44,4 +44,30 @@
 		});
 	});
 	
+	$(function() {
+		$('#add_field').on( 'click', function (e) {
+			e.preventDefault();
+			var maxFields = 20;
+			var num = $('.clonedInput').length;
+			var newNum = new Number(num + 1);
+			var newElem = $('#field' + num).clone().attr( 'id', 'field' + newNum );
+			$('#field' + num).after(newElem);
+			$('#del_field').removeAttr('disabled');
+			if ( newNum == maxFields ) {
+				$('#add_field').attr('disabled', 'disabled');
+			}
+		});
+
+		$('#del_field').on('click', function (e) {
+			e.preventDefault();
+			var num = $('.clonedInput').length; 
+			$('#field' + num).remove();  
+			$('#add_field').removeAttr('disabled');
+			if ( num - 1 == 1 ) {
+				$('#del_field').attr('disabled', 'disabled');
+			}
+		});
+		$('#del_field').attr('disabled', 'disabled');
+	});	
+	
 }(jQuery));

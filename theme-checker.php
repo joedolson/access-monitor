@@ -346,7 +346,7 @@ function tc_show_report( $report_id = false ) {
 		$output = $report->post_content;
 		$name = $report->post_title;
 	} else {
-		$reports = wp_get_recent_posts( array( 'numberposts'=>1, 'post_type'=>'tenon-report' ), 'OBJECT' );
+		$reports = wp_get_recent_posts( array( 'numberposts'=>1, 'post_type'=>'tenon-report', 'post_status'=>'publish' ), 'OBJECT' );
 		$report = end( $reports );
 		if ( $report ) {
 			//$output = get_option( "tc_report_$report" );
@@ -368,6 +368,7 @@ function tc_format_tenon_report( $results, $name ) {
 	$return = '';
 	$i = $count = 0;
 	if ( !empty( $results ) ) {
+		$reported = array();
 		foreach ( $results as $url => $resultSet ) {
 			$count = count( $url );
 			$return .= "<table class='widefat tenon-report'>";
@@ -385,6 +386,8 @@ function tc_format_tenon_report( $results, $name ) {
 				<tbody>";
 			foreach ( $resultSet as $result ) {
 				$i++;
+				$hash = md5( $result->resultTitle . $result->ref . $result->errorSnippet . $result->xpath );
+				if ( !in_array( $hash, $reported ) ) {
 				$return .= "
 					<tr>
 						<td><a href='$result->ref'>$result->resultTitle</a></td>
@@ -393,6 +396,8 @@ function tc_format_tenon_report( $results, $name ) {
 						<td><button class='snippet' data-target='snippet$i' aria-controls='snippet$i' aria-expanded='false'>Source</button> <div class='codepanel' id='snippet$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='tc_code'>$result->errorSnippet</code></div></td>
 						<td><button class='snippet' data-target='xpath$i' aria-controls='xpath$i' aria-expanded='false'>xPath</button> <div class='codepanel' id='xpath$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='tc_code'>$result->xpath</code></div></td>
 					</tr>";
+				}
+				$reported[] = $hash;
 			}
 				$return .= "</tbody>
 				</table>";
@@ -449,29 +454,37 @@ function tc_report() {
 		<p>
 			<label for='tc_report_name'>".__( 'Report Name', 'theme-checker' )."</label> <input type='text' name='tc_report_name' id='tc_report_name' value='". esc_attr( $name ) ."' />
 		</p>
-		<ul>
+		<ul aria-live='assertive'>
+			<li id='field1' class='clonedInput'>
+			<label for='tc_report_pages'>".__( 'URL or post ID to test', 'theme-checker' )."</label>
+			<input type='text' class='widefat' id='tc_report_pages' name='tc_report_pages[]' value='".esc_url( home_url() )."' />
+			</li>";
+			$last = wp_get_recent_posts( array( 'numberposts' => 1, 'post_type' => 'page', 'post_status'=>'publish' ) );
+			$last_link = get_permalink( $last[0]['ID'] );
+			$last_title = $last[0]['post_title'];
+		echo "
 			<li>
-			<label for='tc_report_pages1'>".__( 'URL or post ID to test (1)', 'theme-checker' )."</label>
-			<input type='text' id='tc_report_pages1' name='tc_report_pages[]' value='".esc_url( home_url() )."' />
+			<label for='tc_report_pages'>".__( 'Most recent page', 'theme-checker' )." ($last_title)</label>
+			<input type='text' class='widefat' id='tc_report_pages' name='tc_report_pages[]' value='".esc_url( $last_link )."' />
+			</li>";
+			$last = wp_get_recent_posts( array( 'numberposts' => 1, 'post_status'=>'publish' ) );
+			$last_link = get_permalink( $last[0]['ID'] );
+			$last_title = $last[0]['post_title'];
+		echo "
+			<li>
+			<label for='tc_report_pages'>".__( 'Most recent post', 'theme-checker' )." ($last_title)</label>
+			<input type='text' class='widefat' id='tc_report_pages' name='tc_report_pages[]' value='".esc_url( $last_link )."' />
 			</li>
-			<li>
-			<label for='tc_report_pages2'>".__( 'URL or post ID to test (2)', 'theme-checker' )."</label>
-			<input type='text' id='tc_report_pages2' name='tc_report_pages[]' />
-			</li>
-			<li>
-			<label for='tc_report_pages3'>".__( 'URL or post ID to test (3)', 'theme-checker' )."</label>
-			<input type='text' id='tc_report_pages3' name='tc_report_pages[]' />
-			</li>
-			<li>
-			<label for='tc_report_pages4'>".__( 'URL or post ID to test (4)', 'theme-checker' )."</label>
-			<input type='text' id='tc_report_pages4' name='tc_report_pages[]' />
-			</li>			
 		</ul>
+		<div>
+			<input type='button' id='add_field' value='".__( 'Add a test URL', 'my-calendar' )."' class='button' />
+			<input type='button' id='del_field' value='".__( 'Remove last test', 'my-calendar' )."' class='button' />
+		</div>		
 		<p>
 			<input type='submit' value='".__('Create Accessibility Report','theme-checker')."' name='tc_generate' class='button-primary' />
 		</p>
 		</div>
-	</form>";	
+	</form>";
 }
 
 function tc_setup_report() {
@@ -485,7 +498,7 @@ function tc_setup_report() {
 
 function tc_list_reports( $count = 10 ) {
 	$count = (int) $count;
-	$reports = wp_get_recent_posts( array( 'post_type'=>'tenon-report', 'numberposts'=>$count ), 'OBJECT' );
+	$reports = wp_get_recent_posts( array( 'post_type'=>'tenon-report', 'numberposts'=>$count, 'post_status'=>'publish' ), 'OBJECT' );
 	if ( is_array( $reports ) ) {
 		echo "<ul>";
 		foreach ( $reports as $report_post ) {
@@ -592,6 +605,7 @@ function tc_show_support_box() {
 		</div>
 		</div>
 	</div>
+
 </div>
 </div>
 <?php
