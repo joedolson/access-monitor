@@ -24,4 +24,24 @@
 			});
 		});
 	});
+	
+	$(function() {
+		$( '.codepanel' ).hide();
+		$( 'button.snippet' ).on( 'click', function(e) {
+			e.preventDefault();
+			var target = $( this ).attr( 'data-target' );
+			$( '.codepanel' ).hide();
+			$( 'button.snippet' ).attr( 'aria-expanded', 'false' );
+			$( '#' + target ).show();
+			$( '#' + target + ' button.close' ).focus();
+			$( this ).attr( 'aria-expanded', 'true' );
+		});
+		$( 'button.close' ).on( 'click', function(e) {
+			e.preventDefault();
+			$( this ).parent( '.codepanel' ).hide();
+			var source = $( this ).parent( '.codepanel' ).attr( 'id' );
+			$( 'button[data-target="'+source+'"]' ).attr( 'aria-expanded', 'false' ).focus();
+		});
+	});
+	
 }(jQuery));

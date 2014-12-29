@@ -255,100 +255,147 @@ function tc_format_wave( $body, $reporttype=1 ) {
 	return $report;
 }
 
+
+add_action( 'init', 'bs_posttypes' );
+function bs_posttypes() {
+	$value = array( 
+			__( 'accessibility report','theme-checker' ),
+			__( 'accessibility reports','theme-checker' ),
+			__( 'Accessibility Report','theme-checker' ),
+			__( 'Accessibility Reports','theme-checker' ),
+		);
+		$labels = array(
+		'name' => $value[3],
+		'singular_name' => $value[2],
+		'add_new' => __( 'Add New' , 'theme-checker' ),
+		'add_new_item' => sprintf( __( 'Create New %s','theme-checker' ), $value[2] ),
+		'edit_item' => sprintf( __( 'Modify %s','theme-checker' ), $value[2] ),
+		'new_item' => sprintf( __( 'New %s','theme-checker' ), $value[2] ),
+		'view_item' => sprintf( __( 'View %s','theme-checker' ), $value[2] ),
+		'search_items' => sprintf( __( 'Search %s','theme-checker' ), $value[3] ),
+		'not_found' =>  sprintf( __( 'No %s found','theme-checker' ), $value[1] ),
+		'not_found_in_trash' => sprintf( __( 'No %s found in Trash','theme-checker' ), $value[1] ), 
+		'parent_item_colon' => ''
+	);
+	$args = array(
+		'labels' => $labels,
+		'public' => false,
+		'show_ui' => true,
+		'show_in_menu' => true,
+		'menu_icon' => 'dashicons-universal-access',
+		'supports' => array( 'title', 'editor', 'custom-fields' )
+	); 
+	register_post_type( 'tenon-report', $args );
+}
+
+add_action('admin_menu', 'tc_remove_menu_item');
+function tc_remove_menu_item() {
+    global $submenu;
+    unset( $submenu['edit.php?post_type=tenon-report'][10] ); // Removes 'Add New'.
+}
+
 function tc_set_report( $name = false ) {
 	if ( !$name ) { 
 		$name = date_i18n( 'Y-m-d H:i:s', current_time( 'timestamp' ) ); 
 	}
-	$report_id = current_time( 'timestamp' );
-	add_option( "tc_report_$report_id", '' );
-	$reports = ( get_option( 'tc_reports' ) != '' ) ? get_option( 'tc_reports' ) : array();
-	$reports[$name] = $report_id;
-	update_option( 'tc_reports', $reports );
+	$report_id = wp_insert_post( array( 'post_content'=>'', 'post_title'=>$name, 'post_status'=>'draft', 'post_type'=>'tenon-report' ) );
+	//$reports = ( get_option( 'tc_reports' ) != '' ) ? get_option( 'tc_reports' ) : array();
+	
 	return $report_id;
 }
 
 function tc_generate_report( $name, $pages = false ) {
 	$settings = get_option( 'tc_settings' );
 	$report_id = tc_set_report( $name );
-	if ( current_time( 'timestamp' ) - $report_id > 240 ) {
-		wp_die( 'You just created a report a few minutes ago; why not wait a while?' );
+	if ( isset( $settings['pages'] ) && !$pages ) {
+		$pages = $settings['pages']; 
+	} elseif ( is_array( $pages ) ) {
+		$pages = $pages;
 	} else {
-		if ( isset( $settings['pages'] ) && !$pages ) {
-			$pages = $settings['pages']; 
-		} elseif ( is_array( $pages ) ) {
-			$pages = $pages;
-		} else {
-			$pages = array( home_url() );
-		}
-		foreach ( $pages as $page ) {
-			if ( is_numeric( $page ) ) { 
-				$url = get_permalink( $page );
-			} else {
-				$url = $page;
-			}
-			if ( esc_url( $url ) ) {
-				$report = tc_query_tenon( array( 'url'=>$url ), false );
-				$saved[$url] = $report;
-			} else {
-				continue;
-			}
-		}
-		update_option( "tc_report_$report_id", array( $name => $saved ) );
+		$pages = array( home_url() );
 	}
+	foreach ( $pages as $page ) {
+		if ( is_numeric( $page ) ) { 
+			$url = get_permalink( $page );
+		} else {
+			$url = $page;
+		}
+		if ( esc_url( $url ) ) {
+			$report = tc_query_tenon( array( 'url'=>$url ), false );
+			$saved[$url] = $report;
+			
+		} else {
+			continue;
+		}
+	}
+	$formatted = tc_format_tenon_report( $saved, $name );	
+	wp_update_post( array( 
+					'ID'=>$report_id, 
+					'post_content'=> $formatted
+					) );
+	update_post_meta( $report_id, '_tenon_json', $saved );
+	wp_publish_post( $report_id );
 }
 
 function tc_show_report( $report_id = false ) {
 	$report_id = ( isset( $_GET['report'] ) && is_numeric( $_GET['report'] ) ) ? $_GET['report'] : false;
-	$output = '';
+	$output = $name = '';
 	if ( $report_id ) {
-		$output = get_option( "tc_report_$report_id" );
+		//$output = get_option( "tc_report_$report_id" );
+		$report = get_post( $report_id );
+		$output = $report->post_content;
+		$name = $report->post_title;
 	} else {
-		$reports = get_option( 'tc_reports' );
-		$report = ( is_array( $reports ) ) ? end( $reports ) : false;
+		$reports = wp_get_recent_posts( array( 'numberposts'=>1, 'post_type'=>'tenon-report' ), 'OBJECT' );
+		$report = end( $reports );
 		if ( $report ) {
-			$output = get_option( "tc_report_$report" );
+			//$output = get_option( "tc_report_$report" );
+			$output = $report->post_content;
+			$name = $report->post_title;
 		}
 	}
-	echo tc_format_tenon_report( $output );
+	if ( $output != '' ) {
+		echo $output;
+	} else {
+		$formatted = tc_format_tenon_report( get_post_meta( $report_id, '_tenon_json', true ), $name );
+		wp_update_post( array( 'ID'=>$report_id, 'post_content' => $formatted ) );
+		echo $formatted;		
+	}
 }
 
-function tc_format_tenon_report( $results ) {
-	$name = array_keys( $results );
-	$name = ( isset( $name[0] ) && $name[0] != '' ) ? $name[0] : __( 'Untitled Report', 'theme-checker' );
+function tc_format_tenon_report( $results, $name ) {
 	$header = "<h4>".stripslashes( $name )."; ".__( 'Results from %d pages tested', 'theme-checker' ). "</h4>";
 	$return = '';
-	$i = 0;
+	$i = $count = 0;
 	if ( !empty( $results ) ) {
-		foreach( $results as $key => $value ) {
-			$count = count( $value );
-			foreach ( $value as $url => $resultSet ) {
-				$return .= "<table class='widefat tenon-report'>";
-				$return .= "<caption>".__( "Errors found on <a href='$url'>$url</a>', 'theme-checker" )."</caption>";
+		foreach ( $results as $url => $resultSet ) {
+			$count = count( $url );
+			$return .= "<table class='widefat tenon-report'>";
+			$return .= "<caption>".__( "Errors found on <a href='$url'>$url</a>", 'theme-checker' )."</caption>";
+			$return .= "
+				<thead>
+					<tr>
+						<th scope='col'>".__( 'Issue', 'theme-checker' )."</th>
+						<th scope='col'>".__( 'Certainty', 'theme-checker' )."</th>
+						<th scope='col'>".__( 'Priority', 'theme-checker' )."</th>
+						<th scope='col'>".__( 'Source', 'theme-checker' )."</th>
+						<th scope='col'>".__( 'Xpath', 'theme-checker' )."</th>
+					</tr>
+				</thead>
+				<tbody>";
+			foreach ( $resultSet as $result ) {
+				$i++;
 				$return .= "
-					<thead>
-						<tr>
-							<th scope='col'>".__( 'Issue', 'theme-checker' )."</th>
-							<th scope='col'>".__( 'Certainty', 'theme-checker' )."</th>
-							<th scope='col'>".__( 'Priority', 'theme-checker' )."</th>
-							<th scope='col'>".__( 'Source', 'theme-checker' )."</th>
-							<th scope='col'>".__( 'Xpath', 'theme-checker' )."</th>
-						</tr>
-					</thead>
-					<tbody>";
-				foreach ( $resultSet as $result ) {
-					$i++;
-					$return .= "
-						<tr>
-							<td><a href='$result->ref'>$result->resultTitle</a></td>
-							<td>$result->certainty</td>
-							<td>$result->priority</td>
-							<td><code class='tc_code' id='snippet$i'>$result->errorSnippet</code></td>
-							<td><code class='tc_code' id='xpath$i'>$result->xpath</code></td>
-						</tr>";
-				}
-					$return .= "</tbody>
-					</table>";
+					<tr>
+						<td><a href='$result->ref'>$result->resultTitle</a></td>
+						<td>$result->certainty</td>
+						<td>$result->priority</td>
+						<td><button class='snippet' data-target='snippet$i' aria-controls='snippet$i' aria-expanded='false'>Source</button> <div class='codepanel' id='snippet$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='tc_code'>$result->errorSnippet</code></div></td>
+						<td><button class='snippet' data-target='xpath$i' aria-controls='xpath$i' aria-expanded='false'>xPath</button> <div class='codepanel' id='xpath$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='tc_code'>$result->xpath</code></div></td>
+					</tr>";
 			}
+				$return .= "</tbody>
+				</table>";
 		}
 	} else {
 		$return .= "<p><strong>Congratulations!</strong> Tenon didn't find any issues on this page.</p>";
@@ -436,16 +483,17 @@ function tc_setup_report() {
 	}
 }
 
-function tc_list_reports() {
-	$reports = get_option( 'tc_reports' );
+function tc_list_reports( $count = 10 ) {
+	$count = (int) $count;
+	$reports = wp_get_recent_posts( array( 'post_type'=>'tenon-report', 'numberposts'=>$count ), 'OBJECT' );
 	if ( is_array( $reports ) ) {
 		echo "<ul>";
-		foreach ( $reports as $report ) {
-			$link = admin_url( "options-general.php?page=theme-checker/theme-checker.php&report=$report" );
-			$report_data = get_option( "tc_report_$report" );
-			$date = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $report );
-			$name = array_keys( $report_data );
-			$name = ( isset( $name[0] ) && $name[0] != '' ) ? $name[0] : __( 'Untitled Report', 'theme-checker' );
+		foreach ( $reports as $report_post ) {
+			$report = json_decode( $report_post->post_content );
+			$report_id = $report_post->ID;
+			$link = admin_url( "options-general.php?page=theme-checker/theme-checker.php&report=$report_id" );
+			$date = get_the_time( 'Y-m-d H:i:s', $report_post );
+			$name = $report_post->post_title;
 			echo "<li><a href='$link'>".stripslashes( $name )."</a> ($date)</li>";
 		}
 		echo "</ul>";
@@ -477,9 +525,12 @@ function tc_support_page() {
 			<div class='metabox-holder'>
 				<div class="tc-settings meta-box-sortables">
 					<div class="postbox" id="report">
-						<h3><?php _e('Past Accessibility Reports','theme-checker'); ?></h3>
+						<h3><?php _e('Recent Accessibility Reports','theme-checker'); ?></h3>
 						<div class="inside">
-							<?php tc_list_reports(); ?>
+							<?php 
+								$count = apply_filters( 'tc_recent_reports', 10 );
+								tc_list_reports( $count ); 
+							?>
 						</div>
 					</div>
 				</div>
@@ -522,7 +573,7 @@ function tc_show_support_box() {
 			<li>		
 			<p>
 				<a href="https://twitter.com/intent/follow?screen_name=joedolson" class="twitter-follow-button" data-size="small" data-related="joedolson">Follow @joedolson</a>
-				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if (!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 			</p>
 			</li>
 			<li><p><?php _e('<a href="http://www.joedolson.com/donate/">Make a donation today!</a> Every donation counts - donate $2, $10, or $100 and help me keep this plug-in running!','theme-checker'); ?></p>
