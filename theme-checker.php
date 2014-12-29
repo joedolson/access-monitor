@@ -304,15 +304,35 @@ function tc_set_report( $name = false ) {
 	return $report_id;
 }
 
-function tc_generate_report( $name, $pages = false ) {
-	$settings = get_option( 'tc_settings' );
+register_deactivation_hook( __FILE__, 'tc_deactivate_cron' );
+function tc_deactivate_cron() {
+	wp_clear_scheduled_hook( 'tccron' );
+}
+
+add_action('tccron', 'tc_schedule_report', 10, 4);
+function tc_schedule_report( $report_id, $pages, $name ) {
+	$new_report = tc_generate_report( $name, $pages, 'none' ); // 'none' to prevent this from being auto-scheduled again
+	$url = admin_url( "options-general.php?page=theme-checker/theme-checker.php&report=$new_report" );
+	update_post_meta( $new_report, '_tenon_parent', $report_id );
+	add_post_meta( $report_id, '_tenon_child', $new_report );
+	wp_mail( 
+		get_option( 'admin_email' ), 
+		sprintf( __( 'Scheduled Accessibility Report on %s', 'theme-checker' ), get_option( 'blogname' ) ), 
+		sprintf( __( "View accessibiity report: %s", 'theme-checker' ), $url ) 
+	);
+}
+
+function tc_generate_report( $name, $pages = false, $schedule = 'none' ) {
 	$report_id = tc_set_report( $name );
-	if ( isset( $settings['pages'] ) && !$pages ) {
-		$pages = $settings['pages']; 
-	} elseif ( is_array( $pages ) ) {
+	if ( is_array( $pages ) ) {
 		$pages = $pages;
 	} else {
 		$pages = array( home_url() );
+	}
+	if ( $schedule != 'none' ) {
+		$timestamp = ( $schedule == 'weekly' ) ? current_time( 'timestamp' ) + 60*60*24*7 : current_time( 'timestamp' ) + ( 60*60*24*30.5 );
+		$args = array( 'report_id'=>$report_id, 'pages'=>$pages, 'name'=>$name );
+		wp_schedule_event( $timestamp, $schedule, 'tccron', $args );
 	}
 	foreach ( $pages as $page ) {
 		if ( is_numeric( $page ) ) { 
@@ -335,6 +355,7 @@ function tc_generate_report( $name, $pages = false ) {
 					) );
 	update_post_meta( $report_id, '_tenon_json', $saved );
 	wp_publish_post( $report_id );
+	return $report_id;
 }
 
 function tc_show_report( $report_id = false ) {
@@ -409,6 +430,19 @@ function tc_format_tenon_report( $results, $name ) {
 	return $header . $return;
 }
 
+add_filter( 'cron_schedules', 'tc_custom_schedules' );
+function tc_custom_schedules( $schedules ) {
+ 	// Adds once weekly to the existing schedules.
+ 	$schedules['weekly'] = array(
+ 		'interval' => 604800,
+ 		'display' => __( 'Once Weekly', 'theme-checker' )
+ 	);
+ 	$schedules['monthly'] = array(
+ 		'interval' => 2635200,
+ 		'display' => __( 'Once Monthly', 'theme-checker' )
+ 	);	
+ 	return $schedules;	
+}
 
 function tc_settings() {
 	if ( isset( $_POST['tc_settings'] ) ) {
@@ -479,7 +513,15 @@ function tc_report() {
 		<div>
 			<input type='button' id='add_field' value='".__( 'Add a test URL', 'my-calendar' )."' class='button' />
 			<input type='button' id='del_field' value='".__( 'Remove last test', 'my-calendar' )."' class='button' />
-		</div>		
+		</div>
+		<p>
+			<label for='report_schedule'>" . __( 'Schedule report', 'theme-checker' ) . "</label>
+			<select id='report_schedule' name='report_schedule'>
+				<option value='none'>" . __( 'One-time report', 'theme-checker' ) . "</option>
+				<option value='weekly'>" . __( 'Weekly', 'theme-checker' ) . "</option>
+				<option value='monthly'>" . __( 'Monthly', 'theme-checker' ) . "</option>
+			</select>
+		</p>
 		<p>
 			<input type='submit' value='".__('Create Accessibility Report','theme-checker')."' name='tc_generate' class='button-primary' />
 		</p>
@@ -491,7 +533,8 @@ function tc_setup_report() {
 	if ( isset( $_POST['tc_generate'] ) ) {
 		$name = ( isset( $_POST['tc_report_name'] ) ) ? sanitize_text_field( $_POST['tc_report_name'] ) : false;
 		$pages = ( isset( $_POST['tc_report_pages'] ) && !empty( $_POST['tc_report_pages'] ) ) ? $_POST['tc_report_pages'] : false;
-		tc_generate_report( $name, $pages );
+		$schedule = ( isset( $_POST['report_schedule'] ) ) ? $_POST['report_schedule'] : 'none';
+		tc_generate_report( $name, $pages, $schedule );
 		tc_show_report();
 	}
 }
