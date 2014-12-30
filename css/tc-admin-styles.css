@@ -1,4 +1,0 @@
-.tc-settings pre { width: 100%; overflow: scroll; background: #fff; padding: 5px; }
-.tc-settings .postbox { margin: 0 10px 0 0}
-.tc-settings .postbox .inside { overflow: visible!important} /* some plugins change this, but I need it at WP default. */
-.tc-settings .meta-box-sortables { min-height: 0}

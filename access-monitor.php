@@ -1,11 +1,11 @@
 <?php
 /*
-Plugin Name: Theme Checker
+Plugin Name: Access Monitor
 Plugin URI: http://checker.accessiblewebdesign.org
-Description: Inspect WordPress for accessibility issues.
+Description: Inspect & monitor WordPress sites for accessibility issues using the Tenon accessibility API.
 Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
-Text Domain: theme-checker
+Text Domain: access-monitor
 Domain Path: lang
 Version: 0.1.0
 */
@@ -37,19 +37,19 @@ define( 'WAVE_API_URL', 'http://wave.webaim.org/api/request' );
 require_once( 't/tenon.php' );
 require_once( 't/wave.php' );
 
-$tc_version = '0.1.0';
+$am_version = '0.1.0';
 
-add_filter( 'the_content', 'tc_pass_query' );
-function tc_pass_query( $content ) {
+add_filter( 'the_content', 'am_pass_query' );
+function am_pass_query( $content ) {
 	if ( isset( $_GET['tenon'] ) && $_GET['tenon'] == 'true' ) {
 		$permalink = get_the_permalink();
-		$results = tc_query_tenon( array( 'url'=>$permalink ) );
+		$results = am_query_tenon( array( 'url'=>$permalink ) );
 		return $results.$content;
 	}
 	return $content;
 }
 
-function tc_query_tenon( $post, $format = true ) {
+function am_query_tenon( $post, $format = true ) {
 	// creates the $opts array from the $post data
 	// only sets items that are non-blank. This allows Tenon to revert to defaults
 	$expectedPost = array( 'src', 'url', 'level', 'certainty', 'priority',
@@ -63,7 +63,7 @@ function tc_query_tenon( $post, $format = true ) {
 			}
 		}
 	}
-	$settings = get_option( 'tc_settings' );
+	$settings = get_option( 'am_settings' );
 	$key = $settings['tenon_api_key'];
 	if ( $key ) {
 		$opts['key'] = $key;
@@ -72,7 +72,7 @@ function tc_query_tenon( $post, $format = true ) {
 		$tenon->submit( DEBUG );
 		$body = $tenon->tenonResponse['body'];
 		if ( $format == true ) {
-			$results = tc_format_tenon( $body );
+			$results = am_format_tenon( $body );
 		} else {
 			$object = json_decode( $body );
 			if ( property_exists( $object, 'resultSet' ) ) {
@@ -87,9 +87,9 @@ function tc_query_tenon( $post, $format = true ) {
 	}
 }
 
-function tc_format_tenon( $body ) {
+function am_format_tenon( $body ) {
 	if ( $body === false ) {
-		return __( 'No Tenon API Key provided', 'theme-checker' );
+		return __( 'No Tenon API Key provided', 'access-monitor' );
 	}
 	$object = json_decode( $body );
 	if ( property_exists( $object, 'resultSummary' ) ) {
@@ -104,12 +104,12 @@ function tc_format_tenon( $body ) {
 	} else {
 		$results = array();
 	}
-	$return = tc_format_tenon_array( $results, $errors );
+	$return = am_format_tenon_array( $results, $errors );
 	return $return;
 }
 
-function tc_format_tenon_array( $results, $errors ) {
-	$return = "<section><h1>".sprintf( __( '%s accessibility issues identified.', 'theme-checker' ), "<em>$errors</em>" )."</h1>";
+function am_format_tenon_array( $results, $errors ) {
+	$return = "<section><h1>".sprintf( __( '%s accessibility issues identified.', 'access-monitor' ), "<em>$errors</em>" )."</h1>";
 	$i = 0;
 	if ( !empty( $results ) ) {
 		foreach( $results as $result ) {
@@ -129,8 +129,8 @@ function tc_format_tenon_array( $results, $errors ) {
 					<h2>
 						<span>$i</span>. $result->errorTitle 
 						<span class='meta'>
-							<span class='certainty $cert'>". sprintf( __( 'Certainty: %s', 'theme-checker' ), "$result->certainty%" ). "</span>  
-							<span class='priority $prio'>". sprintf( __( 'Priority: %s', 'theme-checker' ), "$result->priority%" ). "</span>
+							<span class='certainty $cert'>". sprintf( __( 'Certainty: %s', 'access-monitor' ), "$result->certainty%" ). "</span>  
+							<span class='priority $prio'>". sprintf( __( 'Priority: %s', 'access-monitor' ), "$result->priority%" ). "</span>
 						</span>
 					</h2>
 					<p>$result->errorDescription <strong>Read more:</strong> <a href='$result->ref'>$result->resultTitle</a> <span title='Links not currently live at Tenon.io'>[Note]</span></p>
@@ -146,25 +146,25 @@ function tc_format_tenon_array( $results, $errors ) {
 	return $return . "</section><hr />";
 }
 
-add_action('admin_enqueue_scripts', 'tc_admin_enqueue_scripts');
-function tc_admin_enqueue_scripts() {
+add_action('admin_enqueue_scripts', 'am_admin_enqueue_scripts');
+function am_admin_enqueue_scripts() {
 	global $current_screen;
-	wp_enqueue_script( 'tc.functions', plugins_url( 'js/jquery.ajax.js', __FILE__ ), array( 'jquery' ) );
-	wp_localize_script( 'tc.functions', 'tc_ajax_url', admin_url( 'admin-ajax.php' ) );
-	wp_localize_script( 'tc.functions', 'tc_ajax_action', 'tc_ajax_query_tenon' );
-	wp_localize_script( 'tc.functions', 'tc_current_screen', $current_screen->id );
-	wp_enqueue_style( 'tc.styles', plugins_url( 'css/tc-styles.css', __FILE__ ) );	
+	wp_enqueue_script( 'am.functions', plugins_url( 'js/jquery.ajax.js', __FILE__ ), array( 'jquery' ) );
+	wp_localize_script( 'am.functions', 'am_ajax_url', admin_url( 'admin-ajax.php' ) );
+	wp_localize_script( 'am.functions', 'am_ajax_action', 'am_ajax_query_tenon' );
+	wp_localize_script( 'am.functions', 'am_current_screen', $current_screen->id );
+	wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );	
 }
 
-add_action('wp_enqueue_scripts', 'tc_wp_enqueue_scripts');
-function tc_wp_enqueue_scripts() {
-	wp_enqueue_style( 'tc.styles', plugins_url( 'css/tc-styles.css', __FILE__ ) );
+add_action('wp_enqueue_scripts', 'am_wp_enqueue_scripts');
+function am_wp_enqueue_scripts() {
+	wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );
 }
 
-add_action('wp_ajax_tc_ajax_query_tenon', 'tc_ajax_query_tenon');
-add_action('wp_ajax_nopriv_tc_ajax_query_tenon', 'tc_ajax_query_tenon');
+add_action('wp_ajax_am_ajax_query_tenon', 'am_ajax_query_tenon');
+add_action('wp_ajax_nopriv_am_ajax_query_tenon', 'am_ajax_query_tenon');
 
-function tc_ajax_query_tenon() {
+function am_ajax_query_tenon() {
 	if ( isset( $_REQUEST['tenon'] ) ) {
 		$screen = $_REQUEST['current_screen'];
 		if ( $screen == 'dashboard' ) {
@@ -172,18 +172,18 @@ function tc_ajax_query_tenon() {
 		} else {
 			$args = array( 'src'=>stripslashes( $_REQUEST['tenon'] ), 'fragment' => 1 );
 		}
-		echo tc_query_tenon( $args );
+		echo am_query_tenon( $args );
 		die;
 	}
 }
 
-add_action( 'admin_footer', 'tc_admin_footer' );
-function tc_admin_footer() {
+add_action( 'admin_footer', 'am_admin_footer' );
+function am_admin_footer() {
 	echo "<div aria-live='assertive' class='feedback' id='tenon' style='color: #333;background:#fff;padding: 2em 2em 4em 14em;clear:both;border-top:1px solid #333'></div>";
 }
 
-add_action( 'admin_bar_menu','tc_admin_bar', 200 );
-function tc_admin_bar() {
+add_action( 'admin_bar_menu','am_admin_bar', 200 );
+function am_admin_bar() {
 	global $wp_admin_bar;
 	if ( is_admin() ) {
 		$url = '#tenon';
@@ -191,23 +191,23 @@ function tc_admin_bar() {
 		global $post_id; 
 		$url = add_query_arg(  'tenon', 'true', get_permalink( $post_id ) );
 	}
-	$args = array( 'id'=>'tenonCheck', 'title'=>__( 'A11y Check','theme-checker' ), 'href'=>$url );
+	$args = array( 'id'=>'tenonCheck', 'title'=>__( 'A11y Check','access-monitor' ), 'href'=>$url );
 	$wp_admin_bar->add_node( $args );
 }
 
 
-add_filter( 'the_content', 'tc_wave_pass_query' );
-function tc_wave_pass_query( $content ) {
+add_filter( 'the_content', 'am_wave_pass_query' );
+function am_wave_pass_query( $content ) {
 	if ( isset( $_GET['wave'] ) && is_numeric( $_GET['wave'] ) ) {
 		$permalink = get_the_permalink();
 		$reporttype = (int) $_GET['wave'];
-		$results = tc_query_wave( array( 'url'=>$permalink, 'reporttype'=>$reporttype ) );
+		$results = am_query_wave( array( 'url'=>$permalink, 'reporttype'=>$reporttype ) );
 		return $results.$content;
 	}
 	return $content;
 }
 
-function tc_query_wave( $post ) {
+function am_query_wave( $post ) {
 	// creates the $opts array from the $post data
 	// only sets items that are non-blank. This allows Tenon to revert to defaults
 	$expectedPost = array( 'key', 'url', 'reporttype', 'format' );
@@ -219,21 +219,21 @@ function tc_query_wave( $post ) {
 			}
 		}
 	}
-	$settings = get_option( 'tc_settings' );
+	$settings = get_option( 'am_settings' );
 	$key = $settings['wave_api_key'];
 	if ( $key ) {
 		$opts['key'] = $key;
 		$wave = new wave( WAVE_API_URL, $opts );
 		$wave->submit( DEBUG );
 		$body = $wave->waveResponse['body'];
-		$results = tc_format_wave( $body, $opts['reporttype'] );
+		$results = am_format_wave( $body, $opts['reporttype'] );
 		return $results;
 	} else {
 		return false;
 	}
 }
 
-function tc_format_wave( $body, $reporttype=1 ) {
+function am_format_wave( $body, $reporttype=1 ) {
 	$body = json_decode( $body );
 	
 	$credits = $body->statistics->creditsremaining;
@@ -259,22 +259,22 @@ function tc_format_wave( $body, $reporttype=1 ) {
 add_action( 'init', 'bs_posttypes' );
 function bs_posttypes() {
 	$value = array( 
-			__( 'accessibility report','theme-checker' ),
-			__( 'accessibility reports','theme-checker' ),
-			__( 'Accessibility Report','theme-checker' ),
-			__( 'Accessibility Reports','theme-checker' ),
+			__( 'accessibility report','access-monitor' ),
+			__( 'accessibility reports','access-monitor' ),
+			__( 'Accessibility Report','access-monitor' ),
+			__( 'Accessibility Reports','access-monitor' ),
 		);
 		$labels = array(
 		'name' => $value[3],
 		'singular_name' => $value[2],
-		'add_new' => __( 'Add New' , 'theme-checker' ),
-		'add_new_item' => sprintf( __( 'Create New %s','theme-checker' ), $value[2] ),
-		'edit_item' => sprintf( __( 'Modify %s','theme-checker' ), $value[2] ),
-		'new_item' => sprintf( __( 'New %s','theme-checker' ), $value[2] ),
-		'view_item' => sprintf( __( 'View %s','theme-checker' ), $value[2] ),
-		'search_items' => sprintf( __( 'Search %s','theme-checker' ), $value[3] ),
-		'not_found' =>  sprintf( __( 'No %s found','theme-checker' ), $value[1] ),
-		'not_found_in_trash' => sprintf( __( 'No %s found in Trash','theme-checker' ), $value[1] ), 
+		'add_new' => __( 'Add New' , 'access-monitor' ),
+		'add_new_item' => sprintf( __( 'Create New %s','access-monitor' ), $value[2] ),
+		'edit_item' => sprintf( __( 'Modify %s','access-monitor' ), $value[2] ),
+		'new_item' => sprintf( __( 'New %s','access-monitor' ), $value[2] ),
+		'view_item' => sprintf( __( 'View %s','access-monitor' ), $value[2] ),
+		'search_items' => sprintf( __( 'Search %s','access-monitor' ), $value[3] ),
+		'not_found' =>  sprintf( __( 'No %s found','access-monitor' ), $value[1] ),
+		'not_found_in_trash' => sprintf( __( 'No %s found in Trash','access-monitor' ), $value[1] ), 
 		'parent_item_colon' => ''
 	);
 	$args = array(
@@ -283,47 +283,63 @@ function bs_posttypes() {
 		'show_ui' => true,
 		'show_in_menu' => true,
 		'menu_icon' => 'dashicons-universal-access',
-		'supports' => array( 'title', 'editor', 'custom-fields' )
+		'supports' => array( 'title', 'custom-fields' )
 	); 
 	register_post_type( 'tenon-report', $args );
 }
 
-add_action('admin_menu', 'tc_remove_menu_item');
-function tc_remove_menu_item() {
+
+add_action( 'admin_menu', 'am_add_outer_box' );
+
+// begin add boxes
+function am_add_outer_box() {
+	add_meta_box( 'am_report_div',__('Accessibility Report', 'access-monitor'), 'am_add_inner_box', 'tenon-report', 'normal','high' );			
+}
+function am_add_inner_box() {
+	global $post;
+	$content = stripslashes( $post->post_content );
+	$data = get_post_meta( $post->ID, '_tenon_json', true );
+	$content .= "<h2>".__('JSON Submission Data', 'access-monitor').":</h2><pre><code>".print_r( $data, 1 )."</code></pre>";
+	echo '<div class="bs_post_fields">'.$content.'</div>';
+}
+
+
+add_action('admin_menu', 'am_remove_menu_item');
+function am_remove_menu_item() {
     global $submenu;
     unset( $submenu['edit.php?post_type=tenon-report'][10] ); // Removes 'Add New'.
 }
 
-function tc_set_report( $name = false ) {
+function am_set_report( $name = false ) {
 	if ( !$name ) { 
 		$name = date_i18n( 'Y-m-d H:i:s', current_time( 'timestamp' ) ); 
 	}
 	$report_id = wp_insert_post( array( 'post_content'=>'', 'post_title'=>$name, 'post_status'=>'draft', 'post_type'=>'tenon-report' ) );
-	//$reports = ( get_option( 'tc_reports' ) != '' ) ? get_option( 'tc_reports' ) : array();
+	//$reports = ( get_option( 'am_reports' ) != '' ) ? get_option( 'am_reports' ) : array();
 	
 	return $report_id;
 }
 
-register_deactivation_hook( __FILE__, 'tc_deactivate_cron' );
-function tc_deactivate_cron() {
-	wp_clear_scheduled_hook( 'tccron' );
+register_deactivation_hook( __FILE__, 'am_deactivate_cron' );
+function am_deactivate_cron() {
+	wp_clear_scheduled_hook( 'amcron' );
 }
 
-add_action('tccron', 'tc_schedule_report', 10, 4);
-function tc_schedule_report( $report_id, $pages, $name ) {
-	$new_report = tc_generate_report( $name, $pages, 'none' ); // 'none' to prevent this from being auto-scheduled again
-	$url = admin_url( "options-general.php?page=theme-checker/theme-checker.php&report=$new_report" );
+add_action( 'tccron', 'am_schedule_report', 10, 3 );
+function am_schedule_report( $report_id, $pages, $name ) {
+	$new_report = am_generate_report( $name, $pages, 'none' ); // 'none' to prevent this from being auto-scheduled again
+	$url = admin_url( "options-general.php?page=access-monitor/access-monitor.php&report=$new_report" );
 	update_post_meta( $new_report, '_tenon_parent', $report_id );
 	add_post_meta( $report_id, '_tenon_child', $new_report );
 	wp_mail( 
-		get_option( 'admin_email' ), 
-		sprintf( __( 'Scheduled Accessibility Report on %s', 'theme-checker' ), get_option( 'blogname' ) ), 
-		sprintf( __( "View accessibiity report: %s", 'theme-checker' ), $url ) 
+		apply_filters( 'am_cron_notification_email', get_option( 'admin_email' ), $name ), 
+		sprintf( __( 'Scheduled Accessibility Report on %s', 'access-monitor' ), get_option( 'blogname' ) ), 
+		sprintf( __( "View accessibiity report: %s", 'access-monitor' ), $url ) 
 	);
 }
 
-function tc_generate_report( $name, $pages = false, $schedule = 'none' ) {
-	$report_id = tc_set_report( $name );
+function am_generate_report( $name, $pages = false, $schedule = 'none' ) {
+	$report_id = am_set_report( $name );
 	if ( is_array( $pages ) ) {
 		$pages = $pages;
 	} else {
@@ -332,7 +348,7 @@ function tc_generate_report( $name, $pages = false, $schedule = 'none' ) {
 	if ( $schedule != 'none' ) {
 		$timestamp = ( $schedule == 'weekly' ) ? current_time( 'timestamp' ) + 60*60*24*7 : current_time( 'timestamp' ) + ( 60*60*24*30.5 );
 		$args = array( 'report_id'=>$report_id, 'pages'=>$pages, 'name'=>$name );
-		wp_schedule_event( $timestamp, $schedule, 'tccron', $args );
+		wp_schedule_event( $timestamp, $schedule, 'amcron', $args );
 	}
 	foreach ( $pages as $page ) {
 		if ( is_numeric( $page ) ) { 
@@ -341,14 +357,14 @@ function tc_generate_report( $name, $pages = false, $schedule = 'none' ) {
 			$url = $page;
 		}
 		if ( esc_url( $url ) ) {
-			$report = tc_query_tenon( array( 'url'=>$url ), false );
+			$report = am_query_tenon( array( 'url'=>$url ), false );
 			$saved[$url] = $report;
 			
 		} else {
 			continue;
 		}
 	}
-	$formatted = tc_format_tenon_report( $saved, $name );	
+	$formatted = am_format_tenon_report( $saved, $name );	
 	wp_update_post( array( 
 					'ID'=>$report_id, 
 					'post_content'=> $formatted
@@ -358,11 +374,35 @@ function tc_generate_report( $name, $pages = false, $schedule = 'none' ) {
 	return $report_id;
 }
 
-function tc_show_report( $report_id = false ) {
+add_action( 'save_post', 'am_reformat_report' );
+/**
+ * Reformat report output when saving post. Not likely to be used much, but helpful if format changes.
+ */
+function am_reformat_report( $id ) {
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE || wp_is_post_revision( $id ) || !( get_post_type( $id ) == 'tenon-report' ) ) {
+		return;
+	}
+	$post = get_post( $id );
+	if ( $post->post_status != 'publish' ) {
+		return;
+	} 
+	
+	$json = get_post_meta( $id, '_tenon_json', true );
+	$name = get_the_title( $id );
+	$formatted = am_format_tenon_report( $json, $name );
+	remove_action( 'save_post', 'am_reformat_report' );
+	wp_update_post( array(
+						'ID'=>$id, 
+						'post_content'=> $formatted
+					) );
+	add_action( 'save_post', 'am_reformat_report' );
+}
+
+function am_show_report( $report_id = false ) {
 	$report_id = ( isset( $_GET['report'] ) && is_numeric( $_GET['report'] ) ) ? $_GET['report'] : false;
 	$output = $name = '';
 	if ( $report_id ) {
-		//$output = get_option( "tc_report_$report_id" );
+		//$output = get_option( "am_report_$report_id" );
 		$report = get_post( $report_id );
 		$output = $report->post_content;
 		$name = $report->post_title;
@@ -370,7 +410,7 @@ function tc_show_report( $report_id = false ) {
 		$reports = wp_get_recent_posts( array( 'numberposts'=>1, 'post_type'=>'tenon-report', 'post_status'=>'publish' ), 'OBJECT' );
 		$report = end( $reports );
 		if ( $report ) {
-			//$output = get_option( "tc_report_$report" );
+			//$output = get_option( "am_report_$report" );
 			$output = $report->post_content;
 			$name = $report->post_title;
 		}
@@ -378,30 +418,32 @@ function tc_show_report( $report_id = false ) {
 	if ( $output != '' ) {
 		echo $output;
 	} else {
-		$formatted = tc_format_tenon_report( get_post_meta( $report_id, '_tenon_json', true ), $name );
+		$formatted = am_format_tenon_report( get_post_meta( $report_id, '_tenon_json', true ), $name );
 		wp_update_post( array( 'ID'=>$report_id, 'post_content' => $formatted ) );
 		echo $formatted;		
 	}
 }
 
-function tc_format_tenon_report( $results, $name ) {
-	$header = "<h4>".stripslashes( $name )."; ".__( 'Results from %d pages tested', 'theme-checker' ). "</h4>";
+function am_format_tenon_report( $results, $name ) {
+	$header = "<h4>".stripslashes( $name )."; ".__( 'Results from %d pages tested', 'access-monitor' ). "</h4>";
 	$return = '';
 	$i = $count = 0;
 	if ( !empty( $results ) ) {
 		$reported = array();
+		$count = count( $results );
 		foreach ( $results as $url => $resultSet ) {
-			$count = count( $url );
+			$result_count = count( $resultSet );
+			if ( $result_count > 0 ) {
 			$return .= "<table class='widefat tenon-report'>";
-			$return .= "<caption>".__( "Errors found on <a href='$url'>$url</a>", 'theme-checker' )."</caption>";
+			$return .= "<caption>" . sprintf( __( "Errors found on %s.", 'access-monitor' ), "<a href='$url'>$url</a>" ) . " (<strong>$result_count</strong>)</caption>";
 			$return .= "
 				<thead>
 					<tr>
-						<th scope='col'>".__( 'Issue', 'theme-checker' )."</th>
-						<th scope='col'>".__( 'Certainty', 'theme-checker' )."</th>
-						<th scope='col'>".__( 'Priority', 'theme-checker' )."</th>
-						<th scope='col'>".__( 'Source', 'theme-checker' )."</th>
-						<th scope='col'>".__( 'Xpath', 'theme-checker' )."</th>
+						<th scope='col'>".__( 'Issue', 'access-monitor' )."</th>
+						<th scope='col'>".__( 'Certainty', 'access-monitor' )."</th>
+						<th scope='col'>".__( 'Priority', 'access-monitor' )."</th>
+						<th scope='col'>".__( 'Source', 'access-monitor' )."</th>
+						<th scope='col'>".__( 'Xpath', 'access-monitor' )."</th>
 					</tr>
 				</thead>
 				<tbody>";
@@ -414,14 +456,17 @@ function tc_format_tenon_report( $results, $name ) {
 						<td><a href='$result->ref'>$result->resultTitle</a></td>
 						<td>$result->certainty</td>
 						<td>$result->priority</td>
-						<td><button class='snippet' data-target='snippet$i' aria-controls='snippet$i' aria-expanded='false'>Source</button> <div class='codepanel' id='snippet$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='tc_code'>$result->errorSnippet</code></div></td>
-						<td><button class='snippet' data-target='xpath$i' aria-controls='xpath$i' aria-expanded='false'>xPath</button> <div class='codepanel' id='xpath$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='tc_code'>$result->xpath</code></div></td>
+						<td><button class='snippet' data-target='snippet$i' aria-controls='snippet$i' aria-expanded='false'>Source</button> <div class='codepanel' id='snippet$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result->errorSnippet</code></div></td>
+						<td><button class='snippet' data-target='xpath$i' aria-controls='xpath$i' aria-expanded='false'>xPath</button> <div class='codepanel' id='xpath$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result->xpath</code></div></td>
 					</tr>";
 				}
 				$reported[] = $hash;
 			}
 				$return .= "</tbody>
 				</table>";
+			} else {
+				$return .= "<p>".sprintf( __( "No errors found on %s.", 'access-monitor' ), "<a href='$url'>$url</a>" )."</p>"; 
+			}
 		}
 	} else {
 		$return .= "<p><strong>Congratulations!</strong> Tenon didn't find any issues on this page.</p>";
@@ -430,84 +475,84 @@ function tc_format_tenon_report( $results, $name ) {
 	return $header . $return;
 }
 
-add_filter( 'cron_schedules', 'tc_custom_schedules' );
-function tc_custom_schedules( $schedules ) {
+add_filter( 'cron_schedules', 'am_custom_schedules' );
+function am_custom_schedules( $schedules ) {
  	// Adds once weekly to the existing schedules.
  	$schedules['weekly'] = array(
  		'interval' => 604800,
- 		'display' => __( 'Once Weekly', 'theme-checker' )
+ 		'display' => __( 'Once Weekly', 'access-monitor' )
  	);
  	$schedules['monthly'] = array(
  		'interval' => 2635200,
- 		'display' => __( 'Once Monthly', 'theme-checker' )
+ 		'display' => __( 'Once Monthly', 'access-monitor' )
  	);	
  	return $schedules;	
 }
 
-function tc_settings() {
-	if ( isset( $_POST['tc_settings'] ) ) {
+function am_settings() {
+	if ( isset( $_POST['am_settings'] ) ) {
 		$nonce=$_REQUEST['_wpnonce'];
-		if (! wp_verify_nonce($nonce,'theme-checker-nonce') ) die( "Security check failed" );	
+		if (! wp_verify_nonce($nonce,'access-monitor-nonce') ) die( "Security check failed" );	
 		$tenon_api_key = $_POST['tenon_api_key'];
 		$wave_api_key = $_POST['wave_api_key'];
-		update_option( 'tc_settings', array( 'tenon_api_key'=>$tenon_api_key, 'wave_api_key'=>$wave_api_key ) );
+		update_option( 'am_settings', array( 'tenon_api_key'=>$tenon_api_key, 'wave_api_key'=>$wave_api_key ) );
 	}
-	$settings = ( is_array( get_option( 'tc_settings' ) ) ) ? get_option( 'tc_settings' ) : array();
+	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
 	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'' ), $settings );
 
 	echo "
-	<form method='post' action='".admin_url('options-general.php?page=theme-checker/theme-checker.php')."'>
-		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('theme-checker-nonce')."' /></div>
-		<div><input type='hidden' name='tc_settings' value='update' /></div>
+	<form method='post' action='".admin_url('options-general.php?page=access-monitor/access-monitor.php')."'>
+		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('access-monitor-nonce')."' /></div>
+		<div><input type='hidden' name='am_settings' value='update' /></div>
 		<p>
-			<label for='tenon_api_key'>".__( 'Tenon API Key', 'theme-checker' )."</label> <input type='text' name='tenon_api_key' id='tenon_api_key' value='". esc_attr( $settings['tenon_api_key'] ) ."' />
+			<label for='tenon_api_key'>".__( 'Tenon API Key', 'access-monitor' )."</label> <input type='text' name='tenon_api_key' id='tenon_api_key' value='". esc_attr( $settings['tenon_api_key'] ) ."' />
 		</p>
 		<p>
-			<label for='wave_api_key'>".__( 'WAVE API Key', 'theme-checker' )."</label> <input type='text' name='wave_api_key' id='wave_api_key' value='". esc_attr( $settings['wave_api_key'] ) ."' />
+			<label for='wave_api_key'>".__( 'WAVE API Key', 'access-monitor' )."</label> <input type='text' name='wave_api_key' id='wave_api_key' value='". esc_attr( $settings['wave_api_key'] ) ."' />
 		</p>		
 		<div>";
 		echo "<p>
-		<input type='submit' value='".__('Update Settings','theme-checker')."' name='tc_settings' class='button-primary' />
+		<input type='submit' value='".__('Update Settings','access-monitor')."' name='am_settings' class='button-primary' />
 		</p>
 		</div>
 	</form>";
 }
 
-function tc_report() {
-	echo tc_setup_report();
+function am_report() {
+	echo am_setup_report();
 	$theme = wp_get_theme();
 	$theme_name = $theme->Name;
 	$theme_version = $theme->Version;		
 	$name = $theme_name . ' ' . $theme_version;
 	echo "
-	<form method='post' action='".admin_url('options-general.php?page=theme-checker/theme-checker.php')."'>
-		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('theme-checker-nonce')."' /></div>
-		<div><input type='hidden' name='tc_get_report' value='report' /></div>";
+	<form method='post' action='".admin_url('options-general.php?page=access-monitor/access-monitor.php')."'>
+		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('access-monitor-nonce')."' /></div>
+		<div><input type='hidden' name='am_get_report' value='report' /></div>";
 		echo "
 		<div>
 		<p>
-			<label for='tc_report_name'>".__( 'Report Name', 'theme-checker' )."</label> <input type='text' name='tc_report_name' id='tc_report_name' value='". esc_attr( $name ) ."' />
+			<label for='am_report_name'>".__( 'Report Name', 'access-monitor' )."</label> <input type='text' name='am_report_name' id='am_report_name' value='". esc_attr( $name ) ."' />
 		</p>
 		<ul aria-live='assertive'>
 			<li id='field1' class='clonedInput'>
-			<label for='tc_report_pages'>".__( 'URL or post ID to test', 'theme-checker' )."</label>
-			<input type='text' class='widefat' id='tc_report_pages' name='tc_report_pages[]' value='".esc_url( home_url() )."' />
+			<label for='am_report_pages'>".__( 'URL or post ID to test', 'access-monitor' )."</label>
+			<input type='text' class='widefat' id='am_report_pages' name='am_report_pages[]' value='".esc_url( home_url() )."' />
 			</li>";
 			$last = wp_get_recent_posts( array( 'numberposts' => 1, 'post_type' => 'page', 'post_status'=>'publish' ) );
 			$last_link = get_permalink( $last[0]['ID'] );
 			$last_title = $last[0]['post_title'];
 		echo "
 			<li>
-			<label for='tc_report_pages'>".__( 'Most recent page', 'theme-checker' )." ($last_title)</label>
-			<input type='text' class='widefat' id='tc_report_pages' name='tc_report_pages[]' value='".esc_url( $last_link )."' />
+			<label for='am_report_pages'>".__( 'Most recent page', 'access-monitor' )." ($last_title)</label>
+			<input type='text' class='widefat' id='am_report_pages' name='am_report_pages[]' value='".esc_url( $last_link )."' />
 			</li>";
 			$last = wp_get_recent_posts( array( 'numberposts' => 1, 'post_status'=>'publish' ) );
 			$last_link = get_permalink( $last[0]['ID'] );
 			$last_title = $last[0]['post_title'];
 		echo "
 			<li>
-			<label for='tc_report_pages'>".__( 'Most recent post', 'theme-checker' )." ($last_title)</label>
-			<input type='text' class='widefat' id='tc_report_pages' name='tc_report_pages[]' value='".esc_url( $last_link )."' />
+			<label for='am_report_pages'>".__( 'Most recent post', 'access-monitor' )." ($last_title)</label>
+			<input type='text' class='widefat' id='am_report_pages' name='am_report_pages[]' value='".esc_url( $last_link )."' />
 			</li>
 		</ul>
 		<div>
@@ -515,31 +560,31 @@ function tc_report() {
 			<input type='button' id='del_field' value='".__( 'Remove last test', 'my-calendar' )."' class='button' />
 		</div>
 		<p>
-			<label for='report_schedule'>" . __( 'Schedule report', 'theme-checker' ) . "</label>
+			<label for='report_schedule'>" . __( 'Schedule report', 'access-monitor' ) . "</label>
 			<select id='report_schedule' name='report_schedule'>
-				<option value='none'>" . __( 'One-time report', 'theme-checker' ) . "</option>
-				<option value='weekly'>" . __( 'Weekly', 'theme-checker' ) . "</option>
-				<option value='monthly'>" . __( 'Monthly', 'theme-checker' ) . "</option>
+				<option value='none'>" . __( 'One-time report', 'access-monitor' ) . "</option>
+				<option value='weekly'>" . __( 'Weekly', 'access-monitor' ) . "</option>
+				<option value='monthly'>" . __( 'Monthly', 'access-monitor' ) . "</option>
 			</select>
 		</p>
 		<p>
-			<input type='submit' value='".__('Create Accessibility Report','theme-checker')."' name='tc_generate' class='button-primary' />
+			<input type='submit' value='".__('Create Accessibility Report','access-monitor')."' name='am_generate' class='button-primary' />
 		</p>
 		</div>
 	</form>";
 }
 
-function tc_setup_report() {
-	if ( isset( $_POST['tc_generate'] ) ) {
-		$name = ( isset( $_POST['tc_report_name'] ) ) ? sanitize_text_field( $_POST['tc_report_name'] ) : false;
-		$pages = ( isset( $_POST['tc_report_pages'] ) && !empty( $_POST['tc_report_pages'] ) ) ? $_POST['tc_report_pages'] : false;
+function am_setup_report() {
+	if ( isset( $_POST['am_generate'] ) ) {
+		$name = ( isset( $_POST['am_report_name'] ) ) ? sanitize_text_field( $_POST['am_report_name'] ) : false;
+		$pages = ( isset( $_POST['am_report_pages'] ) && !empty( $_POST['am_report_pages'] ) ) ? $_POST['am_report_pages'] : false;
 		$schedule = ( isset( $_POST['report_schedule'] ) ) ? $_POST['report_schedule'] : 'none';
-		tc_generate_report( $name, $pages, $schedule );
-		tc_show_report();
+		am_generate_report( $name, $pages, $schedule );
+		am_show_report();
 	}
 }
 
-function tc_list_reports( $count = 10 ) {
+function am_list_reports( $count = 10 ) {
 	$count = (int) $count;
 	$reports = wp_get_recent_posts( array( 'post_type'=>'tenon-report', 'numberposts'=>$count, 'post_status'=>'publish' ), 'OBJECT' );
 	if ( is_array( $reports ) ) {
@@ -547,83 +592,83 @@ function tc_list_reports( $count = 10 ) {
 		foreach ( $reports as $report_post ) {
 			$report = json_decode( $report_post->post_content );
 			$report_id = $report_post->ID;
-			$link = admin_url( "options-general.php?page=theme-checker/theme-checker.php&report=$report_id" );
+			$link = admin_url( "options-general.php?page=access-monitor/access-monitor.php&report=$report_id" );
 			$date = get_the_time( 'Y-m-d H:i:s', $report_post );
 			$name = $report_post->post_title;
 			echo "<li><a href='$link'>".stripslashes( $name )."</a> ($date)</li>";
 		}
 		echo "</ul>";
 	} else {
-		echo "<p>".__( 'No accessibility reports created yet.', 'theme-checker' )."</p>";
+		echo "<p>".__( 'No accessibility reports created yet.', 'access-monitor' )."</p>";
 	}
 }
 
-function tc_support_page() {
+function am_support_page() {
 	?>
-	<div class="wrap" id="theme-checker">
-		<h2><?php _e('Theme Checker','theme-checker'); ?></h2>
-		<div id="tc_settings_page" class="postbox-container" style="width: 70%">
+	<div class="wrap" id='access-monitor'>
+		<h2><?php _e('Access Monitor','access-monitor'); ?></h2>
+		<div id="am_settings_page" class="postbox-container" style="width: 70%">
 			<div class='metabox-holder'>
-				<div class="tc-settings meta-box-sortables">
+				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="report">
-						<h3><?php _e('Accessibility Report','theme-checker'); ?></h3>
+						<h3><?php _e('Accessibility Report','access-monitor'); ?></h3>
 						<div class="inside">
 							<?php 
 							if ( isset( $_GET['report'] ) && is_numeric( $_GET['report'] ) ) { 
-								tc_show_report();
+								am_show_report();
 							}
 							?>
-							<?php tc_report(); ?>
+							<?php am_report(); ?>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class='metabox-holder'>
-				<div class="tc-settings meta-box-sortables">
+				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="report">
-						<h3><?php _e('Recent Accessibility Reports','theme-checker'); ?></h3>
+						<h3><?php _e('Recent Accessibility Reports','access-monitor'); ?></h3>
 						<div class="inside">
 							<?php 
-								$count = apply_filters( 'tc_recent_reports', 10 );
-								tc_list_reports( $count ); 
+								$count = apply_filters( 'am_recent_reports', 10 );
+								am_list_reports( $count ); 
 							?>
 						</div>
 					</div>
 				</div>
 			</div>			
 			<div class='metabox-holder'>
-				<div class="tc-settings meta-box-sortables">
+				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="settings">
-						<h3><?php _e('Theme Checker Settings','theme-checker'); ?></h3>
+						<h3><?php _e('Access Monitor Settings','access-monitor'); ?></h3>
 						<div class="inside">
-							<?php tc_settings(); ?>
+							<?php am_settings(); ?>
 						</div>
 					</div>
 				</div>
 			</div>
 			<div class='metabox-holder'>			
-				<div class="tc-settings meta-box-sortables">
+				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="get-support">
-						<h3><?php _e('Get Plug-in Support','theme-checker'); ?></h3>
+						<h3><?php _e('Get Plug-in Support','access-monitor'); ?></h3>
 						<div class="inside">
-							<?php tc_get_support_form(); ?>
+							<?php am_get_support_form(); ?>
 						</div>
 					</div>
 				</div>
 			</div>
 		</div>
-		<?php tc_show_support_box(); ?>
+		<?php am_show_support_box(); ?>
 	</div>
 	<?php
 }
 
-function tc_show_support_box() {
+function am_show_support_box() {
 ?>
 <div class="postbox-container" style="width:20%">
 <div class="metabox-holder">
 	<div class="meta-box-sortables">
 		<div class="postbox">
-		<h3><?php _e('Support this Plug-in','theme-checker'); ?></h3>
+		<h3><?php _e('Support this Plug-in','access-monitor'); ?></h3>
 		<div id="support" class="inside resources">
 		<ul>
 			<li>		
@@ -632,7 +677,7 @@ function tc_show_support_box() {
 				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if (!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 			</p>
 			</li>
-			<li><p><?php _e('<a href="http://www.joedolson.com/donate/">Make a donation today!</a> Every donation counts - donate $2, $10, or $100 and help me keep this plug-in running!','theme-checker'); ?></p>
+			<li><p><?php _e('<a href="http://www.joedolson.com/donate/">Make a donation today!</a> Every donation counts - donate $2, $10, or $100 and help me keep this plug-in running!','access-monitor'); ?></p>
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 					<div>
 					<input type="hidden" name="cmd" value="_s-xclick" />
@@ -642,8 +687,8 @@ function tc_show_support_box() {
 					</div>
 				</form>
 			</li>
-			<li><a href="http://profiles.wordpress.org/users/joedolson/"><?php _e('Check out my other plug-ins','theme-checker'); ?></a></li>
-			<li><a href="http://wordpress.org/extend/plugins/theme-checker/"><?php _e('Rate this plug-in','theme-checker'); ?></a></li>		
+			<li><a href="http://profiles.wordpress.org/users/joedolson/"><?php _e('Check out my other plug-ins','access-monitor'); ?></a></li>
+			<li><a href="http://wordpress.org/extend/plugins/access-monitor/"><?php _e('Rate this plug-in','access-monitor'); ?></a></li>		
 		</ul>
 		</div>
 		</div>
@@ -654,24 +699,24 @@ function tc_show_support_box() {
 <?php
 }
 
-add_action( 'admin_menu', 'tc_add_support_page' );
+add_action( 'admin_menu', 'am_add_support_page' );
 // Add the administrative settings to the "Settings" menu.
-function tc_add_support_page() {
+function am_add_support_page() {
     if ( function_exists( 'add_submenu_page' ) ) {
-		 $plugin_page = add_options_page( 'Theme Checker Support', 'Theme Checker', 'manage_options', __FILE__, 'tc_support_page' );
-		 add_action( 'admin_head-'. $plugin_page, 'tc_admin_styles' );
+		 $plugin_page = add_options_page( 'Access Monitor Support', 'Access Monitor', 'manage_options', __FILE__, 'am_support_page' );
+		 add_action( 'admin_head-'. $plugin_page, 'am_admin_styles' );
     }
 }
 
-function tc_admin_styles() {
-	wp_enqueue_style( 'tc-admin-styles', plugins_url( 'css/tc-admin-styles.css', __FILE__ ) );
+function am_admin_styles() {
+	wp_enqueue_style( 'am-admin-styles', plugins_url( 'css/am-admin-styles.css', __FILE__ ) );
 }
 
-function tc_get_support_form() {
-	global $current_user, $tc_version;
+function am_get_support_form() {
+	global $current_user, $am_version;
 	get_currentuserinfo();
-	// send fields for Theme Checker
-	$version = $tc_version;
+	// send fields for Access Monitor
+	$version = $am_version;
 	// send fields for all plugins
 	$wp_version = get_bloginfo('version');
 	$home_url = home_url();
@@ -725,13 +770,13 @@ Version: $theme_version
 ==Active Plugins:==
 $plugins_string
 ";
-	if ( isset($_POST['tc_support']) ) {
+	if ( isset($_POST['am_support']) ) {
 		$nonce=$_REQUEST['_wpnonce'];
-		if (! wp_verify_nonce($nonce,'theme-checker-nonce') ) die("Security check failed");	
+		if (! wp_verify_nonce($nonce,'access-monitor-nonce') ) die("Security check failed");	
 		$request = stripslashes($_POST['support_request']);
 		$has_donated = ( isset( $_POST['has_donated'] ) && $_POST['has_donated'] == 'on')?"Donor":"No donation";
 		$has_read_faq = ( isset( $_POST['has_read_faq'] ) && $_POST['has_read_faq'] == 'on')?"Read FAQ":true; // has no faq, for now.
-		$subject = "Theme Checker support request. $has_donated";
+		$subject = "Access Monitor support request. $has_donated";
 		$message = $request ."\n\n". $data;
 		// Get the site domain and get rid of www. from pluggable.php
 		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
@@ -742,36 +787,36 @@ $plugins_string
 		$from = "From: \"$current_user->display_name\" <$from_email>\r\nReply-to: \"$current_user->display_name\" <$current_user->user_email>\r\n";
 
 		if ( !$has_read_faq ) {
-			echo "<div class='message error'><p>".__('Please read the FAQ and other Help documents before making a support request.','theme-checker')."</p></div>";
+			echo "<div class='message error'><p>".__('Please read the FAQ and other Help documents before making a support request.','access-monitor')."</p></div>";
 		} else {
 			wp_mail( "plugins@joedolson.com",$subject,$message,$from );
 		
 			if ( $has_donated == 'Donor' ) {
-				echo "<div class='message updated'><p>".__('Thank you for supporting the continuing development of this plug-in! I\'ll get back to you as soon as I can.','theme-checker')."</p></div>";		
+				echo "<div class='message updated'><p>".__('Thank you for supporting the continuing development of this plug-in! I\'ll get back to you as soon as I can.','access-monitor')."</p></div>";		
 			} else {
-				echo "<div class='message updated'><p>".__('I\'ll get back to you as soon as I can, after dealing with any support requests from plug-in supporters.','theme-checker')."</p></div>";				
+				echo "<div class='message updated'><p>".__('I\'ll get back to you as soon as I can, after dealing with any support requests from plug-in supporters.','access-monitor')."</p></div>";				
 			}
 		}
 	} else {
 		$request = '';
 	}
 	echo "
-	<form method='post' action='".admin_url( 'options-general.php?page=theme-checker/theme-checker.php' )."'>
-		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce( 'theme-checker-nonce' )."' /></div>
+	<form method='post' action='".admin_url( 'options-general.php?page=access-monitor/access-monitor.php' )."'>
+		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce( 'access-monitor-nonce' )."' /></div>
 		<div>
 		<p>
-		<input type='checkbox' name='has_donated' id='has_donated' value='on' /> <label for='has_donated'>".__( 'I have <a href="http://www.joedolson.com/donate/">made a donation to help support this plug-in</a>.','theme-checker' )."</label>
+		<input type='checkbox' name='has_donated' id='has_donated' value='on' /> <label for='has_donated'>".__( 'I have <a href="http://www.joedolson.com/donate/">made a donation to help support this plug-in</a>.','access-monitor' )."</label>
 		</p>
 		<p>
 		<label for='support_request'>Support Request:</label><br /><textarea name='support_request' required aria-required='true' id='support_request' cols='80' rows='10'>".stripslashes($request)."</textarea>
 		</p>
 		<p>
-		<input type='submit' value='".__('Send Support Request','theme-checker')."' name='tc_support' class='button-primary' />
+		<input type='submit' value='".__('Send Support Request','access-monitor')."' name='am_support' class='button-primary' />
 		</p>
 		<p>".
-		__('The following additional information will be sent with your support request:','theme-checker')
+		__('The following additional information will be sent with your support request:','access-monitor')
 		."</p>
-		<div class='tc_support'>
+		<div class='am_support'>
 		".wpautop($data)."
 		</div>
 		</div>

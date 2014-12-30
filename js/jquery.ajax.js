@@ -1,19 +1,19 @@
 (function ($) {
 	$(function() {
-		if ( tc_current_screen == 'dashboard' ) {
+		if ( am_current_screen == 'dashboard' ) {
 			var src = document.documentElement.outerHTML; 		
 		} else {
 			var src = document.getElementById('wpbody-content').outerHTML; 
 		}
 		var query = {
-				'action' : tc_ajax_action,
+				'action' : am_ajax_action,
 				'tenon' : src,
-				'current_screen' : tc_current_screen
+				'current_screen' : am_current_screen
 			};
 		$( '#wp-admin-bar-tenonCheck').on( 'click', function() {
 			$.ajax( {
 				type: 'POST',
-				url: tc_ajax_url,
+				url: am_ajax_url,
 				data: query,
 				success: function( data ) {
 					$( '#tenon' ).html( data );

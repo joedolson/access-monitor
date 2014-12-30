@@ -40,6 +40,7 @@
 	background: #e6e6e6;
 	padding: .5em;
 	z-index: 10;
+	width: 24em;
 }
 
 .codepanel code {
@@ -54,10 +55,20 @@ button.close {
 	margin: 0;
 	float: right;
 	color: darkred;
+	margin: 0 0 2px 2px;
 }
 
 button.close:hover, button.close:focus {
 	background: #fff;
+}
+
+#am_report_div pre {
+	overflow: scroll;
+	background: #f3f3f3;
+}
+
+#am_report_div code {
+	background: transparent;
 }
 
 .tenon-result code, .tenon-result pre { margin: 0!important; padding: .5em!important; }

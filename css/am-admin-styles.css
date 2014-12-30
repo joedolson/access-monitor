@@ -1,0 +1,6 @@
+.am-settings pre { width: 100%; overflow: scroll; background: #fff; padding: 5px; }
+.am-settings .postbox { margin: 0 10px 0 0}
+.am-settings .postbox .inside { overflow: visible!important} /* some plugins change this, but I need it at WP default. */
+.am-settings .meta-box-sortables { min-height: 0}
+.am-settings table { margin-bottom: 2em; }
+.am-settings caption { font-size: 1.1em; }
