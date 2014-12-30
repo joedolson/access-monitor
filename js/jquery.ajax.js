@@ -45,6 +45,25 @@
 	});
 	
 	$(function() {
+		$( '.report-options' ).hide();
+		$( 'button.toggle-options' ).on( 'click', function(e) {
+			e.preventDefault();
+			var visible = $( '.report-options' ).is( ':visible' );
+			if ( visible ) {
+				$( '.report-options' ).hide();
+				$( this ).attr( 'aria-expanded', 'false' );
+				$( 'button.toggle-options span' ).removeClass( 'dashicons-arrow-down' );
+				$( 'button.toggle-options span' ).addClass( 'dashicons-arrow-right' );				
+			} else {
+				$( '.report-options' ).show();
+				$( this ).attr( 'aria-expanded', 'true' );
+				$( 'button.toggle-options span' ).removeClass( 'dashicons-arrow-right' );
+				$( 'button.toggle-options span' ).addClass( 'dashicons-arrow-down' );				
+			}
+		});
+	});	
+	
+	$(function() {
 		$('#add_field').on( 'click', function (e) {
 			e.preventDefault();
 			var maxFields = 20;

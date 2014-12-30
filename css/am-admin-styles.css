@@ -4,3 +4,7 @@
 .am-settings .meta-box-sortables { min-height: 0}
 .am-settings table { margin-bottom: 2em; }
 .am-settings caption { font-size: 1.1em; }
+.am-settings label { display: block; }
+.am-settings .checkbox label { display: inline; }
+.am-settings legend { font-weight: 700; }
+.report-options { padding: 1em; border: 1px solid #ddd; }

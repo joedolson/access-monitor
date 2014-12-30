@@ -513,14 +513,18 @@ function am_custom_schedules( $schedules ) {
  	return $schedules;	
 }
 
-function am_settings() {
+function am_update_settings() {
 	if ( isset( $_POST['am_settings'] ) ) {
 		$nonce=$_REQUEST['_wpnonce'];
 		if (! wp_verify_nonce($nonce,'access-monitor-nonce') ) die( "Security check failed" );	
 		$tenon_api_key = $_POST['tenon_api_key'];
 		$wave_api_key = $_POST['wave_api_key'];
 		update_option( 'am_settings', array( 'tenon_api_key'=>$tenon_api_key, 'wave_api_key'=>$wave_api_key ) );
+		echo "<div class='updated'><p>" . __( 'Access Monitor Settings Updated', 'access-monitor' ) . "</p></div>";
 	}
+}
+
+function am_settings() {
 	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
 	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'' ), $settings );
 
@@ -543,12 +547,22 @@ function am_settings() {
 }
 
 function am_report() {
+	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
+	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'' ), $settings );
+	
+	if ( $settings['tenon_api_key'] == '' ) {
+		$disabled = " disabled='disabled'";
+		$message = "<p><a href='http://tenon.io/register.php'>" . __( 'Sign up with Tenon to get an API key', 'access-monitor' ) . "</a></p>";
+	} else {
+		$disabled = $message = '';
+	}
+	
 	echo am_setup_report();
 	$theme = wp_get_theme();
 	$theme_name = $theme->Name;
 	$theme_version = $theme->Version;		
 	$name = $theme_name . ' ' . $theme_version;
-	echo "
+	echo "$message
 	<form method='post' action='".admin_url('options-general.php?page=access-monitor/access-monitor.php')."'>
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('access-monitor-nonce')."' /></div>
 		<div><input type='hidden' name='am_get_report' value='report' /></div>";
@@ -591,8 +605,76 @@ function am_report() {
 				<option value='monthly'>" . __( 'Monthly', 'access-monitor' ) . "</option>
 			</select>
 		</p>
+		<button class='toggle-options closed' aria-controls='report-options' aria-expanded='false'>" . __( 'Tenon report options', 'access-monitor' ) . "<span class='dashicons dashicons-arrow-right' aria-hidden='true'></span></button>
+		<div class='report-options' id='report-options'>
+			<fieldset>
+				<legend>" . __( 'Set Accessibility Test Options', 'access-monitor' ) . "</legend>
+				<p>
+					<label for='certainty'>" . __( 'Minimum Certainty', 'access-monitor' ) . "</label>
+					<select name='certainty' id='certainty'>
+						<option value='0'>0%</option>
+						<option value='20'>20%</option>
+						<option value='40'>40%</option>
+						<option value='60'>60%</option>
+						<option value='80'>80%</option>
+						<option value='100'>100%</option>
+					</select>
+				</p>
+				<p>
+					<label for='priority'>" . __( 'Minimum Priority', 'access-monitor' ) . "</label>
+					<select name='priority' id='priority'>
+						<option value='0'>0%</option>
+						<option value='20'>20%</option>
+						<option value='40'>40%</option>
+						<option value='60'>60%</option>
+						<option value='80'>80%</option>
+					</select>
+				</p>
+				<p>
+					<label for='level'>" . __( 'Minimum WCAG Level', 'access-monitor' ) . "</label>
+					<select name='level' id='level'>
+						<option value='A'>A</option>
+						<option value='AA' selected='selected'>AA</option>
+						<option value='AAA'>AAA</option>
+					</select>
+				</p>
+				<p>
+					<label for='uaString'>" . __( 'User-agent String', 'access-monitor' ) . "</label>				
+					<select name='uaString' id='uaString'>
+						<option value=''>Default</option>
+						<option value='Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36'>Chrome</option>
+						<option value='Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.1; Trident/6.0)'>Internet Explorer</option>
+						<option value='Opera/9.80 (Windows NT 6.0) Presto/2.12.388 Version/12.14'>Opera</option>
+						<option value='Mozilla/5.0 (Windows NT 5.1; rv:31.0) Gecko/20100101 Firefox/31.0'>Firefox</option>
+						".apply_filters( 'am_add_uastring_test', '' )."
+					</select>
+				</p>
+				<p>
+					<label for='viewport'>" . __( 'Viewport Size', 'access-monitor' ) . "</label>
+					<select name='viewport' id='viewport'>
+						<option value='1024x768'>1024x768</option>
+						<option value='1280x1024'>1280x1024</option>
+						<option value='1366x768'>1366x768</option>
+						<option value='320x480'>320x480</option>
+						<option value='640'>960</option>
+						<option value='800'>600</option>
+					</select>			
+				</p>
+				<p>
+					<label for='systemID'>" . __( 'System ID', 'access-monitor' ) . "</label>
+					<input type='text' id='systemID' class='widefat' />
+				</p>
+				<p>
+					<label for='reportID'>" . __( 'Report ID', 'access-monitor' ) . "</label>
+					<input type='text' id='reportID' class='widefat' />
+				</p>
+				<p class='checkbox'>
+					<label for='store'>" . __( 'Store test results at Tenon.io', 'access-monitor' ) . "</label>
+					<input type='checkbox' id='store' value='1' />
+				</p>				
+		</div>
 		<p>
-			<input type='submit' value='".__('Create Accessibility Report','access-monitor')."' name='am_generate' class='button-primary' />
+			<input id='tenon-submit' type='submit'$disabled value='".__('Create Accessibility Report','access-monitor')."' name='am_generate' class='button-primary' />
 		</p>
 		</div>
 	</form>";
@@ -603,6 +685,18 @@ function am_setup_report() {
 		$name = ( isset( $_POST['am_report_name'] ) ) ? sanitize_text_field( $_POST['am_report_name'] ) : false;
 		$pages = ( isset( $_POST['am_report_pages'] ) && !empty( $_POST['am_report_pages'] ) ) ? $_POST['am_report_pages'] : false;
 		$schedule = ( isset( $_POST['report_schedule'] ) ) ? $_POST['report_schedule'] : 'none';
+		/*
+		Set up arguments here; pass to am_generate_report
+			store 0/1
+			reportID string / store as independent meta
+			systemID string / store as independent meta
+			viewport string / split into viewPortWidth & viewPortHeight 
+			uaString string 
+			level
+			priority
+			certainty
+			importance (not present yet; field specific; associate with URL)
+		*/
 		am_generate_report( $name, $pages, $schedule );
 		am_show_report();
 	}
@@ -630,7 +724,8 @@ function am_list_reports( $count = 10 ) {
 function am_support_page() {
 	?>
 	<div class="wrap" id='access-monitor'>
-		<h2><?php _e('Access Monitor','access-monitor'); ?></h2>
+	<?php am_update_settings(); ?>
+		<h2><div class='dashicons dashicons-universal-access' aria-hidden="true"></div><?php _e('Access Monitor','access-monitor'); ?></h2>
 		<div id="am_settings_page" class="postbox-container" style="width: 70%">
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">

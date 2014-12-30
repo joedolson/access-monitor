@@ -55,9 +55,9 @@ button.close {
 	background: none;
 	padding: 0;
 	margin: 0;
+	margin: 0 0 2px 2px;
 	float: right;
 	color: darkred;
-	margin: 0 0 2px 2px;
 }
 
 button.close:hover, button.close:focus {
@@ -72,5 +72,11 @@ button.close:hover, button.close:focus {
 #am_report_div code {
 	background: transparent;
 }
+
+.no-js .report-settings {
+	display: none;
+}
+
+#access-monitor h2 .dashicons-universal-access { font-size: 1.3em; width: 1.3em; }
 
 .tenon-result code, .tenon-result pre { margin: 0!important; padding: .5em!important; }
