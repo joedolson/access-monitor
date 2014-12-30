@@ -294,6 +294,7 @@ add_action( 'admin_menu', 'am_add_outer_box' );
 // begin add boxes
 function am_add_outer_box() {
 	add_meta_box( 'am_report_div',__('Accessibility Report', 'access-monitor'), 'am_add_inner_box', 'tenon-report', 'normal','high' );			
+	add_meta_box( 'am_related_div',__('Related Reports', 'access-monitor'), 'am_add_related_box', 'tenon-report', 'side','high' );			
 }
 function am_add_inner_box() {
 	global $post;
@@ -303,6 +304,29 @@ function am_add_inner_box() {
 	echo '<div class="bs_post_fields">'.$content.'</div>';
 }
 
+function am_add_related_box() {
+	global $post;
+	$parents = get_posts( array(
+			'post_type'  => 'tenon-report',
+			'meta_key'   => '_tenon_parent',
+			'meta_value' => $post->ID
+		) );
+	$children = get_post_meta( $post->ID, '_tenon_child' );
+	if ( !empty( $parents ) ) {
+		$title = $parents[0]->post_title;
+		$id = $parents[0]->ID;
+		$link = get_the_permalink( $id );
+		echo  '<p>' . sprintf( __( 'This report is a re-test of %s', 'access-monitor' ), "<a href='$link'>$title</a>" ) . '</p>';
+	}
+	if ( !empty( $children ) ) {
+		foreach ( $children as $child ) {
+			print_r( $child );
+		}
+	}
+	if ( empty( $children ) && empty( $parents ) ) {
+		echo "<p>" . __( 'No related reports.', 'access-monitor' ) . "</p>";
+	}
+}
 
 add_action('admin_menu', 'am_remove_menu_item');
 function am_remove_menu_item() {
@@ -592,7 +616,7 @@ function am_list_reports( $count = 10 ) {
 		foreach ( $reports as $report_post ) {
 			$report = json_decode( $report_post->post_content );
 			$report_id = $report_post->ID;
-			$link = admin_url( "options-general.php?page=access-monitor/access-monitor.php&report=$report_id" );
+			$link = get_edit_post_link( $report_id );
 			$date = get_the_time( 'Y-m-d H:i:s', $report_post );
 			$name = $report_post->post_title;
 			echo "<li><a href='$link'>".stripslashes( $name )."</a> ($date)</li>";

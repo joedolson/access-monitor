@@ -34,6 +34,8 @@
 	overflow: visible;
 }
 
+.no-js .codepanel { display: none; }
+
 .codepanel {
 	left: -2em;
 	position: absolute;
