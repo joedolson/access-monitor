@@ -255,8 +255,8 @@ function am_format_wave( $body, $reporttype=1 ) {
 }
 
 
-add_action( 'init', 'bs_posttypes' );
-function bs_posttypes() {
+add_action( 'init', 'am_posttypes' );
+function am_posttypes() {
 	$value = array( 
 			__( 'accessibility report','access-monitor' ),
 			__( 'accessibility reports','access-monitor' ),
@@ -302,7 +302,7 @@ function am_add_inner_box() {
 	$content = stripslashes( $post->post_content );
 	$data = get_post_meta( $post->ID, '_tenon_json', true );
 	$content .= "<h2>".__('JSON Submission Data', 'access-monitor').":</h2><pre><code>".print_r( $data, 1 )."</code></pre>";
-	echo '<div class="bs_post_fields">'.$content.'</div>';
+	echo '<div class="am_post_fields">'.$content.'</div>';
 }
 
 function am_add_related_box() {
