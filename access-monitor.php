@@ -31,7 +31,6 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 define( 'TENON_API_URL', 'http://beta.tenon.io/api/' );
 define( 'DEBUG', false );
 
-//define('TENON_API_URL', 'https://www.tenon.io/api/');
 define( 'WAVE_API_URL', 'http://wave.webaim.org/api/request' );
 
 require_once( 't/tenon.php' );
@@ -574,8 +573,8 @@ function am_update_settings() {
 	if ( isset( $_POST['am_settings'] ) ) {
 		$nonce=$_REQUEST['_wpnonce'];
 		if (! wp_verify_nonce($nonce,'access-monitor-nonce') ) die( "Security check failed" );	
-		$tenon_api_key = $_POST['tenon_api_key'];
-		$wave_api_key = $_POST['wave_api_key'];
+		$tenon_api_key = ( isset( $_POST['tenon_api_key'] ) ) ? $_POST['tenon_api_key'] : '';
+		$wave_api_key = ( isset( $_POST['wave_api_key'] ) ) ? $_POST['wave_api_key'] : '';
 		update_option( 'am_settings', array( 'tenon_api_key'=>$tenon_api_key, 'wave_api_key'=>$wave_api_key ) );
 		echo "<div class='updated'><p>" . __( 'Access Monitor Settings Updated', 'access-monitor' ) . "</p></div>";
 	}
@@ -591,11 +590,13 @@ function am_settings() {
 		<div><input type='hidden' name='am_settings' value='update' /></div>
 		<p>
 			<label for='tenon_api_key'>".__( 'Tenon API Key', 'access-monitor' )."</label> <input type='text' name='tenon_api_key' id='tenon_api_key' value='". esc_attr( $settings['tenon_api_key'] ) ."' />
-		</p>
+		</p>";
+/* Removing WAVE settings for now.
 		<p>
 			<label for='wave_api_key'>".__( 'WAVE API Key', 'access-monitor' )."</label> <input type='text' name='wave_api_key' id='wave_api_key' value='". esc_attr( $settings['wave_api_key'] ) ."' />
-		</p>		
-		<div>";
+		</p>
+*/		
+		echo "<div>";
 		echo "<p>
 		<input type='submit' value='".__('Update Settings','access-monitor')."' name='am_settings' class='button-primary' />
 		</p>
