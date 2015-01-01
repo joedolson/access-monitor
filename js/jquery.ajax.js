@@ -30,11 +30,16 @@
 		$( 'button.snippet' ).on( 'click', function(e) {
 			e.preventDefault();
 			var target = $( this ).attr( 'data-target' );
+			var visible = $( '#' + target ).is( ':visible' );				
 			$( '.codepanel' ).hide();
 			$( 'button.snippet' ).attr( 'aria-expanded', 'false' );
-			$( '#' + target ).show();
-			$( '#' + target + ' button.close' ).focus();
-			$( this ).attr( 'aria-expanded', 'true' );
+			if ( visible ) {
+				$( '#' + target ).hide();
+				$( this ).attr( 'aria-expanded', 'false' );			
+			} else {
+				$( '#' + target ).show();
+				$( this ).attr( 'aria-expanded', 'true' );
+			}
 		});
 		$( 'button.close' ).on( 'click', function(e) {
 			e.preventDefault();

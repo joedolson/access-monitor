@@ -292,9 +292,9 @@ add_action( 'admin_menu', 'am_add_outer_box' );
 
 // begin add boxes
 function am_add_outer_box() {
-	add_meta_box( 'am_report_div',__('Accessibility Report', 'access-monitor'), 'am_add_inner_box', 'tenon-report', 'normal','high' );
-	add_meta_box( 'am_related_div',__('Related Reports', 'access-monitor'), 'am_add_related_box', 'tenon-report', 'side','high' );
-	add_meta_box( 'am_about_div',__('About this Report', 'access-monitor'), 'am_add_about_box', 'tenon-report', 'side' );		
+	add_meta_box( 'am_report_div', __('Accessibility Report', 'access-monitor'), 'am_add_inner_box', 'tenon-report', 'normal','high' );
+	add_meta_box( 'am_about_div', __('About this Report', 'access-monitor'), 'am_add_about_box', 'tenon-report', 'side', 'high' );
+	add_meta_box( 'am_related_div', __('Related Reports', 'access-monitor'), 'am_add_related_box', 'tenon-report', 'side','high' );	
 }
 
 function am_add_inner_box() {
@@ -337,6 +337,8 @@ function am_add_about_box() {
 	$urls = $parameters = '';
 	$pages = get_post_meta( $post->ID, '_tenon_pages', true );
 	$params = get_post_meta( $post->ID, '_tenon_params', true );
+	$total = get_post_meta( $post->ID, '_tenon_total', true );
+	echo "<p class='error-total'>" . sprintf( __( '%s unique errors', 'access-monitor' ), "<span>$total</span>" ) . "</p>";
 	foreach ( $pages as $url ) {
 		$page = str_replace( array( 'http://', 'https://', 'http://www.', 'https://www.' ), '', $url );
 		$urls .= "<li><a href='$url'>$page</a></li>";
@@ -346,7 +348,8 @@ function am_add_about_box() {
 		$key = stripslashes( trim( $key ) );
 		$value = stripslashes( trim( $value ) );
 		if ( $value == '' ) { $value = '<em>' . __( 'Default', 'access-monitor' ) . '</em>'; }
-		$parameters .= "<li><strong>$key</strong>: $value</li>";
+		$label = ucfirst( $key );
+		$parameters .= "<li><strong>$label</strong>: $value</li>";
 	}
 	echo "<h4>" . __( 'URLs Tested', 'access-monitor' ) . "</h4><ul>$urls</ul>";
 	echo "<h4>" . __( 'Test Parameters', 'access-monitor' ) . "</h4><ul>$parameters</ul>";
@@ -414,12 +417,15 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 			continue;
 		}
 	}
-	$formatted = am_format_tenon_report( $saved, $name );
+	$data = am_format_tenon_report( $saved, $name );
+	$total = $data['total'];
+	$formatted = $data['html'];
 	remove_action( 'save_post', 'am_run_report' );
 	wp_update_post( array( 
 					'ID'=>$report_id, 
 					'post_content'=> $formatted
 					) );
+	update_post_meta( $report_id, '_tenon_total', $total );
 	update_post_meta( $report_id, '_tenon_json', $saved );
 	if ( isset( $params['reportID'] ) && $params['reportID'] != '' ) {
 		update_post_meta( $report_id, '_tenon_reportID', $params['reportID'] );
@@ -479,17 +485,50 @@ function am_show_report( $report_id = false ) {
 	if ( $output != '' ) {
 		echo $output;
 	} else {
-		$formatted = am_format_tenon_report( get_post_meta( $report_id, '_tenon_json', true ), $name );
+		$data = am_format_tenon_report( get_post_meta( $report_id, '_tenon_json', true ), $name );
+		$formatted = $data['html'];
+		$total = $data['total'];
 		wp_update_post( array( 'ID'=>$report_id, 'post_content' => $formatted ) );
+		update_post_meta( $report_id, '_tenon_total', $total );
 		echo $formatted;		
 	}
+}
+
+
+function am_column($cols) {
+	$cols['am_total'] = __('Errors', 'access-monitor');
+	return $cols;
+}
+
+// Echo the ID for the new column
+function am_custom_column( $column_name, $id ) {
+	switch ( $column_name ) {
+		case 'am_total' :
+			$total = get_post_meta( $id, '_tenon_total', true );
+			echo $total;
+		break;
+	}
+}
+
+function am_return_value( $value, $column_name, $id ) {
+	if ( $column_name == 'am_total' ) {
+		$value = $id;
+	}
+	return $value;
+}
+
+// Actions/Filters for message tables and css output
+add_action('admin_init', 'am_add');
+function am_add() {
+	add_filter( "manage_tenon-report_posts_columns", 'am_column' );			
+	add_action( "manage_tenon-report_posts_custom_column", 'am_custom_column', 10, 2 );
 }
 
 function am_format_tenon_report( $results, $name ) {
 	$header = "<h4>".stripslashes( $name )."; ".__( 'Results from %d pages tested', 'access-monitor' ). "</h4>";
 	$return = $tbody = '';
 	$displayed = false;
-	$i = $count = 0;
+	$i = $count = $total = 0;
 	if ( !empty( $results ) ) {
 		$reported = array();
 		$count = count( $results );
@@ -502,6 +541,7 @@ function am_format_tenon_report( $results, $name ) {
 					$hash = md5( $result->resultTitle . $result->ref . $result->errorSnippet . $result->xpath );
 					if ( !in_array( $hash, $reported ) ) {
 						$displayed = true;
+						$total++;
 						$tbody .= "
 							<tr>
 								<td><a href='$result->ref'>$result->errorTitle</a><p>$result->resultTitle; $result->errorDescription</p></td>
@@ -552,7 +592,7 @@ function am_format_tenon_report( $results, $name ) {
 		$return .= "<p><strong>Congratulations!</strong> Tenon didn't find any issues on this page.</p>";
 	}
 	$header = sprintf( $header, $count );
-	return $header . $return;
+	return array( 'total'=>$total, 'html' => $header . $return );
 }
 
 add_filter( 'cron_schedules', 'am_custom_schedules' );

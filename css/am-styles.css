@@ -64,6 +64,22 @@ button.close:hover, button.close:focus {
 	background: #fff;
 }
 
+.error-total {
+	text-align: center;
+	line-height: 1.2;
+	background: rgba( 0,0,0,.05 );
+	padding: .25em;
+}
+
+.error-total span {
+	display: block;
+	font-size: 4em; 
+}
+
+#am_total {
+	width: 6em;
+}
+
 #am_report_div pre {
 	overflow: scroll;
 	background: #f3f3f3;
