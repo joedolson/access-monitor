@@ -377,7 +377,7 @@ function am_deactivate_cron() {
 add_action( 'tccron', 'am_schedule_report', 10, 4 );
 function am_schedule_report( $report_id, $pages, $name, $params ) {
 	$new_report = am_generate_report( $name, $pages, 'none', $params ); // 'none' to prevent this from being auto-scheduled again
-	$url = admin_url( "options-general.php?page=access-monitor/access-monitor.php&report=$new_report" );
+	$url = admin_url( "edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php&report=$new_report" );
 	update_post_meta( $new_report, '_tenon_parent', $report_id );
 	add_post_meta( $report_id, '_tenon_child', $new_report );
 	wp_mail( 
@@ -585,7 +585,7 @@ function am_settings() {
 	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'' ), $settings );
 
 	echo "
-	<form method='post' action='".admin_url('options-general.php?page=access-monitor/access-monitor.php')."'>
+	<form method='post' action='".admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php')."'>
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('access-monitor-nonce')."' /></div>
 		<div><input type='hidden' name='am_settings' value='update' /></div>
 		<p>
@@ -621,7 +621,7 @@ function am_report() {
 	$theme_version = $theme->Version;		
 	$name = $theme_name . ' ' . $theme_version;
 	echo "$message
-	<form method='post' action='".admin_url('options-general.php?page=access-monitor/access-monitor.php')."'>
+	<form method='post' action='".admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php')."'>
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('access-monitor-nonce')."' /></div>
 		<div><input type='hidden' name='am_get_report' value='report' /></div>";
 		echo "
@@ -801,7 +801,7 @@ function am_support_page() {
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="report">
-						<h3><?php _e('Accessibility Report','access-monitor'); ?></h3>
+						<h3><?php _e('Create Accessibility Report','access-monitor'); ?></h3>
 						<div class="inside">
 							<?php 
 							if ( isset( $_GET['report'] ) && is_numeric( $_GET['report'] ) ) { 
@@ -893,8 +893,9 @@ add_action( 'admin_menu', 'am_add_support_page' );
 // Add the administrative settings to the "Settings" menu.
 function am_add_support_page() {
     if ( function_exists( 'add_submenu_page' ) ) {
-		 $plugin_page = add_options_page( 'Access Monitor Support', 'Access Monitor', 'manage_options', __FILE__, 'am_support_page' );
-		 add_action( 'admin_head-'. $plugin_page, 'am_admin_styles' );
+		$permissions = apply_filters( 'am_use_monitor', 'manage_options' );
+		$plugin_page = add_submenu_page( 'edit.php?post_type=tenon-report', __( 'Access Monitor > Add New Report', 'access-monitor' ), __( 'Add Report', 'access-monitor' ), $permissions, __FILE__, 'am_support_page' );
+		add_action( 'admin_head-'. $plugin_page, 'am_admin_styles' );
     }
 }
 
@@ -991,10 +992,10 @@ $plugins_string
 		$request = '';
 	}
 	echo "
-	<form method='post' action='".admin_url( 'options-general.php?page=access-monitor/access-monitor.php' )."'>
+	<form method='post' action='".admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' )."'>
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce( 'access-monitor-nonce' )."' /></div>
 		<div>
-		<p>
+		<p class='checkbox'>
 		<input type='checkbox' name='has_donated' id='has_donated' value='on' /> <label for='has_donated'>".__( 'I have <a href="http://www.joedolson.com/donate/">made a donation to help support this plug-in</a>.','access-monitor' )."</label>
 		</p>
 		<p>
