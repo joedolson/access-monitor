@@ -55,7 +55,7 @@ function am_query_tenon( $post, $format = true ) {
 	$expectedPost = array( 'src', 'url', 'level', 'certainty', 'priority',
 		'docID', 'systemID', 'reportID', 'viewPortHeight', 'viewPortWidth',
 		'uaString', 'importance', 'ref', 'importance', 'fragment', 'store' );
-
+		
 	foreach ( $post AS $k => $v ) {
 		if ( in_array($k, $expectedPost ) ) {
 			if ( strlen( trim( $v ) ) > 0 ) {
@@ -63,11 +63,11 @@ function am_query_tenon( $post, $format = true ) {
 			}
 		}
 	}
+		
 	$settings = get_option( 'am_settings' );
 	$key = $settings['tenon_api_key'];
 	if ( $key ) {
 		$opts['key'] = $key;
-		//$opts['level'] = 'AA'; // -> this feature is currently broken; pending notice from Karl.
 		$tenon = new tenon( TENON_API_URL, $opts );
 		$tenon->submit( DEBUG );
 		$body = $tenon->tenonResponse['body'];
@@ -293,9 +293,11 @@ add_action( 'admin_menu', 'am_add_outer_box' );
 
 // begin add boxes
 function am_add_outer_box() {
-	add_meta_box( 'am_report_div',__('Accessibility Report', 'access-monitor'), 'am_add_inner_box', 'tenon-report', 'normal','high' );			
-	add_meta_box( 'am_related_div',__('Related Reports', 'access-monitor'), 'am_add_related_box', 'tenon-report', 'side','high' );			
+	add_meta_box( 'am_report_div',__('Accessibility Report', 'access-monitor'), 'am_add_inner_box', 'tenon-report', 'normal','high' );
+	add_meta_box( 'am_related_div',__('Related Reports', 'access-monitor'), 'am_add_related_box', 'tenon-report', 'side','high' );
+	add_meta_box( 'am_about_div',__('About this Report', 'access-monitor'), 'am_add_about_box', 'tenon-report', 'side' );		
 }
+
 function am_add_inner_box() {
 	global $post;
 	$content = stripslashes( $post->post_content );
@@ -306,26 +308,50 @@ function am_add_inner_box() {
 
 function am_add_related_box() {
 	global $post;
-	$parents = get_posts( array(
+	$related = '';
+	$relatives = get_posts( array(
 			'post_type'  => 'tenon-report',
 			'meta_key'   => '_tenon_parent',
 			'meta_value' => $post->ID
 		) );
-	$children = get_post_meta( $post->ID, '_tenon_child' );
-	if ( !empty( $parents ) ) {
-		$title = $parents[0]->post_title;
-		$id = $parents[0]->ID;
-		$link = get_the_permalink( $id );
-		echo  '<p>' . sprintf( __( 'This report is a re-test of %s', 'access-monitor' ), "<a href='$link'>$title</a>" ) . '</p>';
-	}
-	if ( !empty( $children ) ) {
-		foreach ( $children as $child ) {
-			print_r( $child );
+	if ( !empty( $relatives ) ) {
+		foreach ( $relatives as $relative ) {
+			$title = $relative->post_title;
+			$id = $relative->ID;
+			$link = get_edit_post_link( $id );
+			$date = get_the_time( 'M j, Y @ H:i', $id );
+			if ( $id != $post->ID ) {
+				$related .= "<li><a href='$link'>$title</a>: <strong>$date</strong></li>";
+			}
 		}
+		echo "<ul>$related</ul>";
 	}
-	if ( empty( $children ) && empty( $parents ) ) {
+
+	if ( empty( $relatives ) ) {
 		echo "<p>" . __( 'No related reports.', 'access-monitor' ) . "</p>";
 	}
+}
+
+
+function am_add_about_box() {
+	global $post;
+	$urls = $parameters = '';
+	$pages = get_post_meta( $post->ID, '_tenon_pages', true );
+	$params = get_post_meta( $post->ID, '_tenon_params', true );
+	foreach ( $pages as $url ) {
+		$page = str_replace( array( 'http://', 'https://', 'http://www.', 'https://www.' ), '', $url );
+		$urls .= "<li><a href='$url'>$page</a></li>";
+	}
+	unset( $params['url'] );
+	foreach ( $params as $key => $value ) {
+		$key = stripslashes( trim( $key ) );
+		$value = stripslashes( trim( $value ) );
+		if ( $value == '' ) { $value = '<em>' . __( 'Default', 'access-monitor' ) . '</em>'; }
+		$parameters .= "<li><strong>$key</strong>: $value</li>";
+	}
+	echo "<h4>" . __( 'URLs Tested', 'access-monitor' ) . "</h4><ul>$urls</ul>";
+	echo "<h4>" . __( 'Test Parameters', 'access-monitor' ) . "</h4><ul>$parameters</ul>";
+	echo "<p><span class='dashicons dashicons-editor-help' aria-hidden='true'></span><a href='http://tenon.io/documentation/understanding-request-parameters.php'>" . __( 'Tenon Request Parameters', 'access-monitor' ) . "</a></p>";
 }
 
 add_action('admin_menu', 'am_remove_menu_item');
@@ -349,9 +375,9 @@ function am_deactivate_cron() {
 	wp_clear_scheduled_hook( 'amcron' );
 }
 
-add_action( 'tccron', 'am_schedule_report', 10, 3 );
-function am_schedule_report( $report_id, $pages, $name ) {
-	$new_report = am_generate_report( $name, $pages, 'none' ); // 'none' to prevent this from being auto-scheduled again
+add_action( 'tccron', 'am_schedule_report', 10, 4 );
+function am_schedule_report( $report_id, $pages, $name, $params ) {
+	$new_report = am_generate_report( $name, $pages, 'none', $params ); // 'none' to prevent this from being auto-scheduled again
 	$url = admin_url( "options-general.php?page=access-monitor/access-monitor.php&report=$new_report" );
 	update_post_meta( $new_report, '_tenon_parent', $report_id );
 	add_post_meta( $report_id, '_tenon_child', $new_report );
@@ -362,7 +388,7 @@ function am_schedule_report( $report_id, $pages, $name ) {
 	);
 }
 
-function am_generate_report( $name, $pages = false, $schedule = 'none' ) {
+function am_generate_report( $name, $pages = false, $schedule = 'none', $params = array() ) {
 	$report_id = am_set_report( $name );
 	if ( is_array( $pages ) ) {
 		$pages = $pages;
@@ -371,7 +397,7 @@ function am_generate_report( $name, $pages = false, $schedule = 'none' ) {
 	}
 	if ( $schedule != 'none' ) {
 		$timestamp = ( $schedule == 'weekly' ) ? current_time( 'timestamp' ) + 60*60*24*7 : current_time( 'timestamp' ) + ( 60*60*24*30.5 );
-		$args = array( 'report_id'=>$report_id, 'pages'=>$pages, 'name'=>$name );
+		$args = array( 'report_id'=>$report_id, 'pages'=>$pages, 'name'=>$name, 'params'=>$params );
 		wp_schedule_event( $timestamp, $schedule, 'amcron', $args );
 	}
 	foreach ( $pages as $page ) {
@@ -381,28 +407,39 @@ function am_generate_report( $name, $pages = false, $schedule = 'none' ) {
 			$url = $page;
 		}
 		if ( esc_url( $url ) ) {
-			$report = am_query_tenon( array( 'url'=>$url ), false );
+			$params['url'] = $url;
+			$report = am_query_tenon( $params, false );
 			$saved[$url] = $report;
 			
 		} else {
 			continue;
 		}
 	}
-	$formatted = am_format_tenon_report( $saved, $name );	
+	$formatted = am_format_tenon_report( $saved, $name );
+	remove_action( 'save_post', 'am_run_report' );
 	wp_update_post( array( 
 					'ID'=>$report_id, 
 					'post_content'=> $formatted
 					) );
 	update_post_meta( $report_id, '_tenon_json', $saved );
+	if ( isset( $params['reportID'] ) && $params['reportID'] != '' ) {
+		update_post_meta( $report_id, '_tenon_reportID', $params['reportID'] );
+	}
+	if ( isset( $params['systemID'] ) && $params['systemID'] != '' ) {
+		update_post_meta( $report_id, '_tenon_systemID', $params['systemID'] );
+	}
+	update_post_meta( $report_id, '_tenon_params', $params );
+	update_post_meta( $report_id, '_tenon_pages', $pages );
 	wp_publish_post( $report_id );
+	add_action( 'save_post', 'am_run_report' );
 	return $report_id;
 }
 
-add_action( 'save_post', 'am_reformat_report' );
+add_action( 'save_post', 'am_run_report' );
 /**
- * Reformat report output when saving post. Not likely to be used much, but helpful if format changes.
+ * Re-run a test cycle when updating post.
  */
-function am_reformat_report( $id ) {
+function am_run_report( $id ) {
 	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE || wp_is_post_revision( $id ) || !( get_post_type( $id ) == 'tenon-report' ) ) {
 		return;
 	}
@@ -411,22 +448,24 @@ function am_reformat_report( $id ) {
 		return;
 	} 
 	
-	$json = get_post_meta( $id, '_tenon_json', true );
 	$name = get_the_title( $id );
-	$formatted = am_format_tenon_report( $json, $name );
-	remove_action( 'save_post', 'am_reformat_report' );
-	wp_update_post( array(
-						'ID'=>$id, 
-						'post_content'=> $formatted
-					) );
-	add_action( 'save_post', 'am_reformat_report' );
+	$pages = get_post_meta( $id, '_tenon_pages', true );
+	$params = get_post_meta( $id, '_tenon_params', true );
+	$params = ( empty( $params ) ) ? array() : $params;
+	if ( empty( $pages ) ) {
+		return;
+	}
+	remove_action( 'save_post', 'am_run_report' );
+	$report_id = am_generate_report( $name, $pages, 'none', $params );
+	add_post_meta( $id, '_tenon_child', $report_id );
+	update_post_meta( $report_id, '_tenon_parent', $id );
+	add_action( 'save_post', 'am_run_report' );
 }
 
 function am_show_report( $report_id = false ) {
 	$report_id = ( isset( $_GET['report'] ) && is_numeric( $_GET['report'] ) ) ? $_GET['report'] : false;
 	$output = $name = '';
 	if ( $report_id ) {
-		//$output = get_option( "am_report_$report_id" );
 		$report = get_post( $report_id );
 		$output = $report->post_content;
 		$name = $report->post_title;
@@ -434,7 +473,6 @@ function am_show_report( $report_id = false ) {
 		$reports = wp_get_recent_posts( array( 'numberposts'=>1, 'post_type'=>'tenon-report', 'post_status'=>'publish' ), 'OBJECT' );
 		$report = end( $reports );
 		if ( $report ) {
-			//$output = get_option( "am_report_$report" );
 			$output = $report->post_content;
 			$name = $report->post_title;
 		}
@@ -450,44 +488,63 @@ function am_show_report( $report_id = false ) {
 
 function am_format_tenon_report( $results, $name ) {
 	$header = "<h4>".stripslashes( $name )."; ".__( 'Results from %d pages tested', 'access-monitor' ). "</h4>";
-	$return = '';
+	$return = $tbody = '';
+	$displayed = false;
 	$i = $count = 0;
 	if ( !empty( $results ) ) {
 		$reported = array();
 		$count = count( $results );
 		foreach ( $results as $url => $resultSet ) {
+			$tbody = $thead = '';
 			$result_count = count( $resultSet );
 			if ( $result_count > 0 ) {
-			$return .= "<table class='widefat tenon-report'>";
-			$return .= "<caption>" . sprintf( __( "Errors found on %s.", 'access-monitor' ), "<a href='$url'>$url</a>" ) . " (<strong>$result_count</strong>)</caption>";
-			$return .= "
-				<thead>
-					<tr>
-						<th scope='col'>".__( 'Issue', 'access-monitor' )."</th>
-						<th scope='col'>".__( 'Certainty', 'access-monitor' )."</th>
-						<th scope='col'>".__( 'Priority', 'access-monitor' )."</th>
-						<th scope='col'>".__( 'Source', 'access-monitor' )."</th>
-						<th scope='col'>".__( 'Xpath', 'access-monitor' )."</th>
-					</tr>
-				</thead>
-				<tbody>";
-			foreach ( $resultSet as $result ) {
-				$i++;
-				$hash = md5( $result->resultTitle . $result->ref . $result->errorSnippet . $result->xpath );
-				if ( !in_array( $hash, $reported ) ) {
-				$return .= "
-					<tr>
-						<td><a href='$result->ref'>$result->resultTitle</a></td>
-						<td>$result->certainty</td>
-						<td>$result->priority</td>
-						<td><button class='snippet' data-target='snippet$i' aria-controls='snippet$i' aria-expanded='false'>Source</button> <div class='codepanel' id='snippet$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result->errorSnippet</code></div></td>
-						<td><button class='snippet' data-target='xpath$i' aria-controls='xpath$i' aria-expanded='false'>xPath</button> <div class='codepanel' id='xpath$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result->xpath</code></div></td>
-					</tr>";
+				foreach ( $resultSet as $result ) {
+					$i++;
+					$hash = md5( $result->resultTitle . $result->ref . $result->errorSnippet . $result->xpath );
+					if ( !in_array( $hash, $reported ) ) {
+						$displayed = true;
+						$tbody .= "
+							<tr>
+								<td><a href='$result->ref'>$result->errorTitle</a><p>$result->resultTitle; $result->errorDescription</p></td>
+								<td>$result->certainty</td>
+								<td>$result->priority</td>
+								<td><button class='snippet' data-target='snippet$i' aria-controls='snippet$i' aria-expanded='false'>Source</button> <div class='codepanel' id='snippet$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result->errorSnippet</code></div></td>
+								<td><button class='snippet' data-target='xpath$i' aria-controls='xpath$i' aria-expanded='false'>xPath</button> <div class='codepanel' id='xpath$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result->xpath</code></div></td>
+							</tr>";
+					} else {
+						$displayed = false;
+					}
+					$reported[] = $hash;
 				}
-				$reported[] = $hash;
-			}
-				$return .= "</tbody>
-				</table>";
+				if ( !$displayed ) {
+					$return .= "<h4>" . sprintf( __( "Errors found on %s.", 'access-monitor' ), "<a href='$url'>$url</a>" ) . " (<strong>$result_count</strong>)</h4><p>" . sprintf( __( 'The %d errors found on this page were also found on other pages tested.', 'access-monitor' ), $result_count ) . "</p>";
+				} else {
+					$thead = "<table class='widefat tenon-report'>";
+					$thead .= "<caption>" . sprintf( __( "Errors found on %s.", 'access-monitor' ), "<a href='$url'>$url</a>" ) . " (<strong>$result_count</strong>)</caption>";
+					$thead .= "
+						<thead>
+							<tr>
+								<th scope='col'>".__( 'Issue', 'access-monitor' )."</th>
+								<th scope='col'>".__( 'Certainty', 'access-monitor' )."</th>
+								<th scope='col'>".__( 'Priority', 'access-monitor' )."</th>
+								<th scope='col'>".__( 'Source', 'access-monitor' )."</th>
+								<th scope='col'>".__( 'Xpath', 'access-monitor' )."</th>
+							</tr>
+						</thead>
+						<tbody>";				
+					$tfoot = "</tbody>
+						<tfoot>
+							<tr>
+								<th scope='col'>".__( 'Issue', 'access-monitor' )."</th>
+								<th scope='col'>".__( 'Certainty', 'access-monitor' )."</th>
+								<th scope='col'>".__( 'Priority', 'access-monitor' )."</th>
+								<th scope='col'>".__( 'Source', 'access-monitor' )."</th>
+								<th scope='col'>".__( 'Xpath', 'access-monitor' )."</th>
+							</tr>
+						</tfoot>			
+						</table>";
+					$return .= $thead . $tbody . $tfoot;
+				}
 			} else {
 				$return .= "<p>".sprintf( __( "No errors found on %s.", 'access-monitor' ), "<a href='$url'>$url</a>" )."</p>"; 
 			}
@@ -662,15 +719,15 @@ function am_report() {
 				</p>
 				<p>
 					<label for='systemID'>" . __( 'System ID', 'access-monitor' ) . "</label>
-					<input type='text' id='systemID' class='widefat' />
+					<input type='text' id='systemID' name='systemID' class='widefat' />
 				</p>
 				<p>
 					<label for='reportID'>" . __( 'Report ID', 'access-monitor' ) . "</label>
-					<input type='text' id='reportID' class='widefat' />
+					<input type='text' id='reportID' name='reportID' class='widefat' />
 				</p>
 				<p class='checkbox'>
 					<label for='store'>" . __( 'Store test results at Tenon.io', 'access-monitor' ) . "</label>
-					<input type='checkbox' id='store' value='1' />
+					<input type='checkbox' id='store' name='store' value='1' />
 				</p>				
 		</div>
 		<p>
@@ -685,19 +742,32 @@ function am_setup_report() {
 		$name = ( isset( $_POST['am_report_name'] ) ) ? sanitize_text_field( $_POST['am_report_name'] ) : false;
 		$pages = ( isset( $_POST['am_report_pages'] ) && !empty( $_POST['am_report_pages'] ) ) ? $_POST['am_report_pages'] : false;
 		$schedule = ( isset( $_POST['report_schedule'] ) ) ? $_POST['report_schedule'] : 'none';
+		
+		$store = ( isset( $_POST['store'] ) ) ? 1 : 0;
+		$reportID = ( isset( $_POST['reportID'] ) ) ? sanitize_text_field( $_POST['reportID'] ) : '';
+		$systemID = ( isset( $_POST['systemID'] ) ) ? sanitize_text_field( $_POST['systemID'] ) : '';
+		$viewport = ( isset( $_POST['viewport'] ) ) ? explode( 'x', $_POST['viewport'] ) : array( '1024', '768' );
+		$viewportHeight = $viewport[1];
+		$viewportWidth = $viewport[0];
+		$level = ( isset( $_POST['level'] ) ) ? $_POST['level'] : 'AA';
+		$priority = ( isset( $_POST['priority'] ) ) ? (int) $_POST['priority'] : 0;
+		$certainty = ( isset( $_POST['certainty'] ) ) ? (int) $_POST['certainty'] : 0;
+		
+		$args = array( 
+					'store' => $store,
+					'reportID' => $reportID,
+					'systemID' => $systemID,
+					'viewPortHeight' => $viewportHeight,
+					'viewPortWidth' => $viewportWidth,
+					'level' => $level,
+					'priority' => $priority,
+					'certainty' => $certainty
+				);
 		/*
 		Set up arguments here; pass to am_generate_report
-			store 0/1
-			reportID string / store as independent meta
-			systemID string / store as independent meta
-			viewport string / split into viewPortWidth & viewPortHeight 
-			uaString string 
-			level
-			priority
-			certainty
 			importance (not present yet; field specific; associate with URL)
 		*/
-		am_generate_report( $name, $pages, $schedule );
+		am_generate_report( $name, $pages, $schedule, $args );
 		am_show_report();
 	}
 }
@@ -940,4 +1010,18 @@ $plugins_string
 		</div>
 		</div>
 	</form>";
+}
+
+add_filter( 'gettext', 'change_publish_button', 10, 2 );
+
+function change_publish_button( $translation, $text ) {
+	if ( is_admin() && isset( $_GET['action'] ) && $_GET['action'] == 'edit' ) {
+		global $post;
+		if ( is_object( $post ) ) {
+			if ( $text == 'Update' && $post->post_type == 'tenon-report' ) {
+				$translation = __( 'Re-run this test', 'access-monitor' );
+			}
+		}
+	}
+	return $translation;
 }
