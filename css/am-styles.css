@@ -76,8 +76,12 @@ button.close:hover, button.close:focus {
 	font-size: 4em; 
 }
 
-#am_total {
-	width: 6em;
+#am_total, #am_tested {
+	width: 4em;
+}
+
+#am_schedule {
+	width: 10em;
 }
 
 #am_report_div pre {

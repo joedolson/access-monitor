@@ -7,7 +7,7 @@ Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
 Text Domain: access-monitor
 Domain Path: lang
-Version: 0.1.0
+Version: 1.0.0
 */
 /*  Copyright 2014  Joe Dolson (email : joe@joedolson.com)
 
@@ -282,7 +282,7 @@ function am_posttypes() {
 		'show_ui' => true,
 		'show_in_menu' => true,
 		'menu_icon' => 'dashicons-universal-access',
-		'supports' => array( 'title', 'custom-fields' )
+		'supports' => array( 'title' )
 	); 
 	register_post_type( 'tenon-report', $args );
 }
@@ -377,16 +377,16 @@ function am_deactivate_cron() {
 	wp_clear_scheduled_hook( 'amcron' );
 }
 
-add_action( 'tccron', 'am_schedule_report', 10, 4 );
+add_action( 'amcron', 'am_schedule_report', 10, 4 );
 function am_schedule_report( $report_id, $pages, $name, $params ) {
-	$new_report = am_generate_report( $name, $pages, 'none', $params ); // 'none' to prevent this from being auto-scheduled again
-	$url = admin_url( "edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php&report=$new_report" );
+	$new_report = am_generate_report( $name, $pages, $report_id, $params ); // 'none' to prevent this from being auto-scheduled again
+	$url = admin_url( "post.php?post=$new_report&action=edit" );
 	update_post_meta( $new_report, '_tenon_parent', $report_id );
 	add_post_meta( $report_id, '_tenon_child', $new_report );
 	wp_mail( 
 		apply_filters( 'am_cron_notification_email', get_option( 'admin_email' ), $name ), 
 		sprintf( __( 'Scheduled Accessibility Report on %s', 'access-monitor' ), get_option( 'blogname' ) ), 
-		sprintf( __( "View accessibiity report: %s", 'access-monitor' ), $url ) 
+		sprintf( __( "View accessibility report: %s", 'access-monitor' ), $url ) 
 	);
 }
 
@@ -398,10 +398,16 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 		$pages = array( home_url() );
 	}
 	if ( $schedule != 'none' ) {
-		$timestamp = ( $schedule == 'weekly' ) ? current_time( 'timestamp' ) + 60*60*24*7 : current_time( 'timestamp' ) + ( 60*60*24*30.5 );
-		$args = array( 'report_id'=>$report_id, 'pages'=>$pages, 'name'=>$name, 'params'=>$params );
-		wp_schedule_event( $timestamp, $schedule, 'amcron', $args );
+		if ( ! is_numeric( $schedule ) ) {
+			$timestamp = ( $schedule == 'weekly' ) ? current_time( 'timestamp' ) + 60*60*24*7 : current_time( 'timestamp' ) + ( 60*60*24*30.5 );
+			$args = array( 'report_id'=>$report_id, 'pages'=>$pages, 'name'=>$name, 'params'=>$params );
+			wp_schedule_event( $timestamp, $schedule, 'amcron', $args );
+			update_post_meta( $report_id, '_tenon_schedule', $schedule );			
+		} else {
+			update_post_meta( $report_id, '_tenon_schedule', $schedule );
+		}
 	}
+	
 	foreach ( $pages as $page ) {
 		if ( is_numeric( $page ) ) { 
 			$url = get_permalink( $page );
@@ -496,7 +502,9 @@ function am_show_report( $report_id = false ) {
 
 
 function am_column($cols) {
-	$cols['am_total'] = __('Errors', 'access-monitor');
+	$cols['am_total'] = __( 'Errors', 'access-monitor' );
+	$cols['am_schedule'] = __( 'Schedule', 'access-monitor' );
+	$cols['am_tested'] = __( 'Level', 'access-monitor' );
 	return $cols;
 }
 
@@ -507,11 +515,25 @@ function am_custom_column( $column_name, $id ) {
 			$total = get_post_meta( $id, '_tenon_total', true );
 			echo $total;
 		break;
+		case 'am_tested' :
+			$params = get_post_meta( $id, '_tenon_params', true );
+			echo $params['level'];
+		break;		
+		case 'am_schedule' :
+			$schedule = get_post_meta( $id, '_tenon_schedule', true );
+			if ( is_numeric( $schedule ) ) {
+				$edit_url = admin_url( "post.php?post=$schedule&amp;action=edit" );
+				$edit_link = "<a href='$edit_url'><span class='dashicons dashicons-clock'></span> " . __( 'View Original Test', 'access-monitor' ) . "</a>";
+				echo $edit_link;
+			} else {
+				echo ucfirst( $schedule );
+			}
+		break;		
 	}
 }
 
 function am_return_value( $value, $column_name, $id ) {
-	if ( $column_name == 'am_total' ) {
+	if ( $column_name == 'am_total' || $column_name == 'am_schedule' || $column_name == 'am_level' ) {
 		$value = $id;
 	}
 	return $value;
@@ -1055,7 +1077,10 @@ $plugins_string
 }
 
 add_filter( 'gettext', 'change_publish_button', 10, 2 );
-
+/**
+ * Changes the publish button from saying 'Update' to 'Re-run this test'
+ *
+ */
 function change_publish_button( $translation, $text ) {
 	if ( is_admin() && isset( $_GET['action'] ) && $_GET['action'] == 'edit' ) {
 		global $post;
@@ -1066,4 +1091,16 @@ function change_publish_button( $translation, $text ) {
 		}
 	}
 	return $translation;
+}
+
+add_action( 'current_screen', 'am_redirect_new' );
+/** 
+ * Prevents the default add new post screen from showing.
+ *
+ */
+function am_redirect_new() {
+	$screen = get_current_Screen();
+	if ( $screen->id == 'tenon-report' && !isset( $_GET['action'] ) ) {
+		wp_safe_redirect( admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php') );
+	}
 }
