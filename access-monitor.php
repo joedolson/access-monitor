@@ -9,7 +9,7 @@ Text Domain: access-monitor
 Domain Path: lang
 Version: 1.0.0
 */
-/*  Copyright 2014  Joe Dolson (email : joe@joedolson.com)
+/*  Copyright 2014-2015  Joe Dolson (email : joe@joedolson.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,7 +29,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 //define('TENON_API_URL', 'https://www.tenon.io/api/');
 define( 'TENON_API_URL', 'http://beta.tenon.io/api/' );
-define( 'DEBUG', false );
+define( 'AM_DEBUG', false );
 
 define( 'WAVE_API_URL', 'http://wave.webaim.org/api/request' );
 
@@ -68,7 +68,7 @@ function am_query_tenon( $post, $format = true ) {
 	if ( $key ) {
 		$opts['key'] = $key;
 		$tenon = new tenon( TENON_API_URL, $opts );
-		$tenon->submit( DEBUG );
+		$tenon->submit( AM_DEBUG );
 		$body = $tenon->tenonResponse['body'];
 		if ( $format == true ) {
 			$results = am_format_tenon( $body );
@@ -223,7 +223,7 @@ function am_query_wave( $post ) {
 	if ( $key ) {
 		$opts['key'] = $key;
 		$wave = new wave( WAVE_API_URL, $opts );
-		$wave->submit( DEBUG );
+		$wave->submit( AM_DEBUG );
 		$body = $wave->waveResponse['body'];
 		$results = am_format_wave( $body, $opts['reporttype'] );
 		return $results;
