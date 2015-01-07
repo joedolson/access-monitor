@@ -93,7 +93,7 @@ function am_format_tenon( $body ) {
 	$object = json_decode( $body );
 	if ( property_exists( $object, 'resultSummary' ) ) {
 		// unchecked object references
-		$errors = $object->resultSummary->issues->totalErrors;
+		$errors = $object->resultSummary->issues->totalIssues;
 	} else {
 		$errors = 0;
 	}
@@ -127,12 +127,12 @@ function am_format_tenon_array( $results, $errors ) {
 				<div class='tenon-result'>
 					<h2>
 						<span>$i</span>. $result->errorTitle 
-						<span class='meta'>
-							<span class='certainty $cert'>". sprintf( __( 'Certainty: %s', 'access-monitor' ), "$result->certainty%" ). "</span>  
-							<span class='priority $prio'>". sprintf( __( 'Priority: %s', 'access-monitor' ), "$result->priority%" ). "</span>
-						</span>
 					</h2>
-					<p>$result->errorDescription <strong>Read more:</strong> <a href='$result->ref'>$result->resultTitle</a> <span title='Links not currently live at Tenon.io'>[Note]</span></p>
+					<p class='meta'>
+						<span class='certainty $cert'>". sprintf( __( 'Certainty: %s', 'access-monitor' ), "$result->certainty%" ). "</span>  
+						<span class='priority $prio'>". sprintf( __( 'Priority: %s', 'access-monitor' ), "$result->priority%" ). "</span>
+					</p>
+					<p>$result->errorDescription <strong>Read more:</strong> <a href='$result->ref'>$result->resultTitle</a></p>
 					<h3>Error Source</h3>
 					<pre lang='html'>".$result->errorSnippet."</pre>
 					<h3>Xpath:</h3> <pre><code>$result->xpath</code></pre>
