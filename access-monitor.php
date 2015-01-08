@@ -122,7 +122,9 @@ function am_format_tenon_array( $results, $errors ) {
 				case ( $result->priority >= 80 ) : $prio = 'high'; break;
 				case ( $result->priority >= 40 ) : $prio = 'medium'; break;
 				default: $prio = 'low';
-			}		
+			}
+			//$ref = "<strong>" . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$result->ref'>$result->resultTitle</a>";
+			$ref = ''; // Add this back in once links resolve correctly.
 			$return .= "
 				<div class='tenon-result'>
 					<h2>
@@ -132,7 +134,7 @@ function am_format_tenon_array( $results, $errors ) {
 						<span class='certainty $cert'>". sprintf( __( 'Certainty: %s', 'access-monitor' ), "$result->certainty%" ). "</span>  
 						<span class='priority $prio'>". sprintf( __( 'Priority: %s', 'access-monitor' ), "$result->priority%" ). "</span>
 					</p>
-					<p>$result->errorDescription <strong>Read more:</strong> <a href='$result->ref'>$result->resultTitle</a></p>
+					<p>$result->errorDescription $ref</p>
 					<h3>Error Source</h3>
 					<pre lang='html'>".$result->errorSnippet."</pre>
 					<h3>Xpath:</h3> <pre><code>$result->xpath</code></pre>
@@ -526,7 +528,11 @@ function am_custom_column( $column_name, $id ) {
 				$edit_link = "<a href='$edit_url'><span class='dashicons dashicons-clock'></span> " . __( 'View Original Test', 'access-monitor' ) . "</a>";
 				echo $edit_link;
 			} else {
-				echo ucfirst( $schedule );
+				if ( $schedule ) {
+					echo ucfirst( $schedule );
+				} else {
+					_e( 'One-time report', 'access-monitor' );
+				}
 			}
 		break;		
 	}
@@ -564,9 +570,11 @@ function am_format_tenon_report( $results, $name ) {
 					if ( !in_array( $hash, $reported ) ) {
 						$displayed = true;
 						$total++;
+						//$ref = "<a href='$result->ref'>$result->errorTitle</a>";
+						$ref = ''; // Add this back in once links resolve correctly.
 						$tbody .= "
 							<tr>
-								<td><a href='$result->ref'>$result->errorTitle</a><p>$result->resultTitle; $result->errorDescription</p></td>
+								<td>$ref<p><strong>$result->resultTitle</strong>; $result->errorDescription</p></td>
 								<td>$result->certainty</td>
 								<td>$result->priority</td>
 								<td><button class='snippet' data-target='snippet$i' aria-controls='snippet$i' aria-expanded='false'>Source</button> <div class='codepanel' id='snippet$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result->errorSnippet</code></div></td>
