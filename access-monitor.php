@@ -739,24 +739,24 @@ function am_report() {
 				<legend>" . __( 'Set Accessibility Test Options', 'access-monitor' ) . "</legend>
 				<p>
 					<label for='certainty'>" . __( 'Minimum Certainty', 'access-monitor' ) . "</label>
-					<select name='certainty' id='certainty'>
+					<select name='certainty' id='certainty' aria-describedby='certainty-desc'>
 						<option value='0'>0%</option>
 						<option value='20'>20%</option>
 						<option value='40'>40%</option>
 						<option value='60'>60%</option>
 						<option value='80'>80%</option>
 						<option value='100'>100%</option>
-					</select>
+					</select> <span id='certainty-desc'>" . __( 'A higher percentage means only issues that Tenon.io has higher confidence in. Lower numbers mean more issues reported.', 'access-monitor' ) . "</span>
 				</p>
 				<p>
 					<label for='priority'>" . __( 'Minimum Priority', 'access-monitor' ) . "</label>
-					<select name='priority' id='priority'>
+					<select name='priority' id='priority' aria-describedby='priority-desc'>
 						<option value='0'>0%</option>
 						<option value='20'>20%</option>
 						<option value='40'>40%</option>
 						<option value='60'>60%</option>
 						<option value='80'>80%</option>
-					</select>
+					</select> <span id='priority-desc'>" . __( 'A higher percentage means only issues that Tenon.io considers more important to fix. Lower numbers mean more issues reported.', 'access-monitor' ) . "</span>
 				</p>
 				<p>
 					<label for='level'>" . __( 'Minimum WCAG Level', 'access-monitor' ) . "</label>
@@ -954,6 +954,19 @@ function am_show_support_box() {
 		</div>
 		</div>
 	</div>
+	<div class="meta-box-sortables">
+		<div class="postbox">
+		<h3><?php _e('Disclaimer','access-monitor'); ?></h3>
+		<div id="support" class="inside resources">
+			<p>
+				<?php _e( 'Access Monitor uses Tenon.io. The Tenon.io API is designed to examine aspects of accessibility that are machine-testable in a reliable way. No errors does not mean that your site is accessible.', 'access-monitor' ); ?>
+			</p>
+			<p>
+				<?php echo "<a href='http://tenon.io/documentation/what-tenon-tests.php'>" . __( 'What Tenon Tests', 'access-monitor' ) . "</a>"; ?>
+			</p>
+		</div>
+		</div>
+	</div>	
 
 </div>
 </div>

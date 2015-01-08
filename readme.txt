@@ -67,6 +67,7 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 * Use of old plug-in name in readme.
 * Fixed donate button to be for this plug-in.
+* Extended FAQ
 * 
 
 = 1.0.0 =
@@ -85,6 +86,10 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 = This is awesome! If I fix these problems, is my website accessible? =
 
 Maybe, but there's no way to know using automated testing. Automated accessible testing can't test every accessibility issue; many issues require human checks. However, this will help you find the issues that are fully testable using automation.
+
+= If Access Monitor can't test everything, what's the point? =
+
+No tool can pick up every Accessibility issue - but Access Monitor can help you eliminate issues that <strong>can</strong> be found in automated testing without wasting your time with a bunch of false positives. When you do your manual testing, you won't waste any time on those issues!
 
 == Screenshots ==
 
