@@ -7,7 +7,7 @@ Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
 Text Domain: access-monitor
 Domain Path: lang
-Version: 1.0.0
+Version: 1.0.1
 */
 /*  Copyright 2014-2015  Joe Dolson (email : joe@joedolson.com)
 
@@ -36,7 +36,7 @@ define( 'WAVE_API_URL', 'http://wave.webaim.org/api/request' );
 require_once( 't/tenon.php' );
 require_once( 't/wave.php' );
 
-$am_version = '0.1.0';
+$am_version = '1.0.1';
 
 add_filter( 'the_content', 'am_pass_query' );
 function am_pass_query( $content ) {
@@ -941,11 +941,12 @@ function am_show_support_box() {
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 					<div>
 					<input type="hidden" name="cmd" value="_s-xclick" />
-					<input type="hidden" name="hosted_button_id" value="8490399" />
-					<input type="image" src="https://www.paypal.com/en_US/i/btn/btn_donate_LG.gif" name="submit" alt="Donate" />
-					<img alt="" border="0" src="https://www.paypal.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+					<input type="hidden" name="hosted_button_id" value="B75RYAX9BMX6S" />
+					<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt=	"Donate" />
+					<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1" />
 					</div>
 				</form>
+				
 			</li>
 			<li><a href="http://profiles.wordpress.org/users/joedolson/"><?php _e('Check out my other plug-ins','access-monitor'); ?></a></li>
 			<li><a href="http://wordpress.org/extend/plugins/access-monitor/"><?php _e('Rate this plug-in','access-monitor'); ?></a></li>		
