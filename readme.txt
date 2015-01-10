@@ -53,7 +53,7 @@ You can test the page you're viewing using a link in the admin bar labeled 'A11y
 
 
 Available languages (in order of completeness):
-Nothing yet.
+Dutch
 
 Visit the [Access Monitor translations site](http://translate.joedolson.com/projects/access-monitor/) to check the progress of a translation.
 
@@ -68,7 +68,7 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Use of old plug-in name in readme.
 * Fixed donate button to be for this plug-in.
 * Extended FAQ
-* 
+* New Language: Dutch 
 
 = 1.0.0 =
 
