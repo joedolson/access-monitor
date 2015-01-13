@@ -123,8 +123,7 @@ function am_format_tenon_array( $results, $errors ) {
 				case ( $result->priority >= 40 ) : $prio = 'medium'; break;
 				default: $prio = 'low';
 			}
-			//$ref = "<strong>" . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$result->ref'>$result->resultTitle</a>";
-			$ref = ''; // Add this back in once links resolve correctly.
+			$ref = "<strong>" . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$result->ref'>$result->resultTitle</a>";
 			$return .= "
 				<div class='tenon-result'>
 					<h2>
@@ -150,11 +149,14 @@ function am_format_tenon_array( $results, $errors ) {
 add_action('admin_enqueue_scripts', 'am_admin_enqueue_scripts');
 function am_admin_enqueue_scripts() {
 	global $current_screen;
-	wp_enqueue_script( 'am.functions', plugins_url( 'js/jquery.ajax.js', __FILE__ ), array( 'jquery' ) );
-	wp_localize_script( 'am.functions', 'am_ajax_url', admin_url( 'admin-ajax.php' ) );
-	wp_localize_script( 'am.functions', 'am_ajax_action', 'am_ajax_query_tenon' );
-	wp_localize_script( 'am.functions', 'am_current_screen', $current_screen->id );
-	wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );	
+	if ( $current_screen->id !== 'customize' ) {
+	// The customizer doesn't have an adminbar; so no reason to enqueue this. Also, it breaks the customizer. :)
+		wp_enqueue_script( 'am.functions', plugins_url( 'js/jquery.ajax.js', __FILE__ ), array( 'jquery' ) );
+		wp_localize_script( 'am.functions', 'am_ajax_url', admin_url( 'admin-ajax.php' ) );
+		wp_localize_script( 'am.functions', 'am_ajax_action', 'am_ajax_query_tenon' );
+		wp_localize_script( 'am.functions', 'am_current_screen', $current_screen->id );
+		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );	
+	}
 }
 
 add_action('wp_enqueue_scripts', 'am_wp_enqueue_scripts');
@@ -570,8 +572,7 @@ function am_format_tenon_report( $results, $name ) {
 					if ( !in_array( $hash, $reported ) ) {
 						$displayed = true;
 						$total++;
-						//$ref = "<a href='$result->ref'>$result->errorTitle</a>";
-						$ref = ''; // Add this back in once links resolve correctly.
+						$ref = "<a href='$result->ref'>$result->errorTitle</a>";
 						$tbody .= "
 							<tr>
 								<td>$ref<p><strong>$result->resultTitle</strong>; $result->errorDescription</p></td>
@@ -906,7 +907,7 @@ function am_support_page() {
 					</div>
 				</div>
 			</div>
-			<div class='metabox-holder'>			
+			<div class='metabox-holder' tabindex='-1' id='support-form'>			
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="get-support">
 						<h3><?php _e('Get Plug-in Support','access-monitor'); ?></h3>
@@ -967,6 +968,17 @@ function am_show_support_box() {
 		</div>
 		</div>
 	</div>	
+	
+	<div class="meta-box-sortables">
+		<div class="postbox">
+		<h3><?php _e('Get Help','access-monitor'); ?></h3>
+		<div id="support" class="inside resources">
+			<p>
+				<?php printf( __( 'Access Monitor has two parts: the plug-in, and the API it interacts with. If your issue is in the plug-in, use the <a href="%s">support form</a>. If your issue is with the API or on tenon.io, <a href="mailto:support@tenon.io">email Tenon support</a>. Thanks!', 'access-monitor' ), '#support-form' ); ?>
+			</p>
+		</div>
+		</div>
+	</div>		
 
 </div>
 </div>
@@ -1048,7 +1060,7 @@ $plugins_string
 	if ( isset($_POST['am_support']) ) {
 		$nonce=$_REQUEST['_wpnonce'];
 		if (! wp_verify_nonce($nonce,'access-monitor-nonce') ) die("Security check failed");	
-		$request = stripslashes($_POST['support_request']);
+		$request = stripslashes( $_POST['support_request'] );
 		$has_donated = ( isset( $_POST['has_donated'] ) && $_POST['has_donated'] == 'on')?"Donor":"No donation";
 		$has_read_faq = ( isset( $_POST['has_read_faq'] ) && $_POST['has_read_faq'] == 'on')?"Read FAQ":true; // has no faq, for now.
 		$subject = "Access Monitor support request. $has_donated";

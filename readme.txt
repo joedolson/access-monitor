@@ -61,6 +61,7 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 <a href="http://www.joedolson.com/translator-credits/">Translator Credits</a>
 
+
 == Changelog ==
 
 = 1.0.1 =
@@ -69,6 +70,8 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Fixed donate button to be for this plug-in.
 * Extended FAQ
 * New Language: Dutch 
+* Put ref links back in place now that they redirect properly.
+* Bug fix: Disabled A11y Check in customizer.
 
 = 1.0.0 =
 
