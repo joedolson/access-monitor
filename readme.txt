@@ -72,6 +72,7 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * New Language: Dutch 
 * Put ref links back in place now that they redirect properly.
 * Bug fix: Disabled A11y Check in customizer.
+* Add an admin notice to point to the API key field if it hasn't been set.
 
 = 1.0.0 =
 

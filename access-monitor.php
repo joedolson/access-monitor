@@ -123,7 +123,9 @@ function am_format_tenon_array( $results, $errors ) {
 				case ( $result->priority >= 40 ) : $prio = 'medium'; break;
 				default: $prio = 'low';
 			}
-			$ref = "<strong>" . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$result->ref'>$result->resultTitle</a>";
+			// right now, tenon.io is broken over https. So, strip back to non-https.
+			$href = str_replace( 'https', 'http', $result->ref );
+			$ref = "<strong>" . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$href'>$result->resultTitle</a>";
 			$return .= "
 				<div class='tenon-result'>
 					<h2>
@@ -572,7 +574,9 @@ function am_format_tenon_report( $results, $name ) {
 					if ( !in_array( $hash, $reported ) ) {
 						$displayed = true;
 						$total++;
-						$ref = "<a href='$result->ref'>$result->errorTitle</a>";
+						// right now, tenon.io is broken over https. So, strip back to non-https.
+						$href = str_replace( 'https', 'http', $result->ref );						
+						$ref = "<a href='$href'>$result->errorTitle</a>";
 						$tbody .= "
 							<tr>
 								<td>$ref<p><strong>$result->resultTitle</strong>; $result->errorDescription</p></td>
@@ -651,6 +655,24 @@ function am_update_settings() {
 	}
 }
 
+
+add_action( 'admin_head', 'am_setup_admin_notice' );
+function am_setup_admin_notice() {
+	if ( !( isset( $_POST['tenon_api_key'] ) && $_POST['tenon_api_key'] != '' ) ) {
+		$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
+		if ( empty( $settings ) || !isset( $settings['tenon_api_key'] ) || $settings['tenon_api_key'] == '' ) {
+			if ( isset( $_GET['page'] ) && $_GET['page'] == 'access-monitor/access-monitor.php' ) {
+				$url = '#settings';
+			} else {
+				$url = admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php');
+			}
+			$message = sprintf(__("You must <a href='%s'>enter a Tenon API key</a> to use Access Monitor.", 'access-monitor'), $url );
+			add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } else { echo \"<div class='error'><p>$message</p></div>\";}" ) );
+		}
+	}
+}
+
+
 function am_settings() {
 	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
 	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'' ), $settings );
@@ -681,7 +703,7 @@ function am_report() {
 	
 	if ( $settings['tenon_api_key'] == '' ) {
 		$disabled = " disabled='disabled'";
-		$message = "<p><a href='http://tenon.io/register.php'>" . __( 'Sign up with Tenon to get an API key', 'access-monitor' ) . "</a></p>";
+		$message = "<p><strong><a href='http://tenon.io/register.php'>" . __( 'Sign up with Tenon to get an API key', 'access-monitor' ) . "</a></strong> &bull; <a href='#settings'>" . __( 'Add your API key', 'access-monitor' ) . "</a></p>";
 	} else {
 		$disabled = $message = '';
 	}
@@ -741,23 +763,23 @@ function am_report() {
 				<p>
 					<label for='certainty'>" . __( 'Minimum Certainty', 'access-monitor' ) . "</label>
 					<select name='certainty' id='certainty' aria-describedby='certainty-desc'>
-						<option value='0'>0%</option>
+						<option value='0'>0% (". __( 'More issues' ) . ")</option>
 						<option value='20'>20%</option>
 						<option value='40'>40%</option>
 						<option value='60'>60%</option>
 						<option value='80'>80%</option>
-						<option value='100'>100%</option>
-					</select> <span id='certainty-desc'>" . __( 'A higher percentage means only issues that Tenon.io has higher confidence in. Lower numbers mean more issues reported.', 'access-monitor' ) . "</span>
+						<option value='100'>100% (". __( 'Fewer issues' ) . ")</option>
+					</select> <span id='certainty-desc'>" . __( 'Higher values means Tenon.io has more confidence in the results.', 'access-monitor' ) . "</span>
 				</p>
 				<p>
 					<label for='priority'>" . __( 'Minimum Priority', 'access-monitor' ) . "</label>
 					<select name='priority' id='priority' aria-describedby='priority-desc'>
-						<option value='0'>0%</option>
+						<option value='0'>0% (". __( 'More issues' ) . ")</option>
 						<option value='20'>20%</option>
 						<option value='40'>40%</option>
 						<option value='60'>60%</option>
-						<option value='80'>80%</option>
-					</select> <span id='priority-desc'>" . __( 'A higher percentage means only issues that Tenon.io considers more important to fix. Lower numbers mean more issues reported.', 'access-monitor' ) . "</span>
+						<option value='80'>80% (". __( 'Fewer issues' ) . ")</option>
+					</select> <span id='priority-desc'>" . __( 'Higher values means Tenon.io lists this as a high priority issue.', 'access-monitor' ) . "</span>
 				</p>
 				<p>
 					<label for='level'>" . __( 'Minimum WCAG Level', 'access-monitor' ) . "</label>
@@ -899,7 +921,7 @@ function am_support_page() {
 			</div>			
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
-					<div class="postbox" id="settings">
+					<div class="postbox" id="settings" tabindex='-1'>
 						<h3><?php _e('Access Monitor Settings','access-monitor'); ?></h3>
 						<div class="inside">
 							<?php am_settings(); ?>
