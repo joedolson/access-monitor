@@ -7,7 +7,7 @@ Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
 Text Domain: access-monitor
 Domain Path: lang
-Version: 1.0.1
+Version: 1.0.2
 */
 /*  Copyright 2014-2015  Joe Dolson (email : joe@joedolson.com)
 
@@ -36,7 +36,7 @@ define( 'WAVE_API_URL', 'http://wave.webaim.org/api/request' );
 require_once( 't/tenon.php' );
 require_once( 't/wave.php' );
 
-$am_version = '1.0.1';
+$am_version = '1.0.2';
 
 add_filter( 'the_content', 'am_pass_query' );
 function am_pass_query( $content ) {
