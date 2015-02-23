@@ -1,6 +1,6 @@
 === Access Monitor ===
 Contributors: joedolson
-Donate link: http://www.joedolson.com/donate.php
+Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, wave, section508
 Requires at least: 3.9.2
 Tested up to: 4.1
@@ -61,8 +61,11 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 <a href="http://www.joedolson.com/translator-credits/">Translator Credits</a>
 
-
 == Changelog ==
+
+= 1.0.2 =
+
+* API Change: remove reportID; change sytemID to projectID
 
 = 1.0.1 =
 

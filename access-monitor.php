@@ -52,7 +52,7 @@ function am_query_tenon( $post, $format = true ) {
 	// creates the $opts array from the $post data
 	// only sets items that are non-blank. This allows Tenon to revert to defaults
 	$expectedPost = array( 'src', 'url', 'level', 'certainty', 'priority',
-		'docID', 'systemID', 'reportID', 'viewPortHeight', 'viewPortWidth',
+		'docID', 'projectID', 'viewPortHeight', 'viewPortWidth',
 		'uaString', 'importance', 'ref', 'importance', 'fragment', 'store' );
 		
 	foreach ( $post AS $k => $v ) {
@@ -439,11 +439,8 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 					) );
 	update_post_meta( $report_id, '_tenon_total', $total );
 	update_post_meta( $report_id, '_tenon_json', $saved );
-	if ( isset( $params['reportID'] ) && $params['reportID'] != '' ) {
-		update_post_meta( $report_id, '_tenon_reportID', $params['reportID'] );
-	}
-	if ( isset( $params['systemID'] ) && $params['systemID'] != '' ) {
-		update_post_meta( $report_id, '_tenon_systemID', $params['systemID'] );
+	if ( isset( $params['projectID'] ) && $params['projectID'] != '' ) {
+		update_post_meta( $report_id, '_tenon_projectID', $params['projectID'] );
 	}
 	update_post_meta( $report_id, '_tenon_params', $params );
 	update_post_meta( $report_id, '_tenon_pages', $pages );
@@ -812,12 +809,8 @@ function am_report() {
 					</select>			
 				</p>
 				<p>
-					<label for='systemID'>" . __( 'System ID', 'access-monitor' ) . "</label>
-					<input type='text' id='systemID' name='systemID' class='widefat' />
-				</p>
-				<p>
-					<label for='reportID'>" . __( 'Report ID', 'access-monitor' ) . "</label>
-					<input type='text' id='reportID' name='reportID' class='widefat' />
+					<label for='projectID'>" . __( 'Project ID', 'access-monitor' ) . "</label>
+					<input type='text' id='projectID' name='projectID' class='widefat' />
 				</p>
 				<p class='checkbox'>
 					<label for='store'>" . __( 'Store test results at Tenon.io', 'access-monitor' ) . "</label>
@@ -838,8 +831,7 @@ function am_setup_report() {
 		$schedule = ( isset( $_POST['report_schedule'] ) ) ? $_POST['report_schedule'] : 'none';
 		
 		$store = ( isset( $_POST['store'] ) ) ? 1 : 0;
-		$reportID = ( isset( $_POST['reportID'] ) ) ? sanitize_text_field( $_POST['reportID'] ) : '';
-		$systemID = ( isset( $_POST['systemID'] ) ) ? sanitize_text_field( $_POST['systemID'] ) : '';
+		$projectID = ( isset( $_POST['projectID'] ) ) ? sanitize_text_field( $_POST['projectID'] ) : '';
 		$viewport = ( isset( $_POST['viewport'] ) ) ? explode( 'x', $_POST['viewport'] ) : array( '1024', '768' );
 		$viewportHeight = $viewport[1];
 		$viewportWidth = $viewport[0];
@@ -849,8 +841,7 @@ function am_setup_report() {
 		
 		$args = array( 
 					'store' => $store,
-					'reportID' => $reportID,
-					'systemID' => $systemID,
+					'projectID' => $projectID,
 					'viewPortHeight' => $viewportHeight,
 					'viewPortWidth' => $viewportWidth,
 					'level' => $level,
@@ -960,7 +951,7 @@ function am_show_support_box() {
 				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if (!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 			</p>
 			</li>
-			<li><p><?php _e('<a href="http://www.joedolson.com/donate/">Make a donation today!</a> Every donation counts - donate $2, $10, or $100 and help me keep this plug-in running!','access-monitor'); ?></p>
+			<li><p><?php _e('<a href="http://www.joedolson.com/donate/">Make a donation today!</a> Every donation counts - donate $10, $20, or $100 and help me keep this plug-in running!','access-monitor'); ?></p>
 				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
 					<div>
 					<input type="hidden" name="cmd" value="_s-xclick" />
