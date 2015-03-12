@@ -1,13 +1,13 @@
 <?php
 /*
 Plugin Name: Access Monitor
-Plugin URI: http://checker.accessiblewebdesign.org
+Plugin URI: http://www.joedolson.com/access-monitor/
 Description: Inspect & monitor WordPress sites for accessibility issues using the Tenon accessibility API.
 Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
 Text Domain: access-monitor
 Domain Path: lang
-Version: 1.0.2
+Version: 1.0.3
 */
 /*  Copyright 2014-2015  Joe Dolson (email : joe@joedolson.com)
 
@@ -28,7 +28,7 @@ Version: 1.0.2
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
 //define('TENON_API_URL', 'https://www.tenon.io/api/');
-define( 'TENON_API_URL', 'http://beta.tenon.io/api/' );
+define( 'TENON_API_URL', 'https://tenon.io/api/' );
 define( 'AM_DEBUG', false );
 
 define( 'WAVE_API_URL', 'http://wave.webaim.org/api/request' );
@@ -65,8 +65,11 @@ function am_query_tenon( $post, $format = true ) {
 		
 	$settings = get_option( 'am_settings' );
 	$key = $settings['tenon_api_key'];
+	/* Tenon uses the application ID to credit specific application authors with API usage. Please leave this intact! Thanks! */
+	$appID = '8cfaff90a1bd9eaa59c8bbc2e75f8657';
 	if ( $key ) {
 		$opts['key'] = $key;
+		$opts['appID'] = $appID;
 		$tenon = new tenon( TENON_API_URL, $opts );
 		$tenon->submit( AM_DEBUG );
 		$body = $tenon->tenonResponse['body'];
@@ -742,8 +745,8 @@ function am_report() {
 			</li>
 		</ul>
 		<div>
-			<input type='button' id='add_field' value='".__( 'Add a test URL', 'my-calendar' )."' class='button' />
-			<input type='button' id='del_field' value='".__( 'Remove last test', 'my-calendar' )."' class='button' />
+			<input type='button' id='add_field' value='".__( 'Add a test URL', 'access-monitor' )."' class='button' />
+			<input type='button' id='del_field' value='".__( 'Remove last test', 'access-monitor' )."' class='button' />
 		</div>
 		<p>
 			<label for='report_schedule'>" . __( 'Schedule report', 'access-monitor' ) . "</label>

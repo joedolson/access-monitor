@@ -3,9 +3,9 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, wave, section508
 Requires at least: 3.9.2
-Tested up to: 4.1
+Tested up to: 4.1.1
 License: GPLv2 or later
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -63,9 +63,25 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 == Changelog ==
 
+= Future =
+
+* AJAXIFY all the things ... that should be ajaxified.
+* Add processing indicator (aria-live, visible)
+* Add clientScriptErrors data to resultset.
+* Add filters and filters and filters. 
+	- Prep for pre-process post tests
+	- Relate reports to authors
+	
+= 1.0.3 =
+
+* Corrected a couple of textdomains.
+* Fixed plugin URI.
+* Added application ID for Tenon queries.
+* Tenon is out of beta, so move off beta API endpoint.
+
 = 1.0.2 =
 
-* API Change: remove reportID; change sytemID to projectID
+* API Change: remove reportID; change systemID to projectID
 
 = 1.0.1 =
 
