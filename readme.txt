@@ -5,7 +5,7 @@ Tags: a11y, accessibility, wcag, wave, section508
 Requires at least: 3.9.2
 Tested up to: 4.1.1
 License: GPLv2 or later
-Stable tag: 1.0.2
+Stable tag: 1.0.3
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
