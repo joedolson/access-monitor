@@ -126,8 +126,9 @@ function am_format_tenon_array( $results, $errors ) {
 				case ( $result->priority >= 40 ) : $prio = 'medium'; break;
 				default: $prio = 'low';
 			}
-			// right now, tenon.io is broken over https. So, strip back to non-https.
-			$href = str_replace( 'https', 'http', $result->ref );
+			$bpID = $result->bpID;
+			$tID = $result->tID;
+			$href = esc_url( add_query_arg( array( 'bpID'=>$bpID, 'tID'=>$tID ), 'http://tenon.io/bestpractice.php' ) );
 			$ref = "<strong>" . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$href'>$result->resultTitle</a>";
 			$return .= "
 				<div class='tenon-result'>

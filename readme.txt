@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, wave, section508
 Requires at least: 3.9.2
-Tested up to: 4.1.1
+Tested up to: 4.2
 License: GPLv2 or later
 Stable tag: 1.0.3
 
@@ -71,6 +71,20 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Add filters and filters and filters. 
 	- Prep for pre-process post tests
 	- Relate reports to authors
+	- Create rules UI for whether post publish should be blocked.
+* Create ignore list
+* Add CTA to contact me about how to fix issues.
+* [Note:] Issues data: will be adding content field
+
+= 1.0.5 =
+
+* Simpler CSS on front-end.
+* Bug Fix: REF URL (no longer in result)
+* 
+
+= 1.0.4 =
+
+* Added Language: Portuguese (Brazil)
 	
 = 1.0.3 =
 
