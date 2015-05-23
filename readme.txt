@@ -76,14 +76,12 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Add CTA to contact me about how to fix issues.
 * [Note:] Issues data: will be adding content field
 
-= 1.0.5 =
-
-* Simpler CSS on front-end.
-* Bug Fix: REF URL (no longer in result)
-* 
-
 = 1.0.4 =
 
+* Simpler CSS on front-end.
+* Bug fix: Conflict with Press This
+* Bug Fix: REF URL (no longer in result)
+* Updated language: Portuguese (Brazil)
 * Added Language: Portuguese (Brazil)
 	
 = 1.0.3 =

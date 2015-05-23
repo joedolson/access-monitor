@@ -155,8 +155,10 @@ function am_format_tenon_array( $results, $errors ) {
 add_action('admin_enqueue_scripts', 'am_admin_enqueue_scripts');
 function am_admin_enqueue_scripts() {
 	global $current_screen;
-	if ( $current_screen->id !== 'customize' ) {
-	// The customizer doesn't have an adminbar; so no reason to enqueue this. Also, it breaks the customizer. :)
+	if ( $current_screen->id == 'customize' || $current_screen->id == 'press-this' ) {
+		// We don't want any of this on these screens.
+	} else {
+		// The customizer doesn't have an adminbar; so no reason to enqueue this. Also, it breaks the customizer. :)
 		wp_enqueue_script( 'am.functions', plugins_url( 'js/jquery.ajax.js', __FILE__ ), array( 'jquery' ) );
 		wp_localize_script( 'am.functions', 'am_ajax_url', admin_url( 'admin-ajax.php' ) );
 		wp_localize_script( 'am.functions', 'am_ajax_action', 'am_ajax_query_tenon' );
