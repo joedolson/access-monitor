@@ -5,7 +5,7 @@ Tags: a11y, accessibility, wcag, wave, section508
 Requires at least: 3.9.2
 Tested up to: 4.2
 License: GPLv2 or later
-Stable tag: 1.0.3
+Stable tag: 1.0.4
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -81,7 +81,6 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Simpler CSS on front-end.
 * Bug fix: Conflict with Press This
 * Bug Fix: REF URL (no longer in result)
-* Updated language: Portuguese (Brazil)
 * Added Language: Portuguese (Brazil)
 	
 = 1.0.3 =
@@ -135,4 +134,4 @@ No tool can pick up every Accessibility issue - but Access Monitor can help you 
 
 == Upgrade Notice ==
 
-* 1.0.0 Nothing to say yet.
+* 1.0.4 Couple bug fixes, corrected bad links, added Portuguese.
