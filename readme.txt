@@ -76,6 +76,11 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Add CTA to contact me about how to fix issues.
 * [Note:] Issues data: will be adding content field
 
+= 1.1.0 =
+
+* Feature: Reject publication of posts if they don't meet configured accessibility requirements
+* 
+
 = 1.0.4 =
 
 * Simpler CSS on front-end.

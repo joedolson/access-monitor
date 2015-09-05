@@ -102,3 +102,5 @@ button.close:hover, button.close:focus {
 #access-monitor h2 .dashicons-universal-access { font-size: 1.3em; width: 1.3em; }
 
 .tenon-result code, .tenon-result pre { margin: 0!important; padding: .5em!important; }
+
+#am-errors { display: none; }
