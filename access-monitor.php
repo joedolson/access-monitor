@@ -112,7 +112,7 @@ function am_format_tenon( $body ) {
 }
 
 function am_format_tenon_array( $results, $errors ) {
-	$return = "<section><h1>".sprintf( __( '%s accessibility issues identified.', 'access-monitor' ), "<em>$errors</em>" )."</h1>";
+	$return = "<section><h2>".sprintf( __( '%s accessibility issues identified.', 'access-monitor' ), "<em>$errors</em>" )."</h2>";
 	$i = 0;
 	if ( !empty( $results ) ) {
 		foreach( $results as $result ) {
@@ -133,17 +133,17 @@ function am_format_tenon_array( $results, $errors ) {
 			$ref = "<strong>" . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$href'>$result->resultTitle</a>";
 			$return .= "
 				<div class='tenon-result'>
-					<h2>
+					<h3>
 						<span>$i</span>. $result->errorTitle 
-					</h2>
+					</h3>
 					<p class='meta'>
 						<span class='certainty $cert'>". sprintf( __( 'Certainty: %s', 'access-monitor' ), "$result->certainty%" ). "</span>  
 						<span class='priority $prio'>". sprintf( __( 'Priority: %s', 'access-monitor' ), "$result->priority%" ). "</span>
 					</p>
 					<p>$result->errorDescription $ref</p>
-					<h3>Error Source</h3>
+					<h4>Error Source</h4>
 					<pre lang='html'>".$result->errorSnippet."</pre>
-					<h3>Xpath:</h3> <pre><code>$result->xpath</code></pre>
+					<h4>Xpath:</h4> <pre><code>$result->xpath</code></pre>
 	
 				</div>";
 		}
