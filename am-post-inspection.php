@@ -15,21 +15,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 add_action( 'admin_enqueue_scripts', 'am_pre_publish' );
 function am_pre_publish( $hook ) { 
 	global $post;
-	$settings = get_option( 'am_settings' );
-	$check = isset( $settings['tenon_pre_publish'] ) ? $settings['tenon_pre_publish'] : 0;	
+	$options = get_option( 'am_settings' );
+	$check = isset( $options['tenon_pre_publish'] ) ? $options['tenon_pre_publish'] : 0;
+	$args = isset( $options['am_criteria'] ) ? $options['am_criteria'] : array();
 	if ( $check == 1 ) {
 		if ( $hook == 'post-new.php' || $hook == 'post.php' ) {
 			if ( am_in_post_type( $post->ID ) ) {
 				wp_enqueue_script( 'tenon.inspector', plugins_url( 'js/inspector.js', __FILE__ ), array( 'jquery' ), '', true );
 				$settings = array(
-					'level'          => 'AAA',
-					'certainty'      => '0',
-					'priority'       => '0',
-					'viewPortWidth'  => '1024',
-					'viewPortHeight' => '800',
-					'container'      => '.post-content',
-					'store'          => '0',
-					'grade'          => '95'
+					'level'          => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
+					'certainty'      => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '0',
+					'priority'       => ( isset( $args['priority'] ) ) ? $args['priority'] : '0',
+					'container'      => ( isset( $args['container'] ) ) ? $args['container'] : '.post-content',
+					'store'          => ( isset( $args['store'] ) ) ? $args['store'] : '0',
+					'grade'          => ( isset( $args['grade'] ) ) ? $args['grade'] : '90'
 				);
 				wp_localize_script( 'tenon.inspector', 'am', $settings );
 			}

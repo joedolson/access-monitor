@@ -19,8 +19,6 @@ jQuery( document ).ready( function( $ ) {
 					'level' : am.level,
 					'certainty' : am.certainty,
 					'priority' : am.priority,
-					'viewPortWidth' : am.viewPortWidth,
-					'viewPortHeight' : am.viewPortHeight,
 					'fragment' : '1'
 				};
 				

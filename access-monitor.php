@@ -202,15 +202,7 @@ function am_ajax_query_tenon() {
 		if ( isset( $_REQUEST['priority'] ) ) {
 			$args['priority'] = $_REQUEST['priority'];
 		}
-
-		if ( isset( $_REQUEST['viewPortWidth'] ) ) {
-			$args['viewPortWidth'] = $_REQUEST['viewPortWidth'];
-		}
-		
-		if ( isset( $_REQUEST['viewPortHeight'] ) ) {
-			$args['viewPortHeight'] = $_REQUEST['viewPortHeight'];
-		}		
-				
+	
 		$results = am_query_tenon( $args );		
 		
 		wp_send_json(
@@ -692,13 +684,15 @@ function am_update_settings() {
 		$wave_api_key = ( isset( $_POST['wave_api_key'] ) ) ? $_POST['wave_api_key'] : '';
 		$tenon_pre_publish = ( isset( $_POST['tenon_pre_publish'] ) ) ? 1 : 0;
 		$am_post_types = ( isset( $_POST['am_post_types'] ) ) ? $_POST['am_post_types'] : array();
+		$am_criteria = ( isset( $_POST['am_criteria'] ) ) ? $_POST['am_criteria'] : array();
 		
 		update_option( 'am_settings', 
 			array( 
 				'tenon_api_key'     => $tenon_api_key, 
 				'wave_api_key'      => $wave_api_key,
 				'am_post_types'     => $am_post_types,
-				'tenon_pre_publish' => $tenon_pre_publish
+				'tenon_pre_publish' => $tenon_pre_publish,
+				'am_criteria'       => $am_criteria
 			) 
 		);
 		echo "<div class='updated'><p>" . __( 'Access Monitor Settings Updated', 'access-monitor' ) . "</p></div>";
@@ -725,22 +719,21 @@ function am_setup_admin_notice() {
 
 function am_settings() {
 	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
-	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'', 'tenon_pre_publish' => '', 'am_post_types' => array(), 'am_post_grade' => '', 'am_post_criteria' => array() ), $settings );
+	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'', 'tenon_pre_publish' => '', 'am_post_types' => array(), 'am_post_grade' => '', 'am_criteria' => array() ), $settings );
 
 	$post_types    = get_post_types( array( 'public' => true ), 'objects' );
 	$am_post_types = isset( $settings['am_post_types'] ) ? $settings['am_post_types'] : array();
-	$am_post_grade = isset( $settings['am_post_grade'] ) ? $settings['am_post_grade'] : array();
-	$am_post_criteria = isset( $settings['am_post_criteria'] ) ? $settings['am_post_criteria'] : array();
+	$am_criteria = isset( $settings['am_criteria'] ) ? $settings['am_criteria'] : array();
 		
 	$am_post_type_options = '';
 
 	foreach ( $post_types as $type ) {
 		if ( in_array( $type->name, $am_post_types ) ) {
-			$selected = ' selected="selected"';
+			$selected = ' checked="checked"';
 		} else {
 			$selected = '';
 		}
-		$am_post_type_options .= "<option value='$type->name'$selected>" . $type->labels->name . "</option>";
+		$am_post_type_options .= "<input type='checkbox' id='am_$type->name' name='am_post_types[]' value='$type->name'$selected><label for='am_$type->name'>" . $type->labels->name . "</label> ";
 	}
 	
 	echo "
@@ -750,20 +743,39 @@ function am_settings() {
 		<p>
 			<label for='tenon_api_key'>".__( 'Tenon API Key', 'access-monitor' )."</label> <input type='text' name='tenon_api_key' id='tenon_api_key' value='". esc_attr( $settings['tenon_api_key'] ) ."' />
 		</p>
-		<p>
+		<p class='checkbox'>
 			<input type='checkbox' name='tenon_pre_publish' id='tenon_pre_publish' value='1' ". checked( $settings['tenon_pre_publish'], 1, false ) ."' /> <label for='tenon_pre_publish'>".__( 'Prevent inaccessible posts from being published', 'access-monitor' )."</label>
 		</p>";
 		if ( $settings['tenon_pre_publish'] == 1 ) {
 			?>
-				<p>
-					<label for='am_post_types'><?php _e( 'Test these post types before publishing:', 'my-tickets' ); ?></label>
-					<select multiple='multiple' name='am_post_types[]' id='am_post_types'>
-							<?php echo $am_post_type_options; ?>
-					</select>
-				</p>
-				+ Criteria
-				+ Min. Grade
+				<fieldset>
+					<legend><?php _e( 'Test these post types before publishing:', 'my-tickets' ); ?></legend>				
+					<p class='checkbox'><?php echo $am_post_type_options; ?></p>
+				</fieldset>
 			<?php
+			$criteria = array( 
+				'level' => array( 'label' => __( 'Required WCAG Level', 'access-monitor' ), 'default' => 'AA' ),
+				'certainty' => array( 'label' =>  __( 'Minimum certainty', 'access-monitor' ), 'default' => '0' ),
+				'priority' => array( 'label' => __( 'Minimum priority', 'access-monitor' ), 'default' => '0' ),
+				'grade' => array( 'label' => __( 'Minimum percentage grade to publish', 'access-monitor' ),  'default' => '90' ),
+				'container' => array( 'label' => __( 'Post content container', 'access-monitor' ), 'default' => '.post-content' ),
+				'store' => array( 'label' => __( 'Store data at Tenon.io?', 'access-monitor' ), 'default' => '0' ),				
+			);
+			echo "<ul>";
+			foreach ( $criteria as $key => $values ) {
+				$label = $values['label'];
+				$value = ( isset( $am_criteria[$key] ) && $am_criteria[$key] != '' ) ? $am_criteria[$key] : $values['default'];
+				if ( $key == 'store' ) {
+					echo "<li><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . ">" . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . ">" . __( 'No', 'access-monitor' ) . "</option></select></li>";
+				} else {
+					if ( is_numeric( $value ) ) {
+						echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='$value' /></li>";
+					} else {
+						echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='$value' /></li>";
+					}
+				}
+			}
+			echo "</ul>";
 		}
 		
 		
