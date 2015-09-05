@@ -8,5 +8,6 @@
 .am-settings .checkbox { padding-bottom: 1em; }
 .am-settings .checkbox label { display: inline; }
 .am-settings legend { font-weight: 700; }
+.inspect-a11y .dashicons { vertical-align: middle; }
 .report-options { padding: 1em; border: 1px solid #ddd; }
 #support_request { width: 100%; }

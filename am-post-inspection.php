@@ -6,8 +6,15 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
  
 /**
- * Access Monitor post meta box with 'Test post' button.
+ * Insert 'test accessibility' button in Publish box.
  */
+add_action( 'post_submitbox_misc_actions', 'am_inspect_post' );
+function am_inspect_post() {
+	echo '
+		<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">
+			<button class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Inspect Accessibility', 'access-monitor' ) . '</button>
+		</div>';
+}
  
 /** 
  * JS that executes when 'Publish' pressed and only executes the command if Tenon results pass.
@@ -28,7 +35,10 @@ function am_pre_publish( $hook ) {
 					'priority'       => ( isset( $args['priority'] ) ) ? $args['priority'] : '0',
 					'container'      => ( isset( $args['container'] ) ) ? $args['container'] : '.post-content',
 					'store'          => ( isset( $args['store'] ) ) ? $args['store'] : '0',
-					'grade'          => ( isset( $args['grade'] ) ) ? $args['grade'] : '90'
+					'grade'          => ( isset( $args['grade'] ) ) ? $args['grade'] : '90',
+					'hide'           => __( 'Hide issues', 'access-monitor' ),
+					'show'           => __( 'Show issues', 'access-monitor' ),
+					'failed'         => __( 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.', 'access-monitor' )
 				);
 				wp_localize_script( 'tenon.inspector', 'am', $settings );
 			}
@@ -62,7 +72,11 @@ function am_in_post_type( $id ) {
 add_action( 'edit_form_top', 'am_edit_form_after_title' );
 function am_edit_form_after_title( $post ) {
 	if ( am_in_post_type( $post->ID ) ) { 
-		echo '<div class="am-errors"><p><strong class="score"></strong> <strong>Post not published</strong>: does not meet minimum accessibility requirements. <a href="#am-errors" class="am-toggle" aria-expanded="false"><span class="am-verb">Show</span> Results</a></p><div class="am-errors-display" id="am-errors"></div></div>';
+		echo '
+		<div class="am-errors"><p>' 
+			. sprintf( __( 'Score: %s / <strong>Post may not be published</strong>: does not meet minimum accessibility requirements. %s', 'access-monitor' ), '<strong class="score"></strong>', '<a href="#am-errors" class="am-toggle" aria-expanded="false">Show Results</a>' ) 
+			. "</p><div class='am-errors-display' id='am-errors'></div>
+		</div>";
 	}
 }
 

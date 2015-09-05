@@ -1,6 +1,6 @@
 jQuery( document ).ready( function( $ ) {
 	$( '.am-errors' ).hide();
-	$( '#publish' ).on( 'click', function( e ) {
+	$( '#publish[name="publish"], button.inspect-a11y' ).on( 'click', function( e ) {
 		var preview_url = $( '#post-preview' ).attr( 'href' );
 		var preview_content = '';
 		$.ajax({
@@ -9,7 +9,7 @@ jQuery( document ).ready( function( $ ) {
 		   success: function(data){
 				preview_content = $(data).find( am.container ).html();
 				if ( !preview_content || preview_content == '' ) {
-					preview_content = 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.';
+					preview_content = am.failed;
 				}
 				
 				var query = {
@@ -56,11 +56,11 @@ jQuery( document ).ready( function( $ ) {
 	$( '.am-toggle' ).on( 'click', function(e) {
 		e.preventDefault();
 		$( '#am-errors' ).toggle();
-		var verb = $( this ).find( '.am-verb' ).text();
-		if ( verb == 'Show' ) {
-			$( this ).find( '.am-verb' ).text( 'Hide' );
+		var expanded = $( this ).attr( 'aria-expanded' );
+		if ( expanded == 'false' ) {
+			$( this ).text( am.hide ).attr( 'aria-expanded', 'true' );
 		} else {
-			$( this ).find( '.am-verb' ).text( 'Show' );			
+			$( this ).text( am.show ).attr( 'aria-expanded', 'false' );			
 		}
 	});	
 });
