@@ -79,6 +79,7 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 = 1.1.0 =
 
 * Feature: Reject publication of posts if they don't meet configured accessibility requirements
+* Feature: Inspect post content of any published or draft page on the fly.
 * 
 
 = 1.0.4 =

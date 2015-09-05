@@ -12,7 +12,7 @@ add_action( 'post_submitbox_misc_actions', 'am_inspect_post' );
 function am_inspect_post() {
 	echo '
 		<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">
-			<button class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Inspect Accessibility', 'access-monitor' ) . '</button>
+			<button class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Check Accessibility', 'access-monitor' ) . '</button>
 		</div>';
 }
  
