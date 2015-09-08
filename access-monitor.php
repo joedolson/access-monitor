@@ -685,6 +685,7 @@ function am_update_settings() {
 		$tenon_pre_publish = ( isset( $_POST['tenon_pre_publish'] ) ) ? 1 : 0;
 		$am_post_types = ( isset( $_POST['am_post_types'] ) ) ? $_POST['am_post_types'] : array();
 		$am_criteria = ( isset( $_POST['am_criteria'] ) ) ? $_POST['am_criteria'] : array();
+		$am_notify = ( isset( $_POST['am_notify'] ) ) ? $_POST['am_notify'] : '';
 		
 		update_option( 'am_settings', 
 			array( 
@@ -692,7 +693,8 @@ function am_update_settings() {
 				'wave_api_key'      => $wave_api_key,
 				'am_post_types'     => $am_post_types,
 				'tenon_pre_publish' => $tenon_pre_publish,
-				'am_criteria'       => $am_criteria
+				'am_criteria'       => $am_criteria,
+				'am_notify'         => $am_notify
 			) 
 		);
 		echo "<div class='updated'><p>" . __( 'Access Monitor Settings Updated', 'access-monitor' ) . "</p></div>";
@@ -724,7 +726,7 @@ function am_settings() {
 	$post_types    = get_post_types( array( 'public' => true ), 'objects' );
 	$am_post_types = isset( $settings['am_post_types'] ) ? $settings['am_post_types'] : array();
 	$am_criteria = isset( $settings['am_criteria'] ) ? $settings['am_criteria'] : array();
-		
+	$am_notify   = isset( $settings['am_notify'] ) ? $settings['am_notify'] : get_option( 'admin_email' );
 	$am_post_type_options = '';
 
 	foreach ( $post_types as $type ) {
@@ -751,6 +753,10 @@ function am_settings() {
 				<fieldset>
 					<legend><?php _e( 'Test these post types before publishing:', 'my-tickets' ); ?></legend>				
 					<p class='checkbox'><?php echo $am_post_type_options; ?></p>
+					<p>
+						<label for='am_notify'><?php _e( 'Email address to request accessibility review', 'access-monitor' ); ?></label>
+						<input type='email' value='<?php esc_attr_e( $am_notify ); ?>' id='am_notify' name='am_notify' />
+					</p>
 				</fieldset>
 			<?php
 			$criteria = array( 
@@ -769,9 +775,9 @@ function am_settings() {
 					echo "<li><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . ">" . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . ">" . __( 'No', 'access-monitor' ) . "</option></select></li>";
 				} else {
 					if ( is_numeric( $value ) ) {
-						echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='$value' /></li>";
+						echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='" . intval( $value ) . "' /></li>";
 					} else {
-						echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='$value' /></li>";
+						echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='" . esc_attr( $value ) . "' /></li>";
 					}
 				}
 			}
@@ -1103,8 +1109,12 @@ function am_add_support_page() {
     if ( function_exists( 'add_submenu_page' ) ) {
 		$permissions = apply_filters( 'am_use_monitor', 'manage_options' );
 		$plugin_page = add_submenu_page( 'edit.php?post_type=tenon-report', __( 'Access Monitor > Add New Report', 'access-monitor' ), __( 'Add Report/Settings', 'access-monitor' ), $permissions, __FILE__, 'am_support_page' );
-		add_action( 'admin_head-'. $plugin_page, 'am_admin_styles' );
+		add_action( 'load-'. $plugin_page, 'am_load_admin_styles' );
     }
+}
+
+function am_load_admin_styles() {
+	add_action( 'admin_enqueue_scripts', 'am_admin_styles' );
 }
 
 function am_admin_styles() {

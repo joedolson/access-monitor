@@ -10,9 +10,20 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 add_action( 'post_submitbox_misc_actions', 'am_inspect_post' );
 function am_inspect_post() {
+	$control = '';
+	if ( current_user_can( 'manage_options' ) ) {
+		$control = "<p><input type='checkbox' id='am_override' value='1' name='am_override' /> <label for='am_override'>" . __( 'Override Accessibility Test Results', 'access-monitor' ) . "</label></p>";
+	} else {
+		$settings = get_option( 'am_settings' );
+		$notify = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
+		if ( $notify ) {
+			$control = ' ' . "<p><button type='button' class='button' id='am_notify'>" . __( 'Request A11y Review', 'access-monitor' ) . "</button></p><div id='am_notified' aria-live='assertive'></div>";
+		}
+	}
 	echo '
 		<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">
-			<button class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Check Accessibility', 'access-monitor' ) . '</button>
+			<button type="button" class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Check Accessibility', 'access-monitor' ) . '</button>' . 
+			$control . '
 		</div>';
 }
  
@@ -41,6 +52,19 @@ function am_pre_publish( $hook ) {
 					'failed'         => __( 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.', 'access-monitor' )
 				);
 				wp_localize_script( 'tenon.inspector', 'am', $settings );
+				wp_localize_script( 'tenon.inspector', 'am_ajax_notify', 'am_ajax_notify' );
+				
+				$user_ID = get_current_user_ID();
+				$post_ID = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : false;
+				$security = wp_create_nonce( 'am_notify_admin' );
+
+				$notify = array( 
+					'user'     => $user_ID,
+					'post_ID'  => $post_ID,
+					'security' => $security,
+					'error'    => __( "Accessibility Review Request failed to send.", 'access-monitor' )
+				);
+				wp_localize_script( 'tenon.inspector', 'amn', $notify );				
 			}
 		}
 	}
@@ -102,5 +126,37 @@ function am_percentage( $results ) {
 	}
 	
 	return apply_filters( 'am_modify_grade', $return, $results );
-	
 }
+
+add_action('wp_ajax_am_ajax_notify', 'am_ajax_notify');
+function am_ajax_notify() {
+	if ( isset( $_REQUEST['security'] ) ) {
+		if ( ! check_ajax_referer( 'am_notify_admin', 'security', false ) ) {
+			wp_send_json( array( 'response' => 0, 'message' => __( 'Invalid Security Check', 'access-monitor' ) ) );
+		} else {
+			$settings = get_option( 'am_settings' );
+			$notify = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
+			if ( $notify ) {
+				$email = $settings['am_notify'];
+				$post_ID = $_REQUEST['post_ID'];
+				$user_ID = $_REQUEST['user'];
+				$post = get_post( $post_ID );
+				$user = get_user_by( 'id', $user_ID );
+				$edit_link = get_edit_post_link( $post_ID );
+				
+				$body = sprintf( __( 'Accessibility review on "%s" requested by %s. Review post: %s', 'access-monitor' ), $post->post_title, $user->user_login, $edit_link );
+				
+				$notice = wp_mail( $email, __( 'Request for Accessibility Review', 'access-monitor' ), $body );
+				wp_send_json(
+					array( 
+						'response' => 1, 
+						'message' => __( 'Review request sent!', 'access-monitor' ) 
+					) 
+				);
+			} else {
+				wp_send_json( array( 'response' => 0, 'message' => __( 'Invalid Email provided for accessibility reviewer', 'access-monitor' ) ) );
+			}
+		}
+	}
+}
+
