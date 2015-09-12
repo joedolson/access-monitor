@@ -10,21 +10,24 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 add_action( 'post_submitbox_misc_actions', 'am_inspect_post' );
 function am_inspect_post() {
-	$control = '';
-	if ( current_user_can( 'manage_options' ) ) {
-		$control = "<p><input type='checkbox' id='am_override' value='1' name='am_override' /> <label for='am_override'>" . __( 'Override Accessibility Test Results', 'access-monitor' ) . "</label></p>";
-	} else {
-		$settings = get_option( 'am_settings' );
-		$notify = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
-		if ( $notify ) {
-			$control = ' ' . "<p><button type='button' class='button' id='am_notify'>" . __( 'Request A11y Review', 'access-monitor' ) . "</button></p><div id='am_notified' aria-live='assertive'></div>";
+	$post_ID = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : false;
+		if ( $post_ID && am_in_post_type( $post_ID ) ) {
+		$control = '';
+		if ( current_user_can( 'manage_options' ) ) {
+			$control = "<p><input type='checkbox' id='am_override' value='1' name='am_override' /> <label for='am_override'>" . __( 'Override Accessibility Test Results', 'access-monitor' ) . "</label></p>";
+		} else {
+			$settings = get_option( 'am_settings' );
+			$notify = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
+			if ( $notify ) {
+				$control = ' ' . "<p><button type='button' class='button' id='am_notify'>" . __( 'Request A11y Review', 'access-monitor' ) . "</button></p><div id='am_notified' aria-live='assertive'></div>";
+			}
 		}
+		echo '
+			<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">
+				<button type="button" class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Check Accessibility', 'access-monitor' ) . '</button>' . 
+				$control . '
+			</div>';
 	}
-	echo '
-		<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">
-			<button type="button" class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Check Accessibility', 'access-monitor' ) . '</button>' . 
-			$control . '
-		</div>';
 }
  
 /** 
