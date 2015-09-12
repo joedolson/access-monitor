@@ -379,21 +379,25 @@ function am_add_about_box() {
 	$params = get_post_meta( $post->ID, '_tenon_params', true );
 	$total = get_post_meta( $post->ID, '_tenon_total', true );
 	echo "<p class='error-total'>" . sprintf( __( '%s unique errors', 'access-monitor' ), "<span>$total</span>" ) . "</p>";
-	foreach ( $pages as $url ) {
-		$page = str_replace( array( 'http://', 'https://', 'http://www.', 'https://www.' ), '', $url );
-		$urls .= "<li><a href='$url'>$page</a></li>";
+	if ( is_array( $pages ) ) {
+		foreach ( $pages as $url ) {
+			$page = str_replace( array( 'http://', 'https://', 'http://www.', 'https://www.' ), '', $url );
+			$urls .= "<li><a href='$url'>$page</a></li>";
+		}
+		unset( $params['url'] );
+		foreach ( $params as $key => $value ) {
+			$key = stripslashes( trim( $key ) );
+			$value = stripslashes( trim( $value ) );
+			if ( $value == '' ) { $value = '<em>' . __( 'Default', 'access-monitor' ) . '</em>'; }
+			$label = ucfirst( $key );
+			$parameters .= "<li><strong>$label</strong>: $value</li>";
+		}
+		echo "<h4>" . __( 'URLs Tested', 'access-monitor' ) . "</h4><ul>$urls</ul>";
+		echo "<h4>" . __( 'Test Parameters', 'access-monitor' ) . "</h4><ul>$parameters</ul>";
+		echo "<p><span class='dashicons dashicons-editor-help' aria-hidden='true'></span><a href='http://tenon.io/documentation/understanding-request-parameters.php'>" . __( 'Tenon Request Parameters', 'access-monitor' ) . "</a></p>";
+	} else {
+		echo "<p>" . __( 'No pages tested yet.', 'access-monitor' ) . "</p>";
 	}
-	unset( $params['url'] );
-	foreach ( $params as $key => $value ) {
-		$key = stripslashes( trim( $key ) );
-		$value = stripslashes( trim( $value ) );
-		if ( $value == '' ) { $value = '<em>' . __( 'Default', 'access-monitor' ) . '</em>'; }
-		$label = ucfirst( $key );
-		$parameters .= "<li><strong>$label</strong>: $value</li>";
-	}
-	echo "<h4>" . __( 'URLs Tested', 'access-monitor' ) . "</h4><ul>$urls</ul>";
-	echo "<h4>" . __( 'Test Parameters', 'access-monitor' ) . "</h4><ul>$parameters</ul>";
-	echo "<p><span class='dashicons dashicons-editor-help' aria-hidden='true'></span><a href='http://tenon.io/documentation/understanding-request-parameters.php'>" . __( 'Tenon Request Parameters', 'access-monitor' ) . "</a></p>";
 }
 
 add_action('admin_menu', 'am_remove_menu_item');
@@ -555,7 +559,7 @@ function am_custom_column( $column_name, $id ) {
 		break;
 		case 'am_tested' :
 			$params = get_post_meta( $id, '_tenon_params', true );
-			echo $params['level'];
+			echo isset( $params['level'] ) ? $params['level'] : '';
 		break;		
 		case 'am_schedule' :
 			$schedule = get_post_meta( $id, '_tenon_schedule', true );
