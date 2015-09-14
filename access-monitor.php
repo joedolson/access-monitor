@@ -768,7 +768,7 @@ function am_settings() {
 				'certainty' => array( 'label' =>  __( 'Minimum certainty', 'access-monitor' ), 'default' => '0' ),
 				'priority' => array( 'label' => __( 'Minimum priority', 'access-monitor' ), 'default' => '0' ),
 				'grade' => array( 'label' => __( 'Minimum percentage grade to publish', 'access-monitor' ),  'default' => '90' ),
-				'container' => array( 'label' => __( 'Post content container', 'access-monitor' ), 'default' => '.post-content' ),
+				'container' => array( 'label' => __( 'Post content container', 'access-monitor' ), 'default' => '.entry-content' ),
 				'store' => array( 'label' => __( 'Store data at Tenon.io?', 'access-monitor' ), 'default' => '0' ),				
 			);
 			echo "<ul>";

@@ -47,7 +47,7 @@ function am_pre_publish( $hook ) {
 					'level'          => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
 					'certainty'      => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '0',
 					'priority'       => ( isset( $args['priority'] ) ) ? $args['priority'] : '0',
-					'container'      => ( isset( $args['container'] ) ) ? $args['container'] : '.post-content',
+					'container'      => ( isset( $args['container'] ) ) ? $args['container'] : '.entry-content',
 					'store'          => ( isset( $args['store'] ) ) ? $args['store'] : '0',
 					'grade'          => ( isset( $args['grade'] ) ) ? $args['grade'] : '90',
 					'hide'           => __( 'Hide issues', 'access-monitor' ),
