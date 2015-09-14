@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, wave, section508
 Requires at least: 3.9.2
-Tested up to: 4.2
+Tested up to: 4.3
 License: GPLv2 or later
 Stable tag: 1.0.4
 
@@ -42,7 +42,8 @@ Keep up with <a href="https://github.com/joedolson/access-monitor">Access Monito
 Access Monitor allows you to run a one-time test or schedule a test to be run on a weekly or monthly basis. All tests run through this system are saved for later review and comparison so you can track the performance of a page or a test over time.
 
 * Duplicate issues are filtered out from the display. If an accessibility issue appears on multiple pages, it will only be shown the first time it's identified.
-* You can re-run any test from the Accessibility Reports screen at any time. Re-running a test will create a new test on the same pages and using the same test parameters.
+* Re-run any test from the Accessibility Reports screen at any time. Re-running a test will create a new test on the same pages and using the same test parameters.
+* Apply rules that will test posts before you publish them and reject their publication if they don't meet your criteria
 
 = Testing the WordPress Admin =
 
@@ -50,7 +51,6 @@ You can test the page you're viewing using a link in the admin bar labeled 'A11y
 
 * In the admin, the entirety of the WordPress admin HTML is only tested on the Dashboard. On other admin pages, only the code inside the wpbody-content container is passed to Tenon.
 * On the front-end, only Pages and individual posts or custom post type pages can be tested. Archive pages are not currently passed to Tenon.
-
 
 Available languages (in order of completeness):
 Dutch

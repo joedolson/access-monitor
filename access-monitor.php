@@ -341,7 +341,7 @@ function am_add_inner_box() {
 	global $post;
 	$content = stripslashes( $post->post_content );
 	$data = get_post_meta( $post->ID, '_tenon_json', true );
-	$content .= "<h2>".__('JSON Submission Data', 'access-monitor').":</h2><pre><code>".print_r( $data, 1 )."</code></pre>";
+	$content .= "<h3>".__('JSON Submission Data', 'access-monitor').":</h3><pre><code>".print_r( $data, 1 )."</code></pre>";
 	echo '<div class="am_post_fields">'.$content.'</div>';
 }
 
@@ -986,15 +986,17 @@ function am_list_reports( $count = 10 ) {
 }
 
 function am_support_page() {
+	$elem = ( version_compare( '4.4', get_option( 'version' ), '>=' ) ) ? 'h2' : 'h3'; 	
+	$parent = ( version_compare( '4.3', get_option( 'version' ), '>=' ) ) ? 'h1' : 'h2'; 	
 	?>
 	<div class="wrap" id='access-monitor'>
 	<?php am_update_settings(); ?>
-		<h2><div class='dashicons dashicons-universal-access' aria-hidden="true"></div><?php _e('Access Monitor','access-monitor'); ?></h2>
+		<<?php echo $parent; ?>><div class='dashicons dashicons-universal-access' aria-hidden="true"></div><?php _e('Access Monitor','access-monitor'); ?></<?php echo $parent; ?>>
 		<div id="am_settings_page" class="postbox-container" style="width: 70%">
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="report">
-						<h3><?php _e('Create Accessibility Report','access-monitor'); ?></h3>
+						<<?php echo $elem; ?>><?php _e('Create Accessibility Report','access-monitor'); ?></<?php echo $elem; ?>>
 						<div class="inside">
 							<?php 
 							if ( isset( $_GET['report'] ) && is_numeric( $_GET['report'] ) ) { 
@@ -1009,7 +1011,7 @@ function am_support_page() {
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="recent">
-						<h3><?php _e('Recent Accessibility Reports','access-monitor'); ?></h3>
+						<<?php echo $elem; ?>><?php _e('Recent Accessibility Reports','access-monitor'); ?></<?php echo $elem; ?>>
 						<div class="inside">
 							<?php 
 								$count = apply_filters( 'am_recent_reports', 10 );
@@ -1022,7 +1024,7 @@ function am_support_page() {
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="settings" tabindex='-1'>
-						<h3><?php _e('Access Monitor Settings','access-monitor'); ?></h3>
+						<<?php echo $elem; ?>><?php _e('Access Monitor Settings','access-monitor'); ?></<?php echo $elem; ?>>
 						<div class="inside">
 							<?php am_settings(); ?>
 						</div>
@@ -1032,7 +1034,7 @@ function am_support_page() {
 			<div class='metabox-holder' tabindex='-1' id='support-form'>			
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="get-support">
-						<h3><?php _e('Get Plug-in Support','access-monitor'); ?></h3>
+						<<?php echo $elem; ?>><?php _e('Get Plug-in Support','access-monitor'); ?></<?php echo $elem; ?>>
 						<div class="inside">
 							<div class='am-support-me'>
 								<p>
@@ -1053,12 +1055,13 @@ function am_support_page() {
 }
 
 function am_show_support_box() {
+	$elem = ( version_compare( '4.4', get_option( 'version' ), '>=' ) ) ? 'h2' : 'h3'; 
 ?>
 <div class="postbox-container" style="width:20%">
 <div class="metabox-holder">
 	<div class="meta-box-sortables">
 		<div class="postbox">
-		<h3><?php _e('Support this Plug-in','access-monitor'); ?></h3>
+		<<?php echo $elem; ?>><?php _e('Support this Plug-in','access-monitor'); ?></<?php echo $elem; ?>>
 		<div id="support" class="inside resources">
 		<ul>
 			<li>		
@@ -1084,9 +1087,21 @@ function am_show_support_box() {
 		</div>
 		</div>
 	</div>
+	
 	<div class="meta-box-sortables">
 		<div class="postbox">
-		<h3><?php _e('Disclaimer','access-monitor'); ?></h3>
+		<<?php echo $elem; ?>><?php _e('Get Help','access-monitor'); ?></<?php echo $elem; ?>>
+		<div id="support" class="inside resources">
+			<p>
+				<?php printf( __( 'Access Monitor has two parts: the plug-in, and the API it interacts with. If your issue is in the plug-in, use the <a href="%s">support form</a>. If your issue is with the API or on tenon.io, <a href="mailto:support@tenon.io">email Tenon support</a>. Thanks!', 'access-monitor' ), '#support-form' ); ?>
+			</p>
+		</div>
+		</div>
+	</div>
+	
+	<div class="meta-box-sortables">
+		<div class="postbox">
+		<<?php echo $elem; ?>><?php _e('Disclaimer','access-monitor'); ?></<?php echo $elem; ?>>
 		<div id="support" class="inside resources">
 			<p>
 				<?php _e( 'Access Monitor uses Tenon.io. The Tenon.io API is designed to examine aspects of accessibility that are machine-testable in a reliable way. No errors does not mean that your site is accessible.', 'access-monitor' ); ?>
@@ -1097,18 +1112,6 @@ function am_show_support_box() {
 		</div>
 		</div>
 	</div>	
-	
-	<div class="meta-box-sortables">
-		<div class="postbox">
-		<h3><?php _e('Get Help','access-monitor'); ?></h3>
-		<div id="support" class="inside resources">
-			<p>
-				<?php printf( __( 'Access Monitor has two parts: the plug-in, and the API it interacts with. If your issue is in the plug-in, use the <a href="%s">support form</a>. If your issue is with the API or on tenon.io, <a href="mailto:support@tenon.io">email Tenon support</a>. Thanks!', 'access-monitor' ), '#support-form' ); ?>
-			</p>
-		</div>
-		</div>
-	</div>		
-
 </div>
 </div>
 <?php
