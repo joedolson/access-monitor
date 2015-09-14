@@ -8,6 +8,7 @@ jQuery( document ).ready( function( $ ) {
 		} else {
 			var preview_url = $( '#post-preview' ).attr( 'href' );
 			var preview_content = '';
+			var preview_container ( am.container == '' ) ? 'body' : am.container;
 			$.ajax({
 			   url:preview_url,
 			   type:'GET',
