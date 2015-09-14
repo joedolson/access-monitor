@@ -1034,6 +1034,13 @@ function am_support_page() {
 					<div class="postbox" id="get-support">
 						<h3><?php _e('Get Plug-in Support','access-monitor'); ?></h3>
 						<div class="inside">
+							<div class='am-support-me'>
+								<p>
+									<?php printf(
+										__( 'Please, consider a <a href="%s">donation</a> to support Access Monitor!', 'access-monitor' )
+									, "https://www.joedolson.com/donate/" ); ?>
+								</p>
+							</div>
 							<?php am_get_support_form(); ?>
 						</div>
 					</div>

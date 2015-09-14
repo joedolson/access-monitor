@@ -11,3 +11,22 @@
 .inspect-a11y .dashicons { vertical-align: middle; }
 .report-options { padding: 1em; border: 1px solid #ddd; }
 #support_request { width: 100%; }
+
+
+.am-support-me p {
+    font-size: 1.6em;
+    font-weight: 600;
+    background: #007eb3;
+    text-shadow: 1px 1px rgb( 35, 60, 127 );
+    padding: 1em;
+    text-align: center;
+    margin: 0 0 1em;
+}
+
+.am-support-me p, .am-support-me a {
+    color: #fff;
+}
+
+.am-support-me a:hover, .am-support-me a:focus {
+    text-decoration: none;
+}
