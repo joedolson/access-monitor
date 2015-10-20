@@ -1,6 +1,5 @@
 jQuery( document ).ready( function( $ ) {
 	$( '.am-errors' ).hide();
-
 	$( '#publish[name="publish"], button.inspect-a11y' ).on( 'click', function( e ) {
 		var override = $( '#am_override' ).is( ':checked' );
 		if ( override ) {
@@ -8,7 +7,12 @@ jQuery( document ).ready( function( $ ) {
 		} else {
 			var preview_url = $( '#post-preview' ).attr( 'href' );
 			var preview_content = '';
-			var preview_container ( am.container == '' ) ? 'body' : am.container;
+			var preview_container = ( am.container == '' ) ? 'body' : am.container;
+			var response_content = '';
+			var grade = 0;
+			
+			e.preventDefault();
+			
 			$.ajax({
 			   url:preview_url,
 			   type:'GET',
@@ -27,30 +31,33 @@ jQuery( document ).ready( function( $ ) {
 						'priority' : am.priority,
 						'fragment' : '1'
 					};
-					
+										
 					$.ajax({
 						data: query,
 						url: am_ajax_url,
 						dataType: 'json',
 						success: function( data ) {
-							var response_content = data.formatted;
-							var grade = data.grade;
+							response_content = data.formatted;
+							grade = data.grade;
 							if ( grade < am.grade ) {
 								$( '#am-errors' ).html( response_content );
 								$( '.am-errors .score' ).text( grade.toFixed(2) + '%' );
 								$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).focus();
-								e.preventDefault();	
+							} else {
+								$( '#post' ).submit();
 							}
 						},
 						error: function( data ) {
-							/* console.log(data.responseText); */
+							/* 
+								console.log(data.responseText); 
+							*/
+							$( '#post' ).submit();
 						}	
-					} );
+					});
 					
 					return false;			   
 			   }
 			});
-			e.preventDefault();
 		}
 	});
 	
@@ -75,15 +82,17 @@ jQuery( document ).ready( function( $ ) {
 			error: function(data) {
 				$( '#am_notified' ).html( amn.error );
 			}
-		});		
+		});
 			
 	});	
 	
-	/*$(document).ajaxError( function( event, requests, settings ) {
-		console.log( event );
-		console.log( requests.responseText );
-		console.log( settings );
-	});*/
+	/*
+		$(document).ajaxError( function( event, requests, settings ) {
+			console.log( event );
+			console.log( requests.responseText );
+			console.log( settings );
+		});
+	*/
 	
 	$( '.am-toggle' ).on( 'click', function(e) {
 		e.preventDefault();
