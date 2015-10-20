@@ -83,6 +83,10 @@ function am_query_tenon( $post ) {
 			$results = array();
 		}
 		$grade = am_percentage( $object );
+		if ( $grade === false ) {
+			$formatted = '<p><strong>' . __( 'Tenon error:', 'access-monitor' ) . '</strong> ' . $object->message . '</p>';
+			$grade = 0;
+		}
 		return array( 'formatted'=> $formatted, 'results' => $results, 'grade' => $grade );
 	} else {
 		return false;

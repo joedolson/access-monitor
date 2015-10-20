@@ -112,22 +112,26 @@ function am_edit_form_after_title( $post ) {
  * For now, use overall error density scoring. Later, add error-specific exits.
  */
 function am_percentage( $results ) {
-	$stats = $results->globalStats;	
-	$max = $stats->allDensity + (3 * $stats->stdDev);
-	$errors = $stats->errorDensity;
-	$warnings = $stats->warningDensity;
-	$score = $results->resultSummary->density->allDensity;
-	
-	$min = 0;
-	
-	if ( $score > $max ) {
-		$return = 0;
-	} else if ( $score <= $min ) {
-		$return = 100;
+	$status = $results->status;
+	if ( $status == 200 ) {
+		$stats = $results->globalStats;	
+		$max = $stats->allDensity + (3 * $stats->stdDev);
+		$errors = $stats->errorDensity;
+		$warnings = $stats->warningDensity;
+		$score = $results->resultSummary->density->allDensity;
+		
+		$min = 0;
+		
+		if ( $score > $max ) {
+			$return = 0;
+		} else if ( $score <= $min ) {
+			$return = 100;
+		} else {
+			$return = 100 - (( $score / $max ) * 100 );
+		}
 	} else {
-		$return = 100 - (( $score / $max ) * 100 );
+		$return = false;
 	}
-	
 	return apply_filters( 'am_modify_grade', $return, $results );
 }
 
