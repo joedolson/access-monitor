@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 add_action( 'post_submitbox_misc_actions', 'am_inspect_post' );
 function am_inspect_post() {
 	$post_ID = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : false;
-		if ( $post_ID && am_in_post_type( $post_ID ) ) {
+	if ( $post_ID && am_in_post_type( $post_ID ) ) {
 		$control = '';
 		if ( current_user_can( 'manage_options' ) ) {
 			$control = "<p><input type='checkbox' id='am_override' value='1' name='am_override' /> <label for='am_override'>" . __( 'Override Accessibility Test Results', 'access-monitor' ) . "</label></p>";
@@ -26,6 +26,7 @@ function am_inspect_post() {
 			<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">
 				<button type="button" class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Check Accessibility', 'access-monitor' ) . '</button>' . 
 				$control . '
+				<input type="submit" name="publish" id="ampublish" class="am-hidden" value="Publish" />
 			</div>';
 	}
 }
@@ -54,7 +55,8 @@ function am_pre_publish( $hook ) {
 					'show'           => __( 'Show issues', 'access-monitor' ),
 					'failed'         => __( 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.', 'access-monitor' ),
 					'error'          => __( '<strong>Post may not be published</strong>: does not meet minimum accessibility requirements.', 'access-monitor' ),
-					'pass'           => __( '<strong>Post may be published!</strong>: meets your accessibility requirements.', 'access-monitor' )
+					'pass'           => __( '<strong>Post may be published!</strong>: meets your accessibility requirements.', 'access-monitor' ),
+					'ajaxerror'        => __( '<strong>There was an error sending your post to Tenon.io</strong>.', 'access-monitor' )
 				);
 				wp_localize_script( 'tenon.inspector', 'am', $settings );
 				wp_localize_script( 'tenon.inspector', 'am_ajax_notify', 'am_ajax_notify' );
