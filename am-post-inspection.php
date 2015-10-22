@@ -45,8 +45,8 @@ function am_pre_publish( $hook ) {
 				wp_enqueue_script( 'tenon.inspector', plugins_url( 'js/inspector.js', __FILE__ ), array( 'jquery' ), '', true );
 				$settings = array(
 					'level'          => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
-					'certainty'      => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '0',
-					'priority'       => ( isset( $args['priority'] ) ) ? $args['priority'] : '0',
+					'certainty'      => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '70',
+					'priority'       => ( isset( $args['priority'] ) ) ? $args['priority'] : '30',
 					'container'      => ( isset( $args['container'] ) ) ? $args['container'] : '.entry-content',
 					'store'          => ( isset( $args['store'] ) ) ? $args['store'] : '0',
 					'grade'          => ( isset( $args['grade'] ) ) ? $args['grade'] : '90',
