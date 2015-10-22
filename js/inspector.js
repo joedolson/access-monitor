@@ -17,7 +17,7 @@ jQuery( document ).ready( function( $ ) {
 			   url:preview_url,
 			   type:'GET',
 			   success: function(data){
-					preview_content = $(data).find( am.container ).html();
+					preview_content = $(data).find( preview_container ).html();
 					if ( !preview_content || preview_content == '' ) {
 						preview_content = am.failed;
 					}
