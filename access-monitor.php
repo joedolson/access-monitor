@@ -1063,8 +1063,8 @@ function am_support_page() {
 }
 
 function am_show_support_box() {
-	$elem = ( version_compare( '4.4', get_option( 'version' ), '>=' ) ) ? 'h2' : 'h3'; 
-?>
+	$elem = ( version_compare( '4.4', get_option( 'version' ), '>' ) ) ? 'h3' : 'h2'; 	
+	?>
 <div class="postbox-container" style="width:20%">
 <div class="metabox-holder">
 	<div class="meta-box-sortables">
