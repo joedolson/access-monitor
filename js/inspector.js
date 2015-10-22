@@ -1,6 +1,6 @@
 jQuery( document ).ready( function( $ ) {
 	$( '.am-errors' ).hide();
-	$( '#publish[name="publish"], button.inspect-a11y' ).on( 'click', function( e ) {
+	$( '#publish[name="publish"], button.inspect-a11y' ).on( 'click', function( e ) {		
 		var override = $( '#am_override' ).is( ':checked' );
 		if ( override ) {
 			// exit without testing
@@ -42,16 +42,26 @@ jQuery( document ).ready( function( $ ) {
 							if ( grade < am.grade ) {
 								$( '#am-errors' ).html( response_content );
 								$( '.am-errors .score' ).text( grade.toFixed(2) + '%' );
+								$( '.am-errors .am-message' ).html( am.error );								
 								$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).focus();
-							} else {
-								$( '#post' ).submit();
+							} else {							
+								if ( e.target.nodeName == 'INPUT' ) {
+									$( '#post' ).submit();
+								} else {
+									$( '#am-errors' ).html( response_content );
+									$( '.am-errors .score' ).text( grade.toFixed(2) + '%' );
+									$( '.am-errors .am-message' ).html( am.pass );
+									$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).focus();
+								}
 							}
 						},
 						error: function( data ) {
 							/* 
 								console.log(data.responseText); 
 							*/
-							$( '#post' ).submit();
+							if ( e.target.nodeName == 'INPUT' ) {
+								$( '#post' ).submit();
+							}
 						}	
 					});
 					

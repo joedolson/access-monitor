@@ -52,7 +52,9 @@ function am_pre_publish( $hook ) {
 					'grade'          => ( isset( $args['grade'] ) ) ? $args['grade'] : '90',
 					'hide'           => __( 'Hide issues', 'access-monitor' ),
 					'show'           => __( 'Show issues', 'access-monitor' ),
-					'failed'         => __( 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.', 'access-monitor' )
+					'failed'         => __( 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.', 'access-monitor' ),
+					'error'          => __( '<strong>Post may not be published</strong>: does not meet minimum accessibility requirements.', 'access-monitor' ),
+					'pass'           => __( '<strong>Post may be published!</strong>: meets your accessibility requirements.', 'access-monitor' )
 				);
 				wp_localize_script( 'tenon.inspector', 'am', $settings );
 				wp_localize_script( 'tenon.inspector', 'am_ajax_notify', 'am_ajax_notify' );
@@ -101,7 +103,7 @@ function am_edit_form_after_title( $post ) {
 	if ( am_in_post_type( $post->ID ) ) { 
 		echo '
 		<div class="am-errors"><p>' 
-			. sprintf( __( 'Score: %s / <strong>Post may not be published</strong>: does not meet minimum accessibility requirements. %s', 'access-monitor' ), '<strong class="score"></strong>', '<a href="#am-errors" class="am-toggle" aria-expanded="false">Show Results</a>' ) 
+			. sprintf( __( 'Score: %s / %s %s', 'access-monitor' ), '<strong class="score"></strong>', '<span class="am-message"></span>', '<a href="#am-errors" class="am-toggle" aria-expanded="false">Show Results</a>' ) 
 			. "</p><div class='am-errors-display' id='am-errors'></div>
 		</div>";
 	}
@@ -116,9 +118,21 @@ function am_percentage( $results ) {
 	if ( $status == 200 ) {
 		$stats = $results->globalStats;	
 		$max = $stats->allDensity + (3 * $stats->stdDev);
-		$errors = $stats->errorDensity;
-		$warnings = $stats->warningDensity;
-		$score = $results->resultSummary->density->allDensity;
+		
+		// test against all errors & warnings
+		$score    = $results->resultSummary->density->allDensity;
+		/*
+			Alternate scoring options to be added in future releases
+			
+			// test against errors only
+			$score    = $results->resultSummary->density->errorDensity;
+			// test against error count only
+			$score    = $results->resultSummary->issues->totalErrors;
+			// test against error count by class
+			$scoreA   = $results->resultSummary->issuesByLevel->A->count;
+			$scoreAA  = $results->resultSummary->issuesByLevel->AA->count;
+			$scoreAAA = $results->resultSummary->issuesByLevel->AAA->count;
+		*/
 		
 		$min = 0;
 		
@@ -132,6 +146,7 @@ function am_percentage( $results ) {
 	} else {
 		$return = false;
 	}
+	
 	return apply_filters( 'am_modify_grade', $return, $results );
 }
 
