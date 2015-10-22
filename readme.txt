@@ -136,6 +136,7 @@ No tool can pick up every Accessibility issue - but Access Monitor can help you 
 2. Accessibility Reports list
 3. Set up an Accessibility Report
 4. Accessibility Report
+5. Settings for testing post accessibility
 
 == Upgrade Notice ==
 

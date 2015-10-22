@@ -7,7 +7,7 @@ Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
 Text Domain: access-monitor
 Domain Path: lang
-Version: 1.0.4
+Version: 1.1.0
 */
 /*  Copyright 2014-2015  Joe Dolson (email : joe@joedolson.com)
 
@@ -37,7 +37,7 @@ require_once( 't/tenon.php' );
 require_once( 't/wave.php' );
 require_once( 'am-post-inspection.php' );
 
-$am_version = '1.0.4';
+$am_version = '1.1.0';
 
 add_filter( 'the_content', 'am_pass_query' );
 function am_pass_query( $content ) {
@@ -761,10 +761,6 @@ function am_settings() {
 				<fieldset>
 					<legend><?php _e( 'Test these post types before publishing:', 'my-tickets' ); ?></legend>				
 					<p class='checkbox'><?php echo $am_post_type_options; ?></p>
-					<p>
-						<label for='am_notify'><?php _e( 'Email address to send requests for accessibility review', 'access-monitor' ); ?></label>
-						<input type='email' value='<?php esc_attr_e( $am_notify ); ?>' id='am_notify' name='am_notify' />
-					</p>
 				</fieldset>
 				<fieldset>
 					<legend><?php _e( 'Accessibility Test Settings', 'access-monitor' ); ?></legend>
@@ -774,8 +770,8 @@ function am_settings() {
 				'certainty' => array( 'label' =>  __( 'Minimum certainty', 'access-monitor' ), 'default' => '0' ),
 				'priority' => array( 'label' => __( 'Minimum priority', 'access-monitor' ), 'default' => '0' ),
 				'grade' => array( 'label' => __( 'Minimum percentage grade to publish', 'access-monitor' ),  'default' => '90' ),
-				'container' => array( 'label' => __( 'Post content container', 'access-monitor' ), 'default' => '.entry-content' ),
-				'store' => array( 'label' => __( 'Store data at Tenon.io?', 'access-monitor' ), 'default' => '0' ),				
+				'store' => array( 'label' => __( 'Store data at Tenon.io?', 'access-monitor' ), 'default' => '0' ),	
+				'container' => array( 'label' => __( 'Post content container', 'access-monitor' ), 'default' => '.entry-content' )				
 			);
 			echo "<ul>";
 			foreach ( $criteria as $key => $values ) {
@@ -793,7 +789,12 @@ function am_settings() {
 			}
 			echo "</ul>
 			</fieldset>";
-			
+			?>
+					<p>
+						<label for='am_notify'><?php _e( 'Email address to send requests for accessibility review', 'access-monitor' ); ?></label>
+						<input type='email' value='<?php esc_attr_e( $am_notify ); ?>' id='am_notify' name='am_notify' />
+					</p>
+			<?php			
 		}
 		
 		
