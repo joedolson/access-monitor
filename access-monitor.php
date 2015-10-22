@@ -84,7 +84,12 @@ function am_query_tenon( $post ) {
 		}
 		$grade = am_percentage( $object );
 		if ( $grade === false ) {
-			$formatted = '<p><strong>' . __( 'Tenon error:', 'access-monitor' ) . '</strong> ' . $object->message . '</p>';
+			if ( trim( $object->message ) == 'Bad Request - Either src or url parameter must be supplied' ) {
+				$message = __( 'Save your post as a draft in order to test for accessibility.', 'access-monitor' );
+			} else {
+				$message = $object->message;
+			}
+			$formatted = '<p><strong>' . __( 'Tenon error:', 'access-monitor' ) . '</strong> ' . $message . '</p>';
 			$grade = 0;
 		}
 		return array( 'formatted'=> $formatted, 'results' => $results, 'grade' => $grade );
