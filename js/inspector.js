@@ -21,7 +21,7 @@ jQuery( document ).ready( function( $ ) {
 					if ( !preview_content || preview_content == '' ) {
 						preview_content = am.failed;
 					}
-					
+										
 					var query = {
 						'action' : am_ajax_action,
 						'tenon' : preview_content,
@@ -38,15 +38,21 @@ jQuery( document ).ready( function( $ ) {
 						dataType: 'json',
 						success: function( data ) {
 							response_content = data.formatted;
+							var err = response_content.search( 'Tenon error' );
 							grade = data.grade;
 							if ( grade < am.grade ) {
 								$( '#am-errors' ).html( response_content );
 								$( '.am-errors .score' ).text( grade.toFixed(2) + '%' );
-								$( '.am-errors .am-message' ).html( am.error );								
-								$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).focus();
+								$( '.am-errors .am-message' ).html( am.error );	
+								if ( err > -1 ) {
+									$( '.am-errors' ).addClass( 'updated error' ).html( response_content ).show().attr( 'tabindex', '-1' ).focus();
+								} else {
+									$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).focus();
+								}
 							} else {							
 								if ( e.target.nodeName == 'INPUT' ) {
-									$( '#post' ).submit();
+									console.log( "Am here" );
+									$( '#ampublish' ).click();
 								} else {
 									$( '#am-errors' ).html( response_content );
 									$( '.am-errors .score' ).text( grade.toFixed(2) + '%' );
@@ -66,6 +72,9 @@ jQuery( document ).ready( function( $ ) {
 					});
 					
 					return false;			   
+			   },
+			   error: function( data ) {
+					$( '.am-errors' ).addClass( 'updated error' ).show().html( am.ajaxerror ).attr( 'tabindex', '-1' ).focus();
 			   }
 			});
 		}

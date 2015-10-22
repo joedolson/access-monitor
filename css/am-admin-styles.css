@@ -27,6 +27,10 @@
     color: #fff;
 }
 
+.am-hidden {
+	visibility: hidden;
+}
+
 .am-support-me a:hover, .am-support-me a:focus {
     text-decoration: none;
 }
