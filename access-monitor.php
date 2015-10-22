@@ -762,10 +762,12 @@ function am_settings() {
 					<legend><?php _e( 'Test these post types before publishing:', 'my-tickets' ); ?></legend>				
 					<p class='checkbox'><?php echo $am_post_type_options; ?></p>
 					<p>
-						<label for='am_notify'><?php _e( 'Email address to request accessibility review', 'access-monitor' ); ?></label>
+						<label for='am_notify'><?php _e( 'Email address to send requests for accessibility review', 'access-monitor' ); ?></label>
 						<input type='email' value='<?php esc_attr_e( $am_notify ); ?>' id='am_notify' name='am_notify' />
 					</p>
 				</fieldset>
+				<fieldset>
+					<legend><?php _e( 'Accessibility Test Settings', 'access-monitor' ); ?></legend>
 			<?php
 			$criteria = array( 
 				'level' => array( 'label' => __( 'Required WCAG Level', 'access-monitor' ), 'default' => 'AA' ),
@@ -789,7 +791,9 @@ function am_settings() {
 					}
 				}
 			}
-			echo "</ul>";
+			echo "</ul>
+			</fieldset>";
+			
 		}
 		
 		
@@ -990,8 +994,8 @@ function am_list_reports( $count = 10 ) {
 }
 
 function am_support_page() {
-	$elem = ( version_compare( '4.4', get_option( 'version' ), '>=' ) ) ? 'h2' : 'h3'; 	
-	$parent = ( version_compare( '4.3', get_option( 'version' ), '>=' ) ) ? 'h1' : 'h2'; 	
+	$elem = ( version_compare( '4.4', get_option( 'version' ), '>' ) ) ? 'h3' : 'h2'; 	
+	$parent = ( version_compare( '4.4', get_option( 'version' ), '>' ) ) ? 'h2' : 'h1'; 	
 	?>
 	<div class="wrap" id='access-monitor'>
 	<?php am_update_settings(); ?>
