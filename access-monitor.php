@@ -772,8 +772,8 @@ function am_settings() {
 			<?php
 			$criteria = array( 
 				'level' => array( 'label' => __( 'Required WCAG Level', 'access-monitor' ), 'default' => 'AA' ),
-				'certainty' => array( 'label' =>  __( 'Minimum certainty', 'access-monitor' ), 'default' => '70' ),
-				'priority' => array( 'label' => __( 'Minimum priority', 'access-monitor' ), 'default' => '30' ),
+				'certainty' => array( 'label' =>  __( 'Minimum certainty', 'access-monitor' ), 'default' => '60' ),
+				'priority' => array( 'label' => __( 'Minimum priority', 'access-monitor' ), 'default' => '20' ),
 				'grade' => array( 'label' => __( 'Minimum percentage grade to publish', 'access-monitor' ),  'default' => '90' ),
 				'store' => array( 'label' => __( 'Store data at Tenon.io?', 'access-monitor' ), 'default' => '0' ),	
 				'container' => array( 'label' => __( 'Post content container', 'access-monitor' ), 'default' => '.entry-content' )				
