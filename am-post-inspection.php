@@ -26,7 +26,7 @@ function am_inspect_post() {
 			<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">
 				<button type="button" class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Check Accessibility', 'access-monitor' ) . '</button>' . 
 				$control . '
-				<input type="submit" name="publish" id="ampublish" class="am-hidden" value="Publish" />
+				<input type="submit" name="publish" id="ampublish" class="screen-reader-text" value="Publish" />
 			</div>';
 	}
 }
@@ -46,8 +46,8 @@ function am_pre_publish( $hook ) {
 				wp_enqueue_script( 'tenon.inspector', plugins_url( 'js/inspector.js', __FILE__ ), array( 'jquery' ), '', true );
 				$settings = array(
 					'level'          => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
-					'certainty'      => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '70',
-					'priority'       => ( isset( $args['priority'] ) ) ? $args['priority'] : '30',
+					'certainty'      => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '60',
+					'priority'       => ( isset( $args['priority'] ) ) ? $args['priority'] : '20',
 					'container'      => ( isset( $args['container'] ) ) ? $args['container'] : '.entry-content',
 					'store'          => ( isset( $args['store'] ) ) ? $args['store'] : '0',
 					'grade'          => ( isset( $args['grade'] ) ) ? $args['grade'] : '90',
