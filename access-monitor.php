@@ -736,7 +736,7 @@ function am_settings() {
 	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
 	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'', 'tenon_pre_publish' => '', 'am_post_types' => array(), 'am_post_grade' => '', 'am_criteria' => array() ), $settings );
 
-	$post_types    = get_post_types( array( 'public' => true ), 'objects' );
+	$post_types    = get_post_types( array( 'public' => true, 'show_ui' => true ), 'objects' );
 	$am_post_types = isset( $settings['am_post_types'] ) ? $settings['am_post_types'] : array();
 	$am_criteria = isset( $settings['am_criteria'] ) ? $settings['am_criteria'] : array();
 	$am_notify   = isset( $settings['am_notify'] ) ? $settings['am_notify'] : get_option( 'admin_email' );
@@ -748,7 +748,9 @@ function am_settings() {
 		} else {
 			$selected = '';
 		}
-		$am_post_type_options .= "<input type='checkbox' id='am_$type->name' name='am_post_types[]' value='$type->name'$selected><label for='am_$type->name'>" . $type->labels->name . "</label> ";
+		if ( $type->name != 'attachment' ) {
+			$am_post_type_options .= "<input type='checkbox' id='am_$type->name' name='am_post_types[]' value='$type->name'$selected><label for='am_$type->name'>" . $type->labels->name . "</label> ";
+		}
 	}
 	
 	echo "
