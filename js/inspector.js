@@ -1,5 +1,14 @@
 jQuery( document ).ready( function( $ ) {
 	$( '.am-errors' ).hide();
+	var status = $( '#am_status' ).val();
+	if ( status == 'new' ) {
+		$( '#publish[name="publish"]' ).attr( 'disabled', 'disabled' ).removeClass( 'button-primary' ).addClass( 'button-secondary' );
+		$( '#save-post' ).addClass( 'button-primary' );
+		$( '#save-post' ).on( 'click', function( e ) {
+			$( '#publish[name="publish"]' ).attr( 'disabled', false ).removeClass( 'button-secondary' ).addClass( 'button-primary' );
+			$( '#save-post' ).removeClass( 'button-primary' );
+		});
+	}
 	$( '#publish[name="publish"], button.inspect-a11y' ).on( 'click', function( e ) {		
 		var override = $( '#am_override' ).is( ':checked' );
 		if ( override ) {

@@ -10,7 +10,12 @@ if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
  */
 add_action( 'post_submitbox_misc_actions', 'am_inspect_post' );
 function am_inspect_post() {
-	$post_ID = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : false;
+	global $post;
+	$post_ID = $post->ID;
+	$status = 'new';
+	if ( isset( $_GET['post'] ) ) {
+		$status = 'edit';
+	}
 	if ( $post_ID && am_in_post_type( $post_ID ) ) {
 		$control = '';
 		if ( current_user_can( 'manage_options' ) ) {
@@ -24,6 +29,7 @@ function am_inspect_post() {
 		}
 		echo '
 			<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">
+				<input type="hidden" value="' . $status . '" name="am-status" id="am_status" />
 				<button type="button" class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Check Accessibility', 'access-monitor' ) . '</button>' . 
 				$control . '
 				<input type="submit" name="publish" id="ampublish" class="screen-reader-text" value="Publish" />
