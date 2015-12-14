@@ -9,11 +9,11 @@ Text Domain: access-monitor
 Domain Path: lang
 Version: 1.1.0
 */
-/*  Copyright 2014-2015  Joe Dolson (email : joe@joedolson.com)
+/*  Copyright 2014-2015  Joe Dolson (email : plugins@joedolson.com)
 
-    This program is free software; you can redistribute it and/or modify
+    This program is  software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
+    the  Software Foundation; either version 2 of the License, or
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
@@ -22,7 +22,7 @@ Version: 1.1.0
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
+    along with this program; if not, write to the  Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -778,7 +778,7 @@ function am_settings() {
 				'priority' => array( 'label' => __( 'Minimum priority', 'access-monitor' ), 'default' => '20' ),
 				'grade' => array( 'label' => __( 'Minimum percentage grade to publish', 'access-monitor' ),  'default' => '90' ),
 				'store' => array( 'label' => __( 'Store data at Tenon.io?', 'access-monitor' ), 'default' => '0' ),	
-				'container' => array( 'label' => __( 'Post content container', 'access-monitor' ), 'default' => '.entry-content' )				
+				'container' => array( 'label' => __( 'Post content container', 'access-monitor' ), 'default' => '.access-monitor-content' )				
 			);
 			echo "<ul>";
 			foreach ( $criteria as $key => $values ) {
@@ -1075,6 +1075,24 @@ function am_show_support_box() {
 	?>
 <div class="postbox-container" style="width:20%">
 <div class="metabox-holder">
+	<?php if ( isset( $_GET['signup'] ) && $_GET['signup'] == 'dismiss' ) {
+		update_option( 'am-tenon-signup', 1 );
+	} ?>
+	<?php if ( get_option( 'am-tenon-signup' ) != '1' ) { ?>
+	<div class="meta-box-sortables">
+		<div class="postbox" id="tenon-signup">
+			<a href="<?php echo admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php&signup=dismiss' ); ?>" class='am-dismiss'><span class='dashicons dashicons-no' aria-hidden='true'><span class="screen-reader-text"><?php _e( 'Dismiss', 'access-monitor' ); ?></span></a>
+			<<?php echo $elem; ?> class="heading"><?php _e('Sign-up with Tenon.io','access-monitor'); ?></<?php echo $elem; ?>>
+			<div class="inside subscribe">
+				<a href="https://tenon.io/pricing.php"><img src="<?php echo plugins_url( 'img/tenon-logo-no-border-light.png', __FILE__ ); ?>" alt="<?php _e( 'Sign up for Tenon.io', 'access-monitor' ); ?>" /></a>
+				<p>
+					<?php printf( __( "Access Monitor can't exist without Tenon.io subscribers. <a href='%s'>Subscribe now!</a>", 'access-monitor' ), 'https://tenon.io/pricing.php' ); ?>
+				</p>				
+			</div>
+		</div>
+	</div>
+	<?php } ?>
+	
 	<div class="meta-box-sortables">
 		<div class="postbox">
 		<<?php echo $elem; ?>><?php _e('Support this Plug-in','access-monitor'); ?></<?php echo $elem; ?>>
@@ -1289,4 +1307,16 @@ function am_redirect_new() {
 	if ( $screen->id == 'tenon-report' && !isset( $_GET['action'] ) ) {
 		wp_safe_redirect( admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php') );
 	}
+}
+
+
+/**
+ * Add "Settings" link into Plug-in list
+ */
+add_filter('plugin_action_links', 'am_plugin_action', -10, 2);
+function am_plugin_action($links, $file) {
+	if ($file == plugin_basename(dirname(__FILE__).'/access-monitor.php')) {
+		$links[] = "<a href='" . admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) . ">" . __( 'Access Monitor Settings', 'access-monitor' ) . "</a>";
+	}
+	return $links;
 }
