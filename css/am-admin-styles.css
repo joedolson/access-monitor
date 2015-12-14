@@ -12,6 +12,49 @@
 .report-options { padding: 1em; border: 1px solid #ddd; }
 #support_request { width: 100%; }
 
+#tenon-signup img {
+	max-width: 100%;
+	height: auto;
+}
+
+#tenon-signup .heading {
+	background: #2e6da4;
+	color: #fff;
+}
+
+#tenon-signup {
+	color: #f3f3f3;
+	background: #337ab7;
+}
+
+#tenon-signup .subscribe p {
+	font-size: 1.2em;
+}
+
+#tenon-signup .subscribe a {
+	color: #fff;
+	font-weight: 700;
+	display: block;
+	width: 100%;
+	padding: .5em 0;
+	font-size: 1.2em;
+}
+
+#tenon-signup .subscribe a:hover {
+	text-decoration: none;
+}
+
+#tenon-signup .am-dismiss {
+	float: right;
+	padding: 8px;
+	color: #e6e6e6;
+	text-decoration: none;
+}
+
+#tenon-signup .am-dismiss:hover, #tenon-signup .am-dismiss:focus {
+	outline: 1px solid #fff;
+	color: #fff;
+}
 
 .am-support-me p {
     font-size: 1.6em;
