@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, wave, section508
 Requires at least: 3.9.2
-Tested up to: 4.3
+Tested up to: 4.4.0
 License: GPLv2 or later
 Stable tag: 1.1.0
 
