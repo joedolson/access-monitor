@@ -54,7 +54,7 @@ function am_pre_publish( $hook ) {
 					'level'          => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
 					'certainty'      => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '60',
 					'priority'       => ( isset( $args['priority'] ) ) ? $args['priority'] : '20',
-					'container'      => ( isset( $args['container'] ) ) ? $args['container'] : '.entry-content',
+					'container'      => ( isset( $args['container'] ) && !empty( $args['container'] ) ) ? $args['container'] : '.access-monitor-content',
 					'store'          => ( isset( $args['store'] ) ) ? $args['store'] : '0',
 					'grade'          => ( isset( $args['grade'] ) ) ? $args['grade'] : '90',
 					'hide'           => __( 'Hide issues', 'access-monitor' ),
@@ -92,7 +92,7 @@ function am_pre_publish( $hook ) {
  */
 function am_in_post_type( $id ) {
 	$settings = get_option( 'am_settings' );
-	$post_type_settings = $settings['am_post_types'];
+	$post_type_settings = isset( $settings['am_post_types'] ) ? $settings['am_post_types'] : array();
 	if ( is_array( $post_type_settings ) && !empty( $post_type_settings ) ) {
 		$type               = get_post_type( $id );
 		if ( in_array( $type, $post_type_settings ) ) {
@@ -190,3 +190,23 @@ function am_ajax_notify() {
 	}
 }
 
+/**
+ * If custom value is not set for Access Monitor content container, add independent container and test that.
+ */
+add_filter( 'the_content', 'am_testable_post_content' );
+function am_testable_post_content( $content ) {
+	global $post;
+	if ( am_in_post_type( $post->ID ) ) {
+		$options = get_option( 'am_settings' );
+		$args = isset( $options['am_criteria'] ) ? $options['am_criteria'] : array();
+		$test = ( isset( $options['tenon_pre_publish'] ) && $options['tenon_pre_publish'] == 1 ) ? true : false;
+		$container = isset( $args['container'] ) ? $args['container'] : false; 
+		if ( $test ) {
+			if ( !$container || $container == '.access-monitor-content' ) {
+				$content = '<div class="access-monitor-content">' . $content . '</div>';
+			}
+		}
+	}
+	
+	return $content;
+}
