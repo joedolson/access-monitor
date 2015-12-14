@@ -5,7 +5,7 @@ Tags: a11y, accessibility, wcag, wave, section508
 Requires at least: 3.9.2
 Tested up to: 4.3
 License: GPLv2 or later
-Stable tag: 1.0.4
+Stable tag: 1.1.0
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -23,7 +23,7 @@ You can make a plan to check for new issues every day, or every week - but how a
 
 Access Monitor does two great things to help you test your site for accessibility. 
 
-<strong>First</strong>, it gives you the freedom of automation - schedule a weekly or monthly report, and you'll get notified each time that report is run. It'll test a specific set of pages, and return a list of definite accessibility issues, if you have any. 
+<strong>First</strong>, it gives you the dom of automation - schedule a weekly or monthly report, and you'll get notified each time that report is run. It'll test a specific set of pages, and return a list of definite accessibility issues, if you have any. 
 
 <strong>Second</strong>, it only reports accessibility issues that are machine-testable. It's not going to raise a bunch of red flags because the tests weren't able to tell whether a particular issue is a problem. You won't find yourself logging in to look at a report that's showing 30 new accessibility issues, but 27 of them are issues you've already checked manually and know aren't really problems. 
 
@@ -33,7 +33,7 @@ It's true that a perfect score from Access Monitor doesn't mean that your web si
 
 = Learn about Tenon and Automated Accessibility =
 
-Go to <a href="http://tenon.io">Tenon.io to run a test of your site</a> or <a href="http://tenon.io/documentation/">read the Tenon.io documentation</a>. Check out Karl Groves' article series <a href="http://www.karlgroves.com/2014/02/13/everything-you-know-about-accessibility-testing-is-wrong-part-1/">Everything You Know About Accessibility Testing is Wrong</a>. <a href="http://tenon.io/register.php">Get a free Tenon.io API key</a>, then install <a href="https://wordpress.org/plugins/access-monitor">Access Monitor</a> and try it out.
+Go to <a href="http://tenon.io">Tenon.io to run a test of your site</a> or <a href="http://tenon.io/documentation/">read the Tenon.io documentation</a>. Check out Karl Groves' article series <a href="http://www.karlgroves.com/2014/02/13/everything-you-know-about-accessibility-testing-is-wrong-part-1/">Everything You Know About Accessibility Testing is Wrong</a>. <a href="http://tenon.io/register.php">Get a  Tenon.io API key</a>, then install <a href="https://wordpress.org/plugins/access-monitor">Access Monitor</a> and try it out.
 
 Keep up with <a href="https://github.com/joedolson/access-monitor">Access Monitor development on GitHub</a>.
 
@@ -73,6 +73,14 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Create ignore list
 * Add CTA to contact me about how to fix issues.
 * [Note:] Issues data: will be adding content field
+
+
+= 1.1.1 =
+
+* Improvement: Create custom container for post testing if no container assigned.
+* Bug fix: PHP notice for am_post_types
+* Add settings link to Plugins page
+* Add dismissable marketing panel for Tenon.io
 
 = 1.1.0 =
 
