@@ -2,10 +2,10 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, wave, section508
-Requires at least: 3.9.2
-Tested up to: 4.4.0
+Requires at least: 4.0
+Tested up to: 4.4.1
 License: GPLv2 or later
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -74,6 +74,10 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Add CTA to contact me about how to fix issues.
 * [Note:] Issues data: will be adding content field
 
+= 1.1.2 =
+
+* Bug fix: Missing single quote on Plugins page broke layout.
+* Bug fix: Text domain was not loaded.
 
 = 1.1.1 =
 

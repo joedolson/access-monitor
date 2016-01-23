@@ -7,9 +7,9 @@ Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
 Text Domain: access-monitor
 Domain Path: lang
-Version: 1.1.1
+Version: 1.1.2
 */
-/*  Copyright 2014-2015  Joe Dolson (email : plugins@joedolson.com)
+/*  Copyright 2014-2016  Joe Dolson (email : plugins@joedolson.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,6 +27,12 @@ Version: 1.1.1
 */
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
+// Enable internationalisation
+add_action( 'plugins_loaded', 'am_load_textdomain' );
+function am_load_textdomain() {
+	load_plugin_textdomain( 'access-monitor' );
+}
+
 //define('TENON_API_URL', 'https://www.tenon.io/api/');
 define( 'TENON_API_URL', 'https://tenon.io/api/' );
 define( 'AM_DEBUG', false );
@@ -37,7 +43,7 @@ require_once( 't/tenon.php' );
 require_once( 't/wave.php' );
 require_once( 'am-post-inspection.php' );
 
-$am_version = '1.1.1';
+$am_version = '1.1.2';
 
 add_filter( 'the_content', 'am_pass_query' );
 function am_pass_query( $content ) {
@@ -1316,7 +1322,7 @@ function am_redirect_new() {
 add_filter('plugin_action_links', 'am_plugin_action', -10, 2);
 function am_plugin_action($links, $file) {
 	if ($file == plugin_basename(dirname(__FILE__).'/access-monitor.php')) {
-		$links[] = "<a href='" . admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) . ">" . __( 'Access Monitor Settings', 'access-monitor' ) . "</a>";
+		$links[] = "<a href='" . admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) . "'>" . __( 'Access Monitor Settings', 'access-monitor' ) . "</a>";
 	}
 	return $links;
 }
