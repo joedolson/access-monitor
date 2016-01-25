@@ -1,11 +1,12 @@
 === Access Monitor ===
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
-Tags: a11y, accessibility, wcag, wave, section508
+Tags: a11y, accessibility, wcag, section508, tenon
 Requires at least: 4.0
 Tested up to: 4.4.1
 License: GPLv2 or later
-Stable tag: 1.1.1
+Text domain: access-monitor
+Stable tag: 1.1.2
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -73,6 +74,11 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 * Create ignore list
 * Add CTA to contact me about how to fix issues.
 * [Note:] Issues data: will be adding content field
+
+= 1.1.3 =
+
+* Bug fix: Missing 'type' parameter in AJAX query caused page tests to fail due to URL length
+* Bug fix: Removed URL from label
 
 = 1.1.2 =
 

@@ -26,7 +26,7 @@ jQuery( document ).ready( function( $ ) {
 			
 			$.ajax({
 			   url:preview_url,
-			   type:'GET',
+			   type:'post',
 			   success: function(data){
 					preview_content = $(data).find( preview_container ).html();
 					if ( !preview_content || preview_content == '' ) {
@@ -44,6 +44,7 @@ jQuery( document ).ready( function( $ ) {
 					};
 										
 					$.ajax({
+						type:'post',
 						data: query,
 						url: am_ajax_url,
 						dataType: 'json',

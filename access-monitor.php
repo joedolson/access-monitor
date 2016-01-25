@@ -7,7 +7,7 @@ Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
 Text Domain: access-monitor
 Domain Path: lang
-Version: 1.1.2
+Version: 1.1.3
 */
 /*  Copyright 2014-2016  Joe Dolson (email : plugins@joedolson.com)
 
@@ -43,7 +43,7 @@ require_once( 't/tenon.php' );
 require_once( 't/wave.php' );
 require_once( 'am-post-inspection.php' );
 
-$am_version = '1.1.2';
+$am_version = '1.1.3';
 
 add_filter( 'the_content', 'am_pass_query' );
 function am_pass_query( $content ) {
@@ -1061,7 +1061,7 @@ function am_support_page() {
 							<div class='am-support-me'>
 								<p>
 									<?php printf(
-										__( 'Please, consider a <a href="%s">donation</a> to support Access Monitor!', 'access-monitor' )
+										__( 'Please, <a href="%s">consider a donation</a> to support Access Monitor!', 'access-monitor' )
 									, "https://www.joedolson.com/donate/" ); ?>
 								</p>
 							</div>
@@ -1268,7 +1268,7 @@ $plugins_string
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce( 'access-monitor-nonce' )."' /></div>
 		<div>
 		<p class='checkbox'>
-		<input type='checkbox' name='has_donated' id='has_donated' value='on' /> <label for='has_donated'>".__( 'I have <a href="http://www.joedolson.com/donate/">made a donation to help support this plug-in</a>.','access-monitor' )."</label>
+		<input type='checkbox' name='has_donated' id='has_donated' value='on' /> <label for='has_donated'>".__( 'I have made a donation to help support this plug-in.','access-monitor' )."</label>
 		</p>
 		<p>
 		<label for='support_request'>Support Request:</label><br /><textarea name='support_request' required aria-required='true' id='support_request' cols='80' rows='10'>".stripslashes($request)."</textarea>
