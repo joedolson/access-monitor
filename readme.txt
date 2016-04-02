@@ -3,10 +3,10 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, section508, tenon
 Requires at least: 4.0
-Tested up to: 4.4.1
+Tested up to: 4.5.0
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -50,17 +50,11 @@ Access Monitor allows you to run a one-time test or schedule a test to be run on
 
 You can test the page you're viewing using a link in the admin bar labeled 'A11y Check'.
 
-* In the admin, the entirety of the WordPress admin HTML is only tested on the Dashboard. On other admin pages, only the code inside the wpbody-content container is passed to Tenon.
+* In the admin, the entirety of the WordPress admin HTML is only tested on the Dashboard. On other admin pages, only the code inside the `wpbody-content` container is passed to Tenon.
 * On the front-end, only Pages and individual posts or custom post type pages can be tested. Archive pages are not currently passed to Tenon.
 
-Available languages (in order of completeness):
-Dutch
+Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plugins/access-monitor/)!
 
-Visit the [Access Monitor translations site](http://translate.joedolson.com/projects/access-monitor/) to check the progress of a translation.
-
-Translating my plug-ins is always appreciated. Visit <a href="http://translate.joedolson.com">my translations site</a> to start getting your language into shape!
-
-<a href="http://www.joedolson.com/translator-credits/">Translator Credits</a>
 
 == Changelog ==
 
@@ -68,12 +62,17 @@ Translating my plug-ins is always appreciated. Visit <a href="http://translate.j
 
 * Add clientScriptErrors data to resultset.
 * Add filters and filters and filters. 
-	- Prep for pre-process post tests
 	- Relate reports to authors
 	- Create rules UI for whether post publish should be blocked.
 * Create ignore list
 * Add CTA to contact me about how to fix issues.
 * [Note:] Issues data: will be adding content field
+
+= 1.1.4 =
+
+* Bug fix: Admin screens accessibility test did not print results
+* Bug fix: Only show A11y Check button if API key provided.
+* Bug fix: duplicate IDs on settings page
 
 = 1.1.3 =
 

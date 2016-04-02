@@ -218,7 +218,7 @@ function am_ajax_query_tenon() {
 			$args['priority'] = $_REQUEST['priority'];
 		}
 	
-		$results = am_query_tenon( $args );		
+		$results = am_query_tenon( $args );
 		
 		wp_send_json(
 			array( 
@@ -238,15 +238,19 @@ function am_admin_footer() {
 
 add_action( 'admin_bar_menu','am_admin_bar', 200 );
 function am_admin_bar() {
-	global $wp_admin_bar;
-	if ( is_admin() ) {
-		$url = '#tenon';
-	} else {
-		global $post_id; 
-		$url = add_query_arg(  'tenon', 'true', get_permalink( $post_id ) );
+	$settings = get_option( 'am_settings' );
+	$api_key = $settings['tenon_api_key'];
+	if ( $api_key != '' ) {
+		global $wp_admin_bar;
+		if ( is_admin() ) {
+			$url = '#tenon';
+		} else {
+			global $post_id; 
+			$url = add_query_arg(  'tenon', 'true', get_permalink( $post_id ) );
+		}
+		$args = array( 'id'=>'tenonCheck', 'title'=>__( 'A11y Check','access-monitor' ), 'href'=>$url );
+		$wp_admin_bar->add_node( $args );
 	}
-	$args = array( 'id'=>'tenonCheck', 'title'=>__( 'A11y Check','access-monitor' ), 'href'=>$url );
-	$wp_admin_bar->add_node( $args );
 }
 
 
@@ -580,7 +584,7 @@ function am_custom_column( $column_name, $id ) {
 			$schedule = get_post_meta( $id, '_tenon_schedule', true );
 			if ( is_numeric( $schedule ) ) {
 				$edit_url = admin_url( "post.php?post=$schedule&amp;action=edit" );
-				$edit_link = "<a href='$edit_url'><span class='dashicons dashicons-clock'></span> " . __( 'View Original Test', 'access-monitor' ) . "</a>";
+				$edit_link = "<a href='$edit_url'><span class='dashicons dashicons-clock' aria-hidden='true'></span> " . __( 'View Original Test', 'access-monitor' ) . "</a>";
 				echo $edit_link;
 			} else {
 				if ( $schedule ) {
@@ -884,7 +888,7 @@ function am_report() {
 				<option value='monthly'>" . __( 'Monthly', 'access-monitor' ) . "</option>
 			</select>
 		</p>
-		<button class='toggle-options closed' aria-controls='report-options' aria-expanded='false'>" . __( 'Tenon report options', 'access-monitor' ) . "<span class='dashicons dashicons-arrow-right' aria-hidden='true'></span></button>
+		<button class='toggle-options closed' aria-controls='report-options' aria-expanded='false'>" . __( 'Tenon report options', 'access-monitor' ) . "<span class='dashicons dashicons-plus-alt' aria-hidden='true'></span></button>
 		<div class='report-options' id='report-options'>
 			<fieldset>
 				<legend>" . __( 'Set Accessibility Test Options', 'access-monitor' ) . "</legend>
@@ -1131,7 +1135,7 @@ function am_show_support_box() {
 	<div class="meta-box-sortables">
 		<div class="postbox">
 		<<?php echo $elem; ?>><?php _e('Get Help','access-monitor'); ?></<?php echo $elem; ?>>
-		<div id="support" class="inside resources">
+		<div id="help" class="inside resources">
 			<p>
 				<?php printf( __( 'Access Monitor has two parts: the plug-in, and the API it interacts with. If your issue is in the plug-in, use the <a href="%s">support form</a>. If your issue is with the API or on tenon.io, <a href="mailto:support@tenon.io">email Tenon support</a>. Thanks!', 'access-monitor' ), '#support-form' ); ?>
 			</p>
@@ -1142,7 +1146,7 @@ function am_show_support_box() {
 	<div class="meta-box-sortables">
 		<div class="postbox">
 		<<?php echo $elem; ?>><?php _e('Disclaimer','access-monitor'); ?></<?php echo $elem; ?>>
-		<div id="support" class="inside resources">
+		<div id="disclaimer" class="inside resources">
 			<p>
 				<?php _e( 'Access Monitor uses Tenon.io. The Tenon.io API is designed to examine aspects of accessibility that are machine-testable in a reliable way. No errors does not mean that your site is accessible.', 'access-monitor' ); ?>
 			</p>
@@ -1177,7 +1181,7 @@ function am_admin_styles() {
 
 function am_get_support_form() {
 	global $current_user, $am_version;
-	get_currentuserinfo();
+	$current_user = wp_get_current_user();
 	// send fields for Access Monitor
 	$version = $am_version;
 	// send fields for all plugins

@@ -10,13 +10,15 @@
 				'tenon' : src,
 				'current_screen' : am_current_screen
 			};
-		$( '#wp-admin-bar-tenonCheck').on( 'click', function() {
-			$.ajax( {
+		$( '#wp-admin-bar-tenonCheck a' ).on( 'click', function() {
+			$.ajax({
 				type: 'POST',
 				url: am_ajax_url,
 				data: query,
+				dataType: "json",
 				success: function( data ) {
-					$( '#tenon' ).html( data );
+					var response = data.formatted;
+					$( '#tenon' ).html( response );
 				},
 				error: function(data) {
 					$( '#tenon' ).html( "Tenon request failed" );
