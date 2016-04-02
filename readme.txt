@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, section508, tenon
 Requires at least: 4.0
-Tested up to: 4.5.0
+Tested up to: 4.5
 License: GPLv2 or later
 Text domain: access-monitor
 Stable tag: 1.1.3
@@ -75,6 +75,7 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * Bug fix: duplicate IDs on settings page
 * Bug fix: properly render reference URL in results
 * Bug fix: Display both parent and child reports in related reports meta box
+* Removed en_AU .mo file in favor of .org language pack.
 
 = 1.1.3 =
 
@@ -159,4 +160,4 @@ No tool can pick up every Accessibility issue - but Access Monitor can help you 
 
 == Upgrade Notice ==
 
-* 1.0.4 Couple bug fixes, corrected bad links, added Portuguese.
+* 1.1.5: Minor bug fixes, update tested to 4.5
