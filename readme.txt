@@ -73,6 +73,8 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * Bug fix: Admin screens accessibility test did not print results
 * Bug fix: Only show A11y Check button if API key provided.
 * Bug fix: duplicate IDs on settings page
+* Bug fix: properly render reference URL in results
+* Bug fix: Display both parent and child reports in related reports meta box
 
 = 1.1.3 =
 

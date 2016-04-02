@@ -366,12 +366,27 @@ function am_add_inner_box() {
 
 function am_add_related_box() {
 	global $post;
-	$related = '';
 	$relatives = get_posts( array(
 			'post_type'  => 'tenon-report',
 			'meta_key'   => '_tenon_parent',
 			'meta_value' => $post->ID
 		) );
+	
+	$children = get_posts( array(
+			'post_type'  => 'tenon-report',
+			'meta_key'   => '_tenon_child',
+			'meta_value' => $post->ID
+		) );	
+	
+	echo "<h3>Child Reports</h3>";
+	echo am_format_related_reports( $relatives, $post );
+	echo "<h3>Parent Reports</h3>";
+	echo am_format_related_reports( $children, $post );
+	
+}
+
+function am_format_related_reports( $relatives, $post ) {
+	$related = '';
 	if ( !empty( $relatives ) ) {
 		foreach ( $relatives as $relative ) {
 			$title = $relative->post_title;
@@ -382,14 +397,15 @@ function am_add_related_box() {
 				$related .= "<li><a href='$link'>$title</a>: <strong>$date</strong></li>";
 			}
 		}
-		echo "<ul>$related</ul>";
+		$related = "<ul>$related</ul>";
 	}
 
 	if ( empty( $relatives ) ) {
-		echo "<p>" . __( 'No related reports.', 'access-monitor' ) . "</p>";
+		$related = "<p>" . __( 'No related reports.', 'access-monitor' ) . "</p>";
 	}
+	
+	return $related;
 }
-
 
 function am_add_about_box() {
 	global $post;
@@ -504,6 +520,7 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 	update_post_meta( $report_id, '_tenon_pages', $pages );
 	wp_publish_post( $report_id );
 	add_action( 'save_post', 'am_run_report' );
+	
 	return $report_id;
 }
 
@@ -629,8 +646,7 @@ function am_format_tenon_report( $results, $name ) {
 					if ( !in_array( $hash, $reported ) ) {
 						$displayed = true;
 						$total++;
-						// right now, tenon.io is broken over https. So, strip back to non-https.
-						$href = str_replace( 'https', 'http', $result->ref );						
+						$href = esc_url( add_query_arg( array( 'bpID' => $result->bpID, 'tID' => $result->tID ), 'https://tenon.io/bestpractice.php' ) );
 						$ref = "<a href='$href'>$result->errorTitle</a>";
 						$tbody .= "
 							<tr>

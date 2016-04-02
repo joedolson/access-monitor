@@ -59,13 +59,13 @@
 			if ( visible ) {
 				$( '.report-options' ).hide();
 				$( this ).attr( 'aria-expanded', 'false' );
-				$( 'button.toggle-options span' ).removeClass( 'dashicons-arrow-down' );
-				$( 'button.toggle-options span' ).addClass( 'dashicons-arrow-right' );				
+				$( 'button.toggle-options span' ).removeClass( 'dashicons-minus' );
+				$( 'button.toggle-options span' ).addClass( 'dashicons-plus-alt' );				
 			} else {
 				$( '.report-options' ).show();
 				$( this ).attr( 'aria-expanded', 'true' );
-				$( 'button.toggle-options span' ).removeClass( 'dashicons-arrow-right' );
-				$( 'button.toggle-options span' ).addClass( 'dashicons-arrow-down' );				
+				$( 'button.toggle-options span' ).removeClass( 'dashicons-plus-alt' );
+				$( 'button.toggle-options span' ).addClass( 'dashicons-minus' );				
 			}
 		});
 	});	
