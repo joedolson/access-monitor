@@ -14,7 +14,7 @@ Test your WordPress site for accessibility compliance. Run on-demand tests or sc
 
 Access Monitor runs accessibility tests of your WordPress site, either on the front-end or in the administration. It runs an automated scan of your site using the Tenon.io web accessibility service. 
 
-Access Monitor requires an [API key for Tenon.io](http://tenon.io/register.php).
+Access Monitor requires an [API key for Tenon.io](http://www.tenon.io?rfsn=236617.3c55e).
 
 = Monitor Site Accessibility =
 
@@ -34,7 +34,7 @@ It's true that a perfect score from Access Monitor doesn't mean that your web si
 
 = Learn about Tenon and Automated Accessibility =
 
-Go to <a href="http://tenon.io">Tenon.io to run a test of your site</a> or <a href="http://tenon.io/documentation/">read the Tenon.io documentation</a>. Check out Karl Groves' article series <a href="http://www.karlgroves.com/2014/02/13/everything-you-know-about-accessibility-testing-is-wrong-part-1/">Everything You Know About Accessibility Testing is Wrong</a>. <a href="http://tenon.io/register.php">Get a  Tenon.io API key</a>, then install <a href="https://wordpress.org/plugins/access-monitor">Access Monitor</a> and try it out.
+Go to <a href="http://tenon.io">Tenon.io to run a test of your site</a> or <a href="http://tenon.io/documentation/">read the Tenon.io documentation</a>. Check out Karl Groves' article series <a href="http://www.karlgroves.com/2014/02/13/everything-you-know-about-accessibility-testing-is-wrong-part-1/">Everything You Know About Accessibility Testing is Wrong</a>. <a href="http://www.tenon.io?rfsn=236617.3c55e">Get a  Tenon.io API key</a>, then install <a href="https://wordpress.org/plugins/access-monitor">Access Monitor</a> and try it out.
 
 Keep up with <a href="https://github.com/joedolson/access-monitor">Access Monitor development on GitHub</a>.
 

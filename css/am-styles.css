@@ -104,3 +104,34 @@ button.close:hover, button.close:focus {
 .tenon-result code, .tenon-result pre { margin: 0!important; padding: .5em!important; }
 
 #am-errors { display: none; }
+
+.tenon-results {
+	position: fixed;
+	z-index: 10000;
+	background: #f3f3f3;
+	color: #333;
+	font-size: .9em;
+	border-top: 3px solid #666;
+	overflow: scroll;
+	bottom: 0;
+	height: 50%;
+	width: 100%;
+	padding: 1em;	
+}
+
+.tenon-results h2 {
+	padding: .5em;
+}
+
+.tenon-results button {
+	float: right;
+}
+
+.tenon-results .tenon-result {
+	margin-bottom: 1em;
+	padding: .5em;
+}
+
+.tenon-results p.meta {
+	margin-bottom: 0;
+}

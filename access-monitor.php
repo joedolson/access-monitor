@@ -45,15 +45,14 @@ require_once( 'am-post-inspection.php' );
 
 $am_version = '1.1.4';
 
-add_filter( 'the_content', 'am_pass_query' );
-function am_pass_query( $content ) {
+add_action( 'wp_footer', 'am_pass_query' );
+function am_pass_query() {
 	if ( isset( $_GET['tenon'] ) && $_GET['tenon'] == 'true' ) {
 		$permalink = get_the_permalink();
 		$results = am_query_tenon( array( 'url'=>$permalink ) );
 		$results = $results['formatted'];
-		return $results.$content;
+		echo "<div class='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button>" . $results . "</div>";
 	}
-	return $content;
 }
 
 function am_query_tenon( $post ) {
@@ -155,9 +154,10 @@ function am_format_tenon_array( $results, $errors ) {
 						<span class='certainty $cert'>". sprintf( __( 'Certainty: %s', 'access-monitor' ), "$result->certainty%" ). "</span>  
 						<span class='priority $prio'>". sprintf( __( 'Priority: %s', 'access-monitor' ), "$result->priority%" ). "</span>
 					</p>
+					<h4 class='screen-reader-text'>Error Source</h4>
+					<pre lang='html'>".$result->errorSnippet."</pre>					
 					<p>$result->errorDescription $ref</p>
-					<h4>Error Source</h4>
-					<pre lang='html'>".$result->errorSnippet."</pre>
+
 					<h4>Xpath:</h4> <pre><code>$result->xpath</code></pre>
 	
 				</div>";
@@ -185,7 +185,11 @@ function am_admin_enqueue_scripts() {
 
 add_action('wp_enqueue_scripts', 'am_wp_enqueue_scripts');
 function am_wp_enqueue_scripts() {
-	wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );
+	if ( !is_admin() && isset( $_GET['tenon'] ) ) {
+		wp_enqueue_style( 'am.public', plugins_url( 'css/am-public.css', __FILE__ ) );
+		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );
+		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
+	}
 }
 
 add_action('wp_ajax_am_ajax_query_tenon', 'am_ajax_query_tenon');
@@ -851,7 +855,7 @@ function am_report() {
 	
 	if ( $settings['tenon_api_key'] == '' ) {
 		$disabled = " disabled='disabled'";
-		$message = "<p><strong><a href='http://tenon.io/register.php'>" . __( 'Sign up with Tenon to get an API key', 'access-monitor' ) . "</a></strong> &bull; <a href='#settings'>" . __( 'Add your API key', 'access-monitor' ) . "</a></p>";
+		$message = "<p><strong><a href='http://www.tenon.io?rfsn=236617.3c55e'>" . __( 'Sign up with Tenon to get an API key', 'access-monitor' ) . "</a></strong> &bull; <a href='#settings'>" . __( 'Add your API key', 'access-monitor' ) . "</a></p>";
 	} else {
 		$disabled = $message = '';
 	}
