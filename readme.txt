@@ -2,7 +2,7 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, section508, tenon
-Requires at least: 4.0
+Requires at least: 4.1
 Tested up to: 4.5
 License: GPLv2 or later
 Text domain: access-monitor
@@ -67,6 +67,13 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * Create ignore list
 * Add CTA to contact me about how to fix issues.
 * [Note:] Issues data: will be adding content field
+
+= 1.1.5 =
+
+* Change registration links to affiliate referral links
+* Move public a11y test results from post content into footer container
+* Add expand/collapse toggle for public test results
+* Updated required WordPress version
 
 = 1.1.4 =
 
