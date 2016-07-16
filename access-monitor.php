@@ -77,11 +77,8 @@ function am_query_tenon( $post ) {
 		
 	$settings = get_option( 'am_settings' );
 	$key = $settings['tenon_api_key'];
-	/* Tenon uses the application ID to credit specific application authors with API usage. Please leave this intact! Thanks! */
-	$appID = '8cfaff90a1bd9eaa59c8bbc2e75f8657';
 	if ( $key ) {
 		$opts['key'] = $key;
-		$opts['appID'] = $appID;
 		$tenon = new tenon( TENON_API_URL, $opts );
 		$tenon->submit( AM_DEBUG );
 		$body = $tenon->tenonResponse['body'];
@@ -185,6 +182,12 @@ function am_admin_enqueue_scripts() {
 		wp_localize_script( 'am.functions', 'am_ajax_url', admin_url( 'admin-ajax.php' ) );
 		wp_localize_script( 'am.functions', 'am_ajax_action', 'am_ajax_query_tenon' );
 		wp_localize_script( 'am.functions', 'am_current_screen', $current_screen->id );
+		
+		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
+		wp_localize_script( 'am.view', 'ami18n', array( 
+			'expand' => __( 'Expand', 'access-monitor' ), 
+			'collapse' => __( 'Collapse', 'access-monitor' ) 
+		) );
 		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );	
 	}
 }
@@ -195,6 +198,10 @@ function am_wp_enqueue_scripts() {
 		wp_enqueue_style( 'am.public', plugins_url( 'css/am-public.css', __FILE__ ) );
 		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );
 		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
+		wp_localize_script( 'am.view', 'ami18n', array( 
+			'expand' => __( 'Expand', 'access-monitor' ), 
+			'collapse' => __( 'Collapse', 'access-monitor' ) 
+		) );		
 	}
 }
 
@@ -387,12 +394,16 @@ function am_show_public_report() {
 		return "<p>" . __( 'No manual accessibility tests have been run on this post.', 'access-monitor' ) . "</p>";
 	} else {
 		foreach ( $reports as $report ) {
-			$date = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $report['date'] );
-			$grade = round( $report['results']['grade'], 2 );
+			$ts     = $report['date'];
+			$date   = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $report['date'] );
+			$grade  = round( $report['results']['grade'], 2 );
 			$format = $report['results']['formatted'];
 			
-			echo "<h3>" . sprintf( __( 'Test from %s (%s)', 'access-monitor' ), "<strong>$date</strong>", "<strong>$grade%</strong>" ) . "</h3>";
-			echo "<div class='view-results'>$format</div>";
+			echo "<div class='tenon-view-container'>";
+				echo "<h3 id='heading-$ts'>" . sprintf( __( 'Test from %s (Grade: %s)', 'access-monitor' ), "<strong>$date</strong>", "<strong>$grade%</strong>" ) . "</h3>";
+				echo "<button class='toggle-view' class='button-secondary' aria-expanded='false' aria-describedby='heading-$ts' aria-controls='body-$ts'>" . __( 'Expand', 'access-monitor' ) . "</button>";
+				echo "<div class='view-results' id='body-$ts'>$format</div>";
+			echo "</div>";
 		}
 	}
 }

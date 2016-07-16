@@ -123,6 +123,20 @@ button.close:hover, button.close:focus {
 	float: right;
 }
 
+.tenon-view-container {
+	position: relative;
+}
+
+.tenon-view-container button {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.tenon-view-container h3 {
+	font-size: 1.1em;
+}
+
 .tenon-results .tenon-result, .tenon-results h2 {
 	padding: .5em;
 	max-width: 44em;
