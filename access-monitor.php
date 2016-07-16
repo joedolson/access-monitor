@@ -54,7 +54,19 @@ function am_pass_query() {
 		$results   = am_query_tenon( array( 'url'=>$permalink ) );
 		$format    = $results['formatted'];
 		$post_id   = get_the_ID();
-		add_post_meta( $post_id, '_tenon_test_results', array( 'date' => current_time( 'timestamp' ), 'results' => $results ) );
+		$hash      = md5( $format );
+		$past      = get_post_meta( $post_id, '_tenon_test_hash' );
+		$exists    = false;
+		if ( !empty( $past ) ) {
+			if ( in_array( $hash, $past ) ) {
+				$exists = true;
+			}
+		}
+		// only save these results if they are different from past results.
+		if ( !$exists ) {
+			add_post_meta( $post_id, '_tenon_test_results', array( 'date' => current_time( 'timestamp' ), 'results' => $results ) );
+			add_post_meta( $post_id, '_tenon_test_hash', $hash );
+		}
 		echo "<div class='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button>" . $format . "</div>";
 	}
 }
