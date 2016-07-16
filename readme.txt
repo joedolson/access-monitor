@@ -6,7 +6,7 @@ Requires at least: 4.1
 Tested up to: 4.5
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.1.4
+Stable tag: 1.1.5
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
