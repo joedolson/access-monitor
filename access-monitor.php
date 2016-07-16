@@ -402,8 +402,10 @@ function am_show_public_report() {
 	global $post;
 	$reports = get_post_meta( $post->ID, '_tenon_test_results' );
 	if ( empty( $reports ) ) {
-		return "<p>" . __( 'No manual accessibility tests have been run on this post.', 'access-monitor' ) . "</p>";
+		echo "<p>" . __( 'No manual accessibility tests have been run on this post.', 'access-monitor' ) . "</p>";
 	} else {
+		echo "<p>" . __( 'Only tests with changed results are shown. Duplicate results are not saved.', 'access-monitor' ) . "</p>";
+		
 		foreach ( $reports as $report ) {
 			$ts     = $report['date'];
 			$date   = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $report['date'] );
