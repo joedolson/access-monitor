@@ -33,7 +33,6 @@ function am_load_textdomain() {
 	load_plugin_textdomain( 'access-monitor' );
 }
 
-//define('TENON_API_URL', 'https://www.tenon.io/api/');
 define( 'TENON_API_URL', 'https://tenon.io/api/' );
 define( 'AM_DEBUG', false );
 
