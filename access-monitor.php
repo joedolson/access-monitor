@@ -47,10 +47,15 @@ $am_version = '1.1.5';
 
 add_action( 'wp_footer', 'am_pass_query' );
 function am_pass_query() {
-	if ( isset( $_GET['tenon'] ) && $_GET['tenon'] == 'true' ) {
+	if ( isset( $_GET['tenon'] ) ) {
+		if ( ! wp_verify_nonce( $_GET['tenon'], 'public-tenon-query' ) ) {
+			die( __( 'Security verification failed', 'access-monitor' ) );
+		}
 		$permalink = get_the_permalink();
-		$results = am_query_tenon( array( 'url'=>$permalink ) );
-		$results = $results['formatted'];
+		$results   = am_query_tenon( array( 'url'=>$permalink ) );
+		$results   = $results['formatted'];
+		$post_id   = get_the_ID();
+		add_post_meta( $post_id, '_tenon_test_results', array( 'date' => current_time( 'timestamp' ), 'results' => $results ) );
 		echo "<div class='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button>" . $results . "</div>";
 	}
 }
@@ -157,8 +162,9 @@ function am_format_tenon_array( $results, $errors ) {
 					<h4 class='screen-reader-text'>Error Source</h4>
 					<pre lang='html'>".$result->errorSnippet."</pre>					
 					<p>$result->errorDescription $ref</p>
-
+					<div class='xpath-data'>
 					<h4>Xpath:</h4> <pre><code>$result->xpath</code></pre>
+					</div>
 	
 				</div>";
 		}
@@ -249,8 +255,9 @@ function am_admin_bar() {
 		if ( is_admin() ) {
 			$url = '#tenon';
 		} else {
-			global $post_id; 
-			$url = add_query_arg(  'tenon', 'true', get_permalink( $post_id ) );
+			global $post_id;
+			$nonce = wp_create_nonce( 'public-tenon-query' );
+			$url   = add_query_arg(  'tenon', $nonce, get_permalink( $post_id ) );
 		}
 		$args = array( 'id'=>'tenonCheck', 'title'=>__( 'A11y Check','access-monitor' ), 'href'=>$url );
 		$wp_admin_bar->add_node( $args );
