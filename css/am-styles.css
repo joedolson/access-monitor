@@ -116,20 +116,21 @@ button.close:hover, button.close:focus {
 	bottom: 0;
 	height: 50%;
 	width: 100%;
-	padding: 1em;	
-}
-
-.tenon-results h2 {
-	padding: .5em;
+	padding: 1em;
 }
 
 .tenon-results button {
 	float: right;
 }
 
-.tenon-results .tenon-result {
-	margin-bottom: 1em;
+.tenon-results .tenon-result, .tenon-results h2 {
 	padding: .5em;
+	max-width: 44em;
+	margin: 0 auto .5em;	
+}
+/* Xpath Data is intentionally hidden to make this view more compact */
+.tenon-results .xpath-data {
+	display: none; 
 }
 
 .tenon-results p.meta {
