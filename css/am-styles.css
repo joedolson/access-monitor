@@ -157,6 +157,7 @@ button.close:hover, button.close:focus {
 	max-width: 760px;
 	margin: 0 auto .5em;	
 }
+
 /* Xpath Data is intentionally hidden to make this view more compact */
 .tenon-results .xpath-data {
 	display: none; 
