@@ -151,7 +151,7 @@ function am_format_tenon_array( $results, $errors ) {
 					<h3>
 						<span>$i</span>. $result->errorTitle 
 					</h3>
-					<p class='meta'>
+					<p class='am-meta'>
 						<span class='certainty $cert'>". sprintf( __( 'Certainty: %s', 'access-monitor' ), "$result->certainty%" ). "</span>  
 						<span class='priority $prio'>". sprintf( __( 'Priority: %s', 'access-monitor' ), "$result->priority%" ). "</span>
 					</p>

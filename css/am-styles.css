@@ -1,6 +1,6 @@
 .tenon-result .certainty, .tenon-result .priority { padding: 2px; border-radius: 2px; text-shadow: 1px 1px #000; }
 
-.tenon-result .meta { font-family: Arial, sans-serif; }
+.tenon-result .am-meta, .tenon-result .meta { font-family: Arial, sans-serif; }
 
 .tenon-result .high {
 	font-weight: 700;
@@ -110,13 +110,13 @@ button.close:hover, button.close:focus {
 	z-index: 10000;
 	background: #f3f3f3;
 	color: #333;
-	font-size: .9em;
 	border-top: 3px solid #666;
 	overflow: scroll;
 	bottom: 0;
 	height: 50%;
 	width: 100%;
 	padding: 1em;
+	text-align: left;
 }
 
 .tenon-results button {
@@ -147,6 +147,6 @@ button.close:hover, button.close:focus {
 	display: none; 
 }
 
-.tenon-results p.meta {
+.tenon-results p.am-meta, .tenon-results p.meta {
 	margin-bottom: 0;
 }
