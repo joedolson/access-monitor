@@ -105,6 +105,8 @@ button.close:hover, button.close:focus {
 
 #am-errors { display: none; }
 
+
+
 .tenon-results {
 	position: fixed;
 	z-index: 10000;
@@ -117,6 +119,19 @@ button.close:hover, button.close:focus {
 	width: 100%;
 	padding: 1em;
 	text-align: left;
+	font-size: 12px;
+}
+
+.tenon-results p {
+	font-size: 1.2em;
+}
+
+.tenon-results h2 {
+	font-size: 1.6em;
+}
+
+.tenon-results h3 {
+	font-size: 1.4em;
 }
 
 .tenon-results button {
@@ -139,7 +154,7 @@ button.close:hover, button.close:focus {
 
 .tenon-results .tenon-result, .tenon-results h2 {
 	padding: .5em;
-	max-width: 44em;
+	max-width: 760px;
 	margin: 0 auto .5em;	
 }
 /* Xpath Data is intentionally hidden to make this view more compact */
