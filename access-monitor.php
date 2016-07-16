@@ -53,10 +53,10 @@ function am_pass_query() {
 		}
 		$permalink = get_the_permalink();
 		$results   = am_query_tenon( array( 'url'=>$permalink ) );
-		$results   = $results['formatted'];
+		$format    = $results['formatted'];
 		$post_id   = get_the_ID();
 		add_post_meta( $post_id, '_tenon_test_results', array( 'date' => current_time( 'timestamp' ), 'results' => $results ) );
-		echo "<div class='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button>" . $results . "</div>";
+		echo "<div class='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button>" . $format . "</div>";
 	}
 }
 
@@ -366,6 +366,37 @@ function am_add_outer_box() {
 	add_meta_box( 'am_about_div', __('About this Report', 'access-monitor'), 'am_add_about_box', 'tenon-report', 'side', 'high' );
 	add_meta_box( 'am_related_div', __('Related Reports', 'access-monitor'), 'am_add_related_box', 'tenon-report', 'side','high' );	
 }
+
+add_action( 'add_meta_boxes', 'am_post_reports_data' );
+function am_post_reports_data( $type ) {
+	$types = get_post_types( array( 'public' => true ) );
+	if( in_array( $type, $types )) {
+		add_meta_box(
+				'am_public_report',
+				__( 'Accessibility Reports', 'access-monitor' ),
+				'am_show_public_report',
+				$type
+		);
+	}
+}
+
+function am_show_public_report() {
+	global $post;
+	$reports = get_post_meta( $post->ID, '_tenon_test_results' );
+	if ( empty( $reports ) ) {
+		return "<p>" . __( 'No manual accessibility tests have been run on this post.', 'access-monitor' ) . "</p>";
+	} else {
+		foreach ( $reports as $report ) {
+			$date = date_i18n( get_option( 'date_format' ) . ' ' . get_option( 'time_format' ), $report['date'] );
+			$grade = round( $report['results']['grade'], 2 );
+			$format = $report['results']['formatted'];
+			
+			echo "<h3>" . sprintf( __( 'Test from %s (%s)', 'access-monitor' ), "<strong>$date</strong>", "<strong>$grade%</strong>" ) . "</h3>";
+			echo "<div class='view-results'>$format</div>";
+		}
+	}
+}
+
 
 function am_add_inner_box() {
 	global $post;
