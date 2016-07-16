@@ -73,7 +73,11 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * Change registration links to affiliate referral links
 * Move public a11y test results from post content into footer container
 * Add expand/collapse toggle for public test results
+* Hide xPath data in public test results to make more compact
+* Save test results in post meta for future reference.
+* Add nonce testing on public test results
 * Updated required WordPress version
+* Removed deprecated appID from request
 
 = 1.1.4 =
 
