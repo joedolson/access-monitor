@@ -51,7 +51,8 @@ function am_pass_query() {
 			die( __( 'Security verification failed', 'access-monitor' ) );
 		}
 		$permalink = get_the_permalink();
-		$results   = am_query_tenon( array( 'url'=>$permalink ) );
+		$query     = apply_filters( 'access_monitor_defaults', array( 'url'=>$permalink ) );
+		$results   = am_query_tenon( $query );
 		$format    = $results['formatted'];
 		$post_id   = get_the_ID();
 		$hash      = md5( $format );
@@ -121,7 +122,7 @@ function am_format_tenon( $body ) {
 		return __( 'No Tenon API Key provided', 'access-monitor' );
 	}
 	$object = json_decode( $body );
-	if ( property_exists( $object, 'resultSummary' ) ) {
+	if ( is_object( $object ) && property_exists( $object, 'resultSummary' ) ) {
 		// unchecked object references
 		$errors = $object->resultSummary->issues->totalIssues;
 	} else {
