@@ -50,9 +50,8 @@ function am_pass_query() {
 		if ( ! wp_verify_nonce( $_GET['tenon'], 'public-tenon-query' ) ) {
 			die( __( 'Security verification failed', 'access-monitor' ) );
 		}
-		$permalink = get_the_permalink();
-		$query     = apply_filters( 'access_monitor_defaults', array( 'url'=>$permalink ) );
-		$results   = am_query_tenon( $query );
+		$args      = am_get_arguments();
+		$results   = am_query_tenon( $args );
 		$format    = $results['formatted'];
 		$post_id   = get_the_ID();
 		$hash      = md5( $format );
@@ -70,6 +69,38 @@ function am_pass_query() {
 		}
 		echo "<div class='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button>" . $format . "</div>";
 	}
+}
+
+/**
+ * Get parameter driven arguments for A11y Check 
+ */
+function am_get_arguments() {
+	$permalink = get_the_permalink();
+	$level     = isset( $_GET['tenon-level'] ) ? $_GET['tenon-level'] : 'AA';
+	$priority  = isset( $_GET['tenon-priority'] ) ? $_GET['tenon-priority'] : '0';
+	$certainty = isset( $_GET['tenon-certainty'] ) ? $_GET['tenon-certainty'] : '';
+	
+	switch( $level ) {
+		case 'A'   :
+		case 'AA'  :
+		case 'AAA' :
+			$level = $level;
+			break;
+		default    :
+			$level = 'AA';
+	}
+	
+	$priority  = ( is_numeric( $priority ) ) ? $priority : 0;
+	$certainty = ( is_numeric( $certainty ) ) ? $certainty : 20;
+	
+	$args = array( 
+		'url'       => $permalink, 
+		'level'     => $level, 
+		'priority'  => $priority, 
+		'certainty' => $certainty 
+	);
+	
+	return apply_filters( 'access_monitor_defaults', $args );
 }
 
 function am_query_tenon( $post ) {
@@ -106,7 +137,7 @@ function am_query_tenon( $post ) {
 			if ( trim( $object->message ) == 'Bad Request - Either src or url parameter must be supplied' ) {
 				$message = __( 'Save your post as a draft in order to test for accessibility.', 'access-monitor' );
 			} else {
-				$message = $object->message;
+				$message = $object->message . ': ' . $object->info;
 			}
 			$formatted = '<p><strong>' . __( 'Tenon error:', 'access-monitor' ) . '</strong> ' . $message . '</p>';
 			$grade = 0;
@@ -786,12 +817,12 @@ function am_update_settings() {
 	if ( isset( $_POST['am_settings'] ) ) {
 		$nonce=$_REQUEST['_wpnonce'];
 		if (! wp_verify_nonce($nonce,'access-monitor-nonce') ) die( "Security check failed" );	
-		$tenon_api_key = ( isset( $_POST['tenon_api_key'] ) ) ? $_POST['tenon_api_key'] : '';
-		$wave_api_key = ( isset( $_POST['wave_api_key'] ) ) ? $_POST['wave_api_key'] : '';
+		$tenon_api_key     = ( isset( $_POST['tenon_api_key'] ) ) ? $_POST['tenon_api_key'] : '';
+		$wave_api_key      = ( isset( $_POST['wave_api_key'] ) ) ? $_POST['wave_api_key'] : '';
 		$tenon_pre_publish = ( isset( $_POST['tenon_pre_publish'] ) ) ? 1 : 0;
-		$am_post_types = ( isset( $_POST['am_post_types'] ) ) ? $_POST['am_post_types'] : array();
-		$am_criteria = ( isset( $_POST['am_criteria'] ) ) ? $_POST['am_criteria'] : array();
-		$am_notify = ( isset( $_POST['am_notify'] ) ) ? $_POST['am_notify'] : '';
+		$am_post_types     = ( isset( $_POST['am_post_types'] ) ) ? $_POST['am_post_types'] : array();
+		$am_criteria       = ( isset( $_POST['am_criteria'] ) ) ? $_POST['am_criteria'] : array();
+		$am_notify         = ( isset( $_POST['am_notify'] ) ) ? $_POST['am_notify'] : '';
 		
 		update_option( 'am_settings', 
 			array( 
@@ -866,11 +897,11 @@ function am_settings() {
 					<legend><?php _e( 'Accessibility Test Settings', 'access-monitor' ); ?></legend>
 			<?php
 			$criteria = array( 
-				'level' => array( 'label' => __( 'Required WCAG Level', 'access-monitor' ), 'default' => 'AA' ),
+				'level'     => array( 'label' => __( 'Required WCAG Level', 'access-monitor' ), 'default' => 'AA' ),
 				'certainty' => array( 'label' =>  __( 'Minimum certainty', 'access-monitor' ), 'default' => '60' ),
-				'priority' => array( 'label' => __( 'Minimum priority', 'access-monitor' ), 'default' => '20' ),
-				'grade' => array( 'label' => __( 'Minimum percentage grade to publish', 'access-monitor' ),  'default' => '90' ),
-				'store' => array( 'label' => __( 'Store data at Tenon.io?', 'access-monitor' ), 'default' => '0' ),	
+				'priority'  => array( 'label' => __( 'Minimum priority', 'access-monitor' ), 'default' => '20' ),
+				'grade'     => array( 'label' => __( 'Minimum percentage grade to publish', 'access-monitor' ),  'default' => '90' ),
+				'store'     => array( 'label' => __( 'Store data at Tenon.io?', 'access-monitor' ), 'default' => '0' ),	
 				'container' => array( 'label' => __( 'Post content container', 'access-monitor' ), 'default' => '.access-monitor-content' )				
 			);
 			echo "<ul>";

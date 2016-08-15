@@ -3,7 +3,7 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, section508, tenon
 Requires at least: 4.1
-Tested up to: 4.5
+Tested up to: 4.6
 License: GPLv2 or later
 Text domain: access-monitor
 Stable tag: 1.1.5
@@ -65,8 +65,14 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 	- Relate reports to authors
 	- Create rules UI for whether post publish should be blocked.
 * Create ignore list
-* Add CTA to contact me about how to fix issues.
 * [Note:] Issues data: will be adding content field
+
+= 1.1.6 =
+
+* Filter: Ability to filter default arguments on A11y Check button
+* Change: Changed default arguments on A11y check button
+* Test whether result from Tenon is an object before checking for properties
+* Test with WordPress 4.6
 
 = 1.1.5 =
 
