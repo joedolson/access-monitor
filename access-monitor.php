@@ -108,7 +108,7 @@ function am_query_tenon( $post ) {
 	// only sets items that are non-blank. This allows Tenon to revert to defaults
 	$expectedPost = array( 'src', 'url', 'level', 'certainty', 'priority',
 		'docID', 'projectID', 'viewPortHeight', 'viewPortWidth',
-		'uaString', 'importance', 'ref', 'importance', 'fragment', 'store' );
+		'uaString', 'fragment', 'store' );
 		
 	foreach ( $post AS $k => $v ) {
 		if ( in_array($k, $expectedPost ) ) {
@@ -121,7 +121,7 @@ function am_query_tenon( $post ) {
 	$settings = get_option( 'am_settings' );
 	$key = $settings['tenon_api_key'];
 	if ( $key ) {
-		$opts['key'] = $key;
+		$opts['key'] = $key;		
 		$tenon = new tenon( TENON_API_URL, $opts );
 		$tenon->submit( AM_DEBUG );
 		$body = $tenon->tenonResponse['body'];
@@ -137,9 +137,9 @@ function am_query_tenon( $post ) {
 			if ( trim( $object->message ) == 'Bad Request - Either src or url parameter must be supplied' ) {
 				$message = __( 'Save your post as a draft in order to test for accessibility.', 'access-monitor' );
 			} else {
-				$message = $object->message . ': ' . $object->info;
+				$message = $object->message . ': ' . $object->info . ' ' . $object->log;
 			}
-			$formatted = '<p><strong>' . __( 'Tenon error:', 'access-monitor' ) . '</strong> ' . $message . '</p>';
+			$formatted = '<p><strong>' . __( 'Tenon error:', 'access-monitor' ) . '</strong> ' . $message . '</pre>' . '</p>';
 			$grade = 0;
 		}
 		return array( 'formatted'=> $formatted, 'results' => $results, 'grade' => $grade );
@@ -882,7 +882,7 @@ function am_settings() {
 		<div><input type='hidden' name='_wpnonce' value='".wp_create_nonce('access-monitor-nonce')."' /></div>
 		<div><input type='hidden' name='am_settings' value='update' /></div>
 		<p>
-			<label for='tenon_api_key'>".__( 'Tenon API Key', 'access-monitor' )."</label> <input type='text' name='tenon_api_key' id='tenon_api_key' value='". esc_attr( $settings['tenon_api_key'] ) ."' />
+			<label for='tenon_api_key'>".__( 'Tenon API Key', 'access-monitor' )."</label> <input type='text' name='tenon_api_key' id='tenon_api_key' size='40' value='". esc_attr( $settings['tenon_api_key'] ) ."' />
 		</p>
 		<p class='checkbox'>
 			<input type='checkbox' name='tenon_pre_publish' id='tenon_pre_publish' value='1' ". checked( $settings['tenon_pre_publish'], 1, false ) ."' /> <label for='tenon_pre_publish'>".__( 'Prevent inaccessible posts from being published', 'access-monitor' )."</label>
@@ -1002,7 +1002,6 @@ function am_report() {
 				<option value='monthly'>" . __( 'Monthly', 'access-monitor' ) . "</option>
 			</select>
 		</p>
-		<button class='toggle-options closed' aria-controls='report-options' aria-expanded='false'>" . __( 'Tenon report options', 'access-monitor' ) . "<span class='dashicons dashicons-plus-alt' aria-hidden='true'></span></button>
 		<div class='report-options' id='report-options'>
 			<fieldset>
 				<legend>" . __( 'Set Accessibility Test Options', 'access-monitor' ) . "</legend>
@@ -1097,10 +1096,7 @@ function am_setup_report() {
 					'priority' => $priority,
 					'certainty' => $certainty
 				);
-		/*
-		Set up arguments here; pass to am_generate_report
-			importance (not present yet; field specific; associate with URL)
-		*/
+
 		am_generate_report( $name, $pages, $schedule, $args );
 		am_show_report();
 	}
@@ -1210,7 +1206,7 @@ function am_show_support_box() {
 			<div class="inside subscribe">
 				<a href="https://tenon.io/pricing.php"><img src="<?php echo plugins_url( 'img/tenon-logo-no-border-light.png', __FILE__ ); ?>" alt="<?php _e( 'Sign up for Tenon.io', 'access-monitor' ); ?>" /></a>
 				<p>
-					<?php printf( __( "Access Monitor can't exist without Tenon.io subscribers. <a href='%s'>Subscribe now!</a>", 'access-monitor' ), 'https://tenon.io/pricing.php' ); ?>
+					<?php printf( __( "Access Monitor can't exist without Tenon.io subscribers. <a href='%s'>Subscribe now!</a>", 'access-monitor' ), 'http://www.tenon.io?rfsn=236617.3c55e' ); ?>
 				</p>				
 			</div>
 		</div>
@@ -1267,9 +1263,12 @@ function am_show_support_box() {
 			<p>
 				<?php echo "<a href='http://tenon.io/documentation/what-tenon-tests.php'>" . __( 'What Tenon Tests', 'access-monitor' ) . "</a>"; ?>
 			</p>
+			<p>
+				<?php _e( 'Note: all links to Tenon are affiliate links. Please use them and help support me!', 'access-monitor' ); ?>
+			</p>
 		</div>
 		</div>
-	</div>	
+	</div>
 </div>
 </div>
 <?php
