@@ -1002,6 +1002,7 @@ function am_report() {
 				<option value='monthly'>" . __( 'Monthly', 'access-monitor' ) . "</option>
 			</select>
 		</p>
+		<button type='button' class='toggle-options closed' aria-controls='report-options' aria-expanded='false'>" . __( 'Tenon report options', 'access-monitor' ) . " <span class='dashicons dashicons-plus-alt' aria-hidden='true'></span></button>
 		<div class='report-options' id='report-options'>
 			<fieldset>
 				<legend>" . __( 'Set Accessibility Test Options', 'access-monitor' ) . "</legend>
