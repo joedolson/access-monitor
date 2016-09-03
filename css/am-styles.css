@@ -166,3 +166,7 @@ button.close:hover, button.close:focus {
 .tenon-results p.am-meta, .tenon-results p.meta {
 	margin-bottom: 0;
 }
+
+#access-monitor .hndle {
+	cursor: auto;
+}
