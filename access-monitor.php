@@ -1123,8 +1123,8 @@ function am_list_reports( $count = 10 ) {
 }
 
 function am_support_page() {
-	$elem = ( version_compare( '4.4', get_option( 'version' ), '>' ) ) ? 'h3' : 'h2'; 	
-	$parent = ( version_compare( '4.4', get_option( 'version' ), '>' ) ) ? 'h2' : 'h1'; 	
+	$elem = ( version_compare( '4.4', get_option( 'version' ), '<' ) ) ? 'h3' : 'h2'; 	
+	$parent = ( version_compare( '4.4', get_option( 'version' ), '<' ) ) ? 'h2' : 'h1'; 	
 	?>
 	<div class="wrap" id='access-monitor'>
 	<?php am_update_settings(); ?>
@@ -1133,7 +1133,7 @@ function am_support_page() {
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="report">
-						<<?php echo $elem; ?>><?php _e('Create Accessibility Report','access-monitor'); ?></<?php echo $elem; ?>>
+						<<?php echo $elem; ?> class="hndle"><?php _e('Create Accessibility Report','access-monitor'); ?></<?php echo $elem; ?>>
 						<div class="inside">
 							<?php 
 							if ( isset( $_GET['report'] ) && is_numeric( $_GET['report'] ) ) { 
@@ -1148,7 +1148,7 @@ function am_support_page() {
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="recent">
-						<<?php echo $elem; ?>><?php _e('Recent Accessibility Reports','access-monitor'); ?></<?php echo $elem; ?>>
+						<<?php echo $elem; ?> class="hndle"><?php _e('Recent Accessibility Reports','access-monitor'); ?></<?php echo $elem; ?>>
 						<div class="inside">
 							<?php 
 								$count = apply_filters( 'am_recent_reports', 10 );
@@ -1161,7 +1161,7 @@ function am_support_page() {
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="settings" tabindex='-1'>
-						<<?php echo $elem; ?>><?php _e('Access Monitor Settings','access-monitor'); ?></<?php echo $elem; ?>>
+						<<?php echo $elem; ?> class="hndle"><?php _e('Access Monitor Settings','access-monitor'); ?></<?php echo $elem; ?>>
 						<div class="inside">
 							<?php am_settings(); ?>
 						</div>
@@ -1171,7 +1171,7 @@ function am_support_page() {
 			<div class='metabox-holder' tabindex='-1' id='support-form'>			
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="get-support">
-						<<?php echo $elem; ?>><?php _e('Get Plug-in Support','access-monitor'); ?></<?php echo $elem; ?>>
+						<<?php echo $elem; ?> class="hndle"><?php _e('Get Plug-in Support','access-monitor'); ?></<?php echo $elem; ?>>
 						<div class="inside">
 							<div class='am-support-me'>
 								<p>
@@ -1192,7 +1192,7 @@ function am_support_page() {
 }
 
 function am_show_support_box() {
-	$elem = ( version_compare( '4.4', get_option( 'version' ), '>' ) ) ? 'h3' : 'h2'; 	
+	$elem = ( version_compare( '4.4', get_option( 'version' ), '<' ) ) ? 'h3' : 'h2'; 	
 	?>
 <div class="postbox-container" style="width:20%">
 <div class="metabox-holder">
@@ -1203,7 +1203,7 @@ function am_show_support_box() {
 	<div class="meta-box-sortables">
 		<div class="postbox" id="tenon-signup">
 			<a href="<?php echo admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php&signup=dismiss' ); ?>" class='am-dismiss'><span class='dashicons dashicons-no' aria-hidden='true'><span class="screen-reader-text"><?php _e( 'Dismiss', 'access-monitor' ); ?></span></a>
-			<<?php echo $elem; ?> class="heading"><?php _e('Sign-up with Tenon.io','access-monitor'); ?></<?php echo $elem; ?>>
+			<<?php echo $elem; ?> class="heading hndle"><?php _e('Sign-up with Tenon.io','access-monitor'); ?></<?php echo $elem; ?>>
 			<div class="inside subscribe">
 				<a href="https://tenon.io/pricing.php"><img src="<?php echo plugins_url( 'img/tenon-logo-no-border-light.png', __FILE__ ); ?>" alt="<?php _e( 'Sign up for Tenon.io', 'access-monitor' ); ?>" /></a>
 				<p>
@@ -1216,7 +1216,7 @@ function am_show_support_box() {
 	
 	<div class="meta-box-sortables">
 		<div class="postbox">
-		<<?php echo $elem; ?>><?php _e('Support this Plug-in','access-monitor'); ?></<?php echo $elem; ?>>
+		<<?php echo $elem; ?> class="hndle"><?php _e('Support this Plug-in','access-monitor'); ?></<?php echo $elem; ?>>
 		<div id="support" class="inside resources">
 		<ul>
 			<li>		
@@ -1245,7 +1245,7 @@ function am_show_support_box() {
 	
 	<div class="meta-box-sortables">
 		<div class="postbox">
-		<<?php echo $elem; ?>><?php _e('Get Help','access-monitor'); ?></<?php echo $elem; ?>>
+		<<?php echo $elem; ?> class="hndle"><?php _e('Get Help','access-monitor'); ?></<?php echo $elem; ?>>
 		<div id="help" class="inside resources">
 			<p>
 				<?php printf( __( 'Access Monitor has two parts: the plug-in, and the API it interacts with. If your issue is in the plug-in, use the <a href="%s">support form</a>. If your issue is with the API or on tenon.io, <a href="mailto:support@tenon.io">email Tenon support</a>. Thanks!', 'access-monitor' ), '#support-form' ); ?>
@@ -1256,7 +1256,7 @@ function am_show_support_box() {
 	
 	<div class="meta-box-sortables">
 		<div class="postbox">
-		<<?php echo $elem; ?>><?php _e('Disclaimer','access-monitor'); ?></<?php echo $elem; ?>>
+		<<?php echo $elem; ?> class="hndle"><?php _e('Disclaimer','access-monitor'); ?></<?php echo $elem; ?>>
 		<div id="disclaimer" class="inside resources">
 			<p>
 				<?php _e( 'Access Monitor uses Tenon.io. The Tenon.io API is designed to examine aspects of accessibility that are machine-testable in a reliable way. No errors does not mean that your site is accessible.', 'access-monitor' ); ?>

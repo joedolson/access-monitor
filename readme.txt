@@ -68,6 +68,11 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * [Note:] Issues data: will be adding content field
 * Make possible to set API key for entire network on network activated
 
+= 1.1.7 =
+
+* Updated headings hierarchy to WP 4.4+ model.
+* 
+
 = 1.1.6 =
 
 * Filter: Ability to filter default arguments on A11y Check button

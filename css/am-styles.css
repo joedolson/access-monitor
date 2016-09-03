@@ -99,7 +99,7 @@ button.close:hover, button.close:focus {
 
 .post-type-tenon-report .misc-pub-visibility { display: none; }
 
-#access-monitor h2 .dashicons-universal-access { font-size: 1.3em; width: 1.3em; }
+#access-monitor h1 .dashicons-universal-access { font-size: 1.3em; width: 1.3em; }
 
 .tenon-result code, .tenon-result pre { margin: 0!important; padding: .5em!important; }
 
