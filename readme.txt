@@ -24,7 +24,7 @@ Access Monitor does two great things to help you test your site for accessibilit
 
 <strong>First</strong>, it gives you the freedom of automation - schedule a weekly or monthly report, and get notified each time a report is run. Test a specific set of pages, and return a list of definite accessibility issues. 
 
-<strong>Second</strong>, it only reports accessibility issues that are machine-testable. It's WON'T raise red flags because it couldn't tell whether an issue is a problem. You won't log in to look at a report that's showing 30 new accessibility issues, when 27 of them aren't really wrong. 
+<strong>Second</strong>, it only reports accessibility issues that are machine-testable. It's won't raise red flags because it couldn't tell whether an issue is a problem. 
 
 Access Monitor uses <a href="http://tenon.io">Tenon.io</a>, an automated accessibility testing service developed by web accessibility guru <a href="http://karlgroves.com">Karl Groves</a>. Tenon does what an automated tool should do - it delivers a report telling you what the issue is, where it was found, why it's an issue, and who is affected by it. 
 
