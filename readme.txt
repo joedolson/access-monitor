@@ -12,25 +12,23 @@ Test your WordPress site for accessibility compliance. Run on-demand tests or sc
 
 == Description ==
 
-Access Monitor runs accessibility tests of your WordPress site, either on the front-end or in the administration. It runs an automated scan of your site using the Tenon.io web accessibility service. 
+Access Monitor runs accessibility tests of your WordPress site. It runs an automated scan of your site using the Tenon.io web accessibility service. 
 
 Access Monitor requires an API key for Tenon.io. <a href="http://www.tenon.io?rfsn=236617.3c55e">Get your API key now!</a> (Affiliate link)
 
 = Monitor Site Accessibility =
 
-No matter how hard you work to make your web site accessible, if it's adding new content on a daily basis, that accessibility might be changing every day. If you change your theme, you're in a whole new accessibility environment. 
-
-You can make a plan to check for new issues every day, or every week - but how are you going to go about it? 
+No matter how hard you work to make your web site accessible, if you're adding new content regularly, the accessibility of your site changes equally often. If you change your theme, you may have a whole new set of issues. 
 
 Access Monitor does two great things to help you test your site for accessibility. 
 
-<strong>First</strong>, it gives you the dom of automation - schedule a weekly or monthly report, and you'll get notified each time that report is run. It'll test a specific set of pages, and return a list of definite accessibility issues, if you have any. 
+<strong>First</strong>, it gives you the freedom of automation - schedule a weekly or monthly report, and get notified each time a report is run. Test a specific set of pages, and return a list of definite accessibility issues. 
 
-<strong>Second</strong>, it only reports accessibility issues that are machine-testable. It's not going to raise a bunch of red flags because the tests weren't able to tell whether a particular issue is a problem. You won't find yourself logging in to look at a report that's showing 30 new accessibility issues, but 27 of them are issues you've already checked manually and know aren't really problems. 
+<strong>Second</strong>, it only reports accessibility issues that are machine-testable. It's WON'T raise red flags because it couldn't tell whether an issue is a problem. You won't log in to look at a report that's showing 30 new accessibility issues, when 27 of them aren't really wrong. 
 
 Access Monitor uses <a href="http://tenon.io">Tenon.io</a>, an automated accessibility testing service developed by web accessibility guru <a href="http://karlgroves.com">Karl Groves</a>. Tenon does what an automated tool should do - it delivers a report telling you what the issue is, where it was found, why it's an issue, and who is affected by it. 
 
-It's true that a perfect score from Access Monitor doesn't mean that your web site is accessible - there's no way around manual testing in the web site accessibility world. But Access Monitor makes sure that if an issue can be found using automation, you'll know about it. 
+A perfect score in Access Monitor doesn't mean that your web site is accessible - there's no way around manual testing. But Access Monitor makes sure that if an issue can be found using automation, you'll know about it. 
 
 = Learn about Tenon and Automated Accessibility =
 
@@ -38,15 +36,15 @@ Go to <a href="http://tenon.io">Tenon.io to run a test of your site</a> or <a hr
 
 Keep up with <a href="https://github.com/joedolson/access-monitor">Access Monitor development on GitHub</a>.
 
-= Testing your WordPress Site =
+= Test your WordPress Site =
 
-Access Monitor allows you to run a one-time test or schedule a test to be run on a weekly or monthly basis. All tests run through this system are saved for later review and comparison so you can track the performance of a page or a test over time.
+Run a one-time test or schedule a test to be run on a weekly or monthly basis. All tests run through this system are saved for later review and comparison so you can track the performance of a page or a test over time.
 
-* Duplicate issues are filtered out from the display. If an accessibility issue appears on multiple pages, it will only be shown the first time it's identified.
-* Re-run any test from the Accessibility Reports screen at any time. Re-running a test will create a new test on the same pages and using the same test parameters.
-* Apply rules that will test posts before you publish them and reject their publication if they don't meet your criteria
+* Duplicate issues are filtered out. If an accessibility issue appears on multiple pages, it will be shown the first time it's identified.
+* Re-run any test from the Accessibility Reports screen at any time. Re-running a test will create a new test on the same pages using the same parameters.
+* Apply rules that will test posts before you publish them and reject publication if they don't meet your criteria
 
-= Testing the WordPress Admin =
+= Test the WordPress Admin =
 
 You can test the page you're viewing using a link in the admin bar labeled 'A11y Check'.
 
