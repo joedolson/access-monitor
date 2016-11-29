@@ -119,7 +119,7 @@ function am_query_tenon( $post ) {
 	}
 		
 	$settings = get_option( 'am_settings' );
-	$key = $settings['tenon_api_key'];
+	$key = ( is_multisite() && get_site_option( 'tenon_multisite_key' ) != '' ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];
 	if ( $key ) {
 		$opts['key'] = $key;		
 		$tenon = new tenon( TENON_API_URL, $opts );
@@ -129,6 +129,7 @@ function am_query_tenon( $post ) {
 		$object = json_decode( $body );
 		if ( property_exists( $object, 'resultSet' ) ) {
 			$results = $object->resultSet;
+			$errors  = $object->clientScriptErrors;
 		} else {
 			$results = array();
 		}
@@ -142,7 +143,7 @@ function am_query_tenon( $post ) {
 			$formatted = '<p><strong>' . __( 'Tenon error:', 'access-monitor' ) . '</strong> ' . $message . '</pre>' . '</p>';
 			$grade = 0;
 		}
-		return array( 'formatted'=> $formatted, 'results' => $results, 'grade' => $grade );
+		return array( 'formatted'=> $formatted, 'results' => $results, 'errors' => $errors, 'grade' => $grade );
 	} else {
 		return false;
 	}
@@ -238,7 +239,6 @@ function am_admin_enqueue_scripts() {
 add_action('wp_enqueue_scripts', 'am_wp_enqueue_scripts');
 function am_wp_enqueue_scripts() {
 	if ( !is_admin() && isset( $_GET['tenon'] ) ) {
-		wp_enqueue_style( 'am.public', plugins_url( 'css/am-public.css', __FILE__ ) );
 		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );
 		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
 		wp_localize_script( 'am.view', 'ami18n', array( 
@@ -300,7 +300,9 @@ add_action( 'admin_bar_menu','am_admin_bar', 200 );
 function am_admin_bar() {
 	$settings = get_option( 'am_settings' );
 	$api_key = $settings['tenon_api_key'];
-	if ( $api_key != '' ) {
+	$multisite = get_site_option( 'tenon_multisite_key' );
+	
+	if ( $api_key != '' || $multisite != '' ) {
 		global $wp_admin_bar;
 		if ( is_admin() ) {
 			$url = '#tenon';
@@ -817,21 +819,24 @@ function am_update_settings() {
 	if ( isset( $_POST['am_settings'] ) ) {
 		$nonce=$_REQUEST['_wpnonce'];
 		if (! wp_verify_nonce($nonce,'access-monitor-nonce') ) die( "Security check failed" );	
-		$tenon_api_key     = ( isset( $_POST['tenon_api_key'] ) ) ? $_POST['tenon_api_key'] : '';
-		$wave_api_key      = ( isset( $_POST['wave_api_key'] ) ) ? $_POST['wave_api_key'] : '';
-		$tenon_pre_publish = ( isset( $_POST['tenon_pre_publish'] ) ) ? 1 : 0;
-		$am_post_types     = ( isset( $_POST['am_post_types'] ) ) ? $_POST['am_post_types'] : array();
-		$am_criteria       = ( isset( $_POST['am_criteria'] ) ) ? $_POST['am_criteria'] : array();
-		$am_notify         = ( isset( $_POST['am_notify'] ) ) ? $_POST['am_notify'] : '';
+		$tenon_api_key       = ( isset( $_POST['tenon_api_key'] ) ) ? $_POST['tenon_api_key'] : '';
+		$tenon_multisite_key = ( isset( $_POST['tenon_multisite_key'] ) ) ? $_POST['tenon_multisite_key'] : '';
+		$wave_api_key        = ( isset( $_POST['wave_api_key'] ) ) ? $_POST['wave_api_key'] : '';
+		$tenon_pre_publish   = ( isset( $_POST['tenon_pre_publish'] ) ) ? 1 : 0;
+		$am_post_types       = ( isset( $_POST['am_post_types'] ) ) ? $_POST['am_post_types'] : array();
+		$am_criteria         = ( isset( $_POST['am_criteria'] ) ) ? $_POST['am_criteria'] : array();
+		$am_notify           = ( isset( $_POST['am_notify'] ) ) ? $_POST['am_notify'] : '';
+		
+		update_site_option( 'tenon_multisite_key', $tenon_multisite_key );
 		
 		update_option( 'am_settings', 
 			array( 
-				'tenon_api_key'     => $tenon_api_key, 
-				'wave_api_key'      => $wave_api_key,
-				'am_post_types'     => $am_post_types,
-				'tenon_pre_publish' => $tenon_pre_publish,
-				'am_criteria'       => $am_criteria,
-				'am_notify'         => $am_notify
+				'tenon_api_key'       => $tenon_api_key, 
+				'wave_api_key'        => $wave_api_key,
+				'am_post_types'       => $am_post_types,
+				'tenon_pre_publish'   => $tenon_pre_publish,
+				'am_criteria'         => $am_criteria,
+				'am_notify'           => $am_notify
 			) 
 		);
 		echo "<div class='updated'><p>" . __( 'Access Monitor Settings Updated', 'access-monitor' ) . "</p></div>";
@@ -841,13 +846,14 @@ function am_update_settings() {
 
 add_action( 'admin_head', 'am_setup_admin_notice' );
 function am_setup_admin_notice() {
-	if ( !( isset( $_POST['tenon_api_key'] ) && $_POST['tenon_api_key'] != '' ) ) {
+	if ( !( isset( $_POST['tenon_api_key'] ) && $_POST['tenon_api_key'] != '' ) && !( isset( $_POST['tenon_multisite_key'] ) && $_POST['tenon_multisite_key'] != '' ) ) {
 		$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
-		if ( empty( $settings ) || !isset( $settings['tenon_api_key'] ) || $settings['tenon_api_key'] == '' ) {
+		$key = ( is_multisite() && get_site_option( 'tenon_multisite_key' ) != '' ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];		
+		if ( !$key ) {
 			if ( isset( $_GET['page'] ) && $_GET['page'] == 'access-monitor/access-monitor.php' ) {
 				$url = '#settings';
 			} else {
-				$url = admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php');
+				$url = admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php#settings');
 			}
 			$message = sprintf(__("You must <a href='%s'>enter a Tenon API key</a> to use Access Monitor.", 'access-monitor'), $url );
 			add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } else { echo \"<div class='error'><p>$message</p></div>\";}" ) );
@@ -859,6 +865,7 @@ function am_setup_admin_notice() {
 function am_settings() {
 	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
 	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'', 'tenon_pre_publish' => '', 'am_post_types' => array(), 'am_post_grade' => '', 'am_criteria' => array() ), $settings );
+	$multisite = get_site_option( 'tenon_multisite_key' );
 
 	$post_types    = get_post_types( array( 'public' => true, 'show_ui' => true ), 'objects' );
 	$am_post_types = isset( $settings['am_post_types'] ) ? $settings['am_post_types'] : array();
@@ -883,7 +890,14 @@ function am_settings() {
 		<div><input type='hidden' name='am_settings' value='update' /></div>
 		<p>
 			<label for='tenon_api_key'>".__( 'Tenon API Key', 'access-monitor' )."</label> <input type='text' name='tenon_api_key' id='tenon_api_key' size='40' value='". esc_attr( $settings['tenon_api_key'] ) ."' />
-		</p>
+		</p>";
+	if ( is_multisite() ) {
+		echo "
+		<p>
+			<label for='tenon_multisite_key'>".__( 'Tenon API Key (Network-wide)', 'access-monitor' )."</label> <input type='text' name='tenon_multisite_key' id='tenon_multisite_key' size='40' value='". esc_attr( $multisite ) ."' />
+		</p>";
+	}	
+	echo "
 		<p class='checkbox'>
 			<input type='checkbox' name='tenon_pre_publish' id='tenon_pre_publish' value='1' ". checked( $settings['tenon_pre_publish'], 1, false ) ."' /> <label for='tenon_pre_publish'>".__( 'Prevent inaccessible posts from being published', 'access-monitor' )."</label>
 		</p>";
@@ -946,8 +960,9 @@ function am_settings() {
 function am_report() {
 	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
 	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'' ), $settings );
+	$multisite = get_site_option( 'tenon_multisite_key' );
 	
-	if ( $settings['tenon_api_key'] == '' ) {
+	if ( $settings['tenon_api_key'] == '' && $multisite == '' ) {
 		$disabled = " disabled='disabled'";
 		$message = "<p><strong><a href='http://www.tenon.io?rfsn=236617.3c55e'>" . __( 'Sign up with Tenon to get an API key', 'access-monitor' ) . "</a></strong> &bull; <a href='#settings'>" . __( 'Add your API key', 'access-monitor' ) . "</a></p>";
 	} else {

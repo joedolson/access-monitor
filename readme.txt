@@ -66,12 +66,12 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 	- Create rules UI for whether post publish should be blocked.
 * Create ignore list
 * [Note:] Issues data: will be adding content field
-* Make possible to set API key for entire network on network activated
 
 = 1.1.7 =
 
 * Updated headings hierarchy to WP 4.4+ model.
-* 
+* Option to set API key for entire network on network activated
+* Bug fix: called a CSS file that did not exist
 
 = 1.1.6 =
 
