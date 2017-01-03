@@ -65,6 +65,11 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * Create ignore list
 * [Note:] Issues data: will be adding content field
 
+= 1.1.8 =
+
+* Remove WAVE (not currently in use)
+* Update tested to value
+
 = 1.1.7 =
 
 * Updated headings hierarchy to WP 4.4+ model.

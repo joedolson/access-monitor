@@ -7,7 +7,7 @@ Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
 Text Domain: access-monitor
 Domain Path: lang
-Version: 1.1.7
+Version: 1.1.8
 */
 /*  Copyright 2014-2016  Joe Dolson (email : plugins@joedolson.com)
 
@@ -39,7 +39,7 @@ define( 'AM_DEBUG', false );
 require_once( 't/tenon.php' );
 require_once( 'am-post-inspection.php' );
 
-$am_version = '1.1.7';
+$am_version = '1.1.8';
 
 add_action( 'wp_footer', 'am_pass_query' );
 function am_pass_query() {
@@ -312,67 +312,6 @@ function am_admin_bar() {
 		$wp_admin_bar->add_node( $args );
 	}
 }
-
-
-add_filter( 'the_content', 'am_wave_pass_query' );
-function am_wave_pass_query( $content ) {
-	if ( isset( $_GET['wave'] ) && is_numeric( $_GET['wave'] ) ) {
-		$permalink = get_the_permalink();
-		$reporttype = (int) $_GET['wave'];
-		$results = am_query_wave( array( 'url'=>$permalink, 'reporttype'=>$reporttype ) );
-		return $results.$content;
-	}
-	return $content;
-}
-
-function am_query_wave( $post ) {
-	// creates the $opts array from the $post data
-	// only sets items that are non-blank. This allows Tenon to revert to defaults
-	$expectedPost = array( 'key', 'url', 'reporttype', 'format' );
-
-	foreach ( $post AS $k => $v ) {
-		if ( in_array($k, $expectedPost ) ) {
-			if ( strlen( trim( $v ) ) > 0 ) {
-				$opts[$k] = $v;
-			}
-		}
-	}
-	$settings = get_option( 'am_settings' );
-	$key = $settings['wave_api_key'];
-	if ( $key ) {
-		$opts['key'] = $key;
-		$wave = new wave( WAVE_API_URL, $opts );
-		$wave->submit( AM_DEBUG );
-		$body = $wave->waveResponse['body'];
-		$results = am_format_wave( $body, $opts['reporttype'] );
-		return $results;
-	} else {
-		return false;
-	}
-}
-
-function am_format_wave( $body, $reporttype=1 ) {
-	$body = json_decode( $body );
-	
-	$credits = $body->statistics->creditsremaining;
-	$itemcount = $body->statistics->allitemcount;
-	$waveurl = $body->statistics->waveurl;
-	$categories = $body->categories;
-	$report = '<ul>';
-	foreach ( $categories as $cat => $category ) {
-		$report .= "<li><strong>$category->description</strong>: $category->count</li>";
-	}
-	$report .= "</ul>";
-	$report = "
-	<div class='wave-result'>
-		<p>
-		Credits Remaining: $credits &bull; <a href='$waveurl'>Test at WAVE</a>
-		</p>
-		$report
-	</div>";
-	return $report;
-}
-
 
 add_action( 'init', 'am_posttypes' );
 function am_posttypes() {
@@ -818,7 +757,6 @@ function am_update_settings() {
 		if (! wp_verify_nonce($nonce,'access-monitor-nonce') ) die( "Security check failed" );	
 		$tenon_api_key       = ( isset( $_POST['tenon_api_key'] ) ) ? $_POST['tenon_api_key'] : '';
 		$tenon_multisite_key = ( isset( $_POST['tenon_multisite_key'] ) ) ? $_POST['tenon_multisite_key'] : '';
-		$wave_api_key        = ( isset( $_POST['wave_api_key'] ) ) ? $_POST['wave_api_key'] : '';
 		$tenon_pre_publish   = ( isset( $_POST['tenon_pre_publish'] ) ) ? 1 : 0;
 		$am_post_types       = ( isset( $_POST['am_post_types'] ) ) ? $_POST['am_post_types'] : array();
 		$am_criteria         = ( isset( $_POST['am_criteria'] ) ) ? $_POST['am_criteria'] : array();
@@ -829,7 +767,6 @@ function am_update_settings() {
 		update_option( 'am_settings', 
 			array( 
 				'tenon_api_key'       => $tenon_api_key, 
-				'wave_api_key'        => $wave_api_key,
 				'am_post_types'       => $am_post_types,
 				'tenon_pre_publish'   => $tenon_pre_publish,
 				'am_criteria'         => $am_criteria,
@@ -861,7 +798,7 @@ function am_setup_admin_notice() {
 
 function am_settings() {
 	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
-	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'', 'tenon_pre_publish' => '', 'am_post_types' => array(), 'am_post_grade' => '', 'am_criteria' => array() ), $settings );
+	$settings = array_merge( array( 'tenon_api_key'=>'', 'tenon_pre_publish' => '', 'am_post_types' => array(), 'am_post_grade' => '', 'am_criteria' => array() ), $settings );
 	$multisite = get_site_option( 'tenon_multisite_key' );
 
 	$post_types    = get_post_types( array( 'public' => true, 'show_ui' => true ), 'objects' );
@@ -938,14 +875,7 @@ function am_settings() {
 					</p>
 			<?php			
 		}
-		
-		
-		
-/* Removing WAVE settings for now.
-		<p>
-			<label for='wave_api_key'>".__( 'WAVE API Key', 'access-monitor' )."</label> <input type='text' name='wave_api_key' id='wave_api_key' value='". esc_attr( $settings['wave_api_key'] ) ."' />
-		</p>
-*/		
+				
 		echo "<div>";
 		echo "<p>
 		<input type='submit' value='".__('Update Settings','access-monitor')."' name='am_settings' class='button-primary' />
@@ -956,7 +886,7 @@ function am_settings() {
 
 function am_report() {
 	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
-	$settings = array_merge( array( 'tenon_api_key'=>'', 'wave_api_key'=>'' ), $settings );
+	$settings = array_merge( array( 'tenon_api_key'=>'' ), $settings );
 	$multisite = get_site_option( 'tenon_multisite_key' );
 	
 	if ( $settings['tenon_api_key'] == '' && $multisite == '' ) {
