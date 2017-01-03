@@ -7,7 +7,7 @@ Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
 Text Domain: access-monitor
 Domain Path: lang
-Version: 1.1.6
+Version: 1.1.7
 */
 /*  Copyright 2014-2016  Joe Dolson (email : plugins@joedolson.com)
 
@@ -36,13 +36,10 @@ function am_load_textdomain() {
 define( 'TENON_API_URL', 'https://tenon.io/api/' );
 define( 'AM_DEBUG', false );
 
-define( 'WAVE_API_URL', 'http://wave.webaim.org/api/request' );
-
 require_once( 't/tenon.php' );
-require_once( 't/wave.php' );
 require_once( 'am-post-inspection.php' );
 
-$am_version = '1.1.6';
+$am_version = '1.1.7';
 
 add_action( 'wp_footer', 'am_pass_query' );
 function am_pass_query() {

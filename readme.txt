@@ -2,11 +2,11 @@
 Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, section508, tenon
-Requires at least: 4.1
-Tested up to: 4.6
+Requires at least: 4.2
+Tested up to: 4.7
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
