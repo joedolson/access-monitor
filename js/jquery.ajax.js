@@ -7,10 +7,11 @@
 				'tenon' : src,
 				'current_screen' : am_current_screen
 			};
-		$( '#wp-admin-bar-tenonCheck a' ).append( ' <span class="tenon-updating dashicons dashicons-update" aria-hidden="true"></span>' );
+		$( '#wp-admin-bar-tenonCheck a' ).append( ' <span class="tenon-updating dashicons dashicons-update" aria-hidden="true"></span><span class="screen-reader-text"></span>' );
 	
 		$( '#wp-admin-bar-tenonCheck a' ).on( 'click', function() {
 			$( this ).find( '.tenon-updating' ).addClass( 'animating' );
+			$( this ).find( '.screen-reader-text' ).text( ami18n.updating );
 			$.ajax({
 				type: 'POST',
 				url: am_ajax_url,
@@ -46,6 +47,7 @@
 				},
 				complete: function(data) {
 					$( '#wp-admin-bar-tenonCheck a .tenon-updating' ).removeClass( 'animating' ).addClass( 'complete' );
+					$( '#wp-admin-bar-tenonCheck a .screen-reader-text' ).text( ami18n.completed );
 				}
 			});
 			

@@ -239,7 +239,9 @@ function am_admin_enqueue_scripts() {
 		wp_localize_script( 'am.view', 'ami18n', array( 
 			'expand'   => __( 'Expand', 'access-monitor' ), 
 			'collapse' => __( 'Collapse', 'access-monitor' ),
-			'vuiew'    => __( 'View', 'access-monitor' )
+			'view'    => __( 'View', 'access-monitor' ),
+			'updating'    => __( 'Updating', 'access-monitor' ),
+			'completed'    => __( 'Completed', 'access-monitor' )
 		) );
 		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );	
 	}
