@@ -62,6 +62,7 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * Add filters and filters and filters. 
 	- Relate reports to authors
 	- Create rules UI for whether post publish should be blocked.
+	- Measure most common errors 
 * Create ignore list
 * [Note:] Issues data: will be adding content field
 

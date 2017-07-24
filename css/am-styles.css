@@ -158,6 +158,46 @@ button.close:hover, button.close:focus {
 	margin: 0 auto .5em;	
 }
 
+.tenon-result a {
+	text-decoration: underline !important;
+	border: none !important;
+}
+
+.tenon-result a:hover, .tenon-result a:focus {
+	text-decoration: none !important;
+}
+
+.tenon-error {
+	position: relative;
+	display: inline-block;
+	width: 6em;
+}
+
+.toggle-view {
+	padding: .25em!important;
+	font-size: 1em!important;
+	opacity: .4;
+	z-index: 5;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.toggle-view:hover, .toggle-view:focus {
+	opacity: 1;
+}
+
+.tenon-error-comment {
+	position: absolute;
+	display: block;
+	left: 3em;
+	top: 1em;
+	width: 24em;
+	padding: 1em;
+	background: #f3f3f3;
+	color: #333;	
+}
+
 /* Xpath Data is intentionally hidden to make this view more compact */
 .tenon-results .xpath-data {
 	display: none; 

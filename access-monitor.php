@@ -9,7 +9,7 @@ Text Domain: access-monitor
 Domain Path: lang
 Version: 1.1.8
 */
-/*  Copyright 2014-2016  Joe Dolson (email : plugins@joedolson.com)
+/*  Copyright 2014-2017  Joe Dolson (email : plugins@joedolson.com)
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -201,7 +201,7 @@ function am_format_tenon_array( $results, $errors ) {
 					<pre lang='html'>".$result->errorSnippet."</pre>					
 					<p>$result->errorDescription $ref</p>
 					<div class='xpath-data'>
-					<h4>Xpath:</h4> <pre><code>$result->xpath</code></pre>
+					<h4>Xpath:</h4> <pre><code data-comments='" . esc_attr( $result->errorDescription ) . "' data-id='tenon-" . md5( $result->xpath ) . "'>$result->xpath</code></pre>
 					</div>
 	
 				</div>";
@@ -233,7 +233,7 @@ function am_admin_enqueue_scripts() {
 	}
 }
 
-add_action('wp_enqueue_scripts', 'am_wp_enqueue_scripts');
+add_action( 'wp_enqueue_scripts', 'am_wp_enqueue_scripts' );
 function am_wp_enqueue_scripts() {
 	if ( !is_admin() && isset( $_GET['tenon'] ) ) {
 		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );
