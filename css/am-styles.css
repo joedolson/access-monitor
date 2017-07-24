@@ -225,6 +225,11 @@ button.close:hover, button.close:focus {
 	display: none; 
 }
 
+.tenon-results .tenon-standards ul {
+	margin: 0;
+	margin-left: 2em;
+}
+
 .tenon-results p.am-meta, .tenon-results p.meta {
 	margin-bottom: 0;
 }

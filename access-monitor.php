@@ -189,6 +189,13 @@ function am_format_tenon_array( $results, $errors ) {
 			$xpathID = md5( $result->xpath );
 			$href = esc_url( add_query_arg( array( 'bpID'=>$bpID, 'tID'=>$tID ), 'http://tenon.io/bestpractice.php' ) );
 			$ref = "<strong>" . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$href'>$result->resultTitle</a>";
+			$standards = '';
+			foreach( $result->standards as $guideline ) {
+				$standards .= "<li>$guideline</li>";
+			}
+			if ( $standards != '' ) {
+				$standards = "<h4>" . __( 'Relevant Accessibility Standards','access-monitor' ) . "</h4><ul>$standards</ul>";
+			}
 			$return .= "
 				<div class='tenon-result' id='tenon-notes-$xpathID'>
 					<h3>
@@ -204,6 +211,9 @@ function am_format_tenon_array( $results, $errors ) {
 					<div class='xpath-data'>
 					<h4>Xpath:</h4> <pre><code data-certainty='$cert' data-priority='$prio' data-title='" . $i . '. ' . esc_attr( $result->errorTitle ) . "' data-id='tenon-" . $xpathID . "'>$result->xpath</code></pre>
 					</div>
+					<div class='tenon-standards'>
+						$standards
+					</div>					
 					<p><a href='#source-tenon-$xpathID'>Find error $i</a></p>
 				</div>";
 		}
