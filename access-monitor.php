@@ -64,7 +64,7 @@ function am_pass_query() {
 			add_post_meta( $post_id, '_tenon_test_results', array( 'date' => current_time( 'timestamp' ), 'results' => $results ) );
 			add_post_meta( $post_id, '_tenon_test_hash', $hash );
 		}
-		echo "<div class='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button>" . $format . "</div>";
+		echo "<div class='tenon-results' id='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button>" . $format . "</div>";
 	}
 }
 
@@ -186,10 +186,11 @@ function am_format_tenon_array( $results, $errors ) {
 			}
 			$bpID = $result->bpID;
 			$tID = $result->tID;
+			$xpathID = md5( $result->xpath );
 			$href = esc_url( add_query_arg( array( 'bpID'=>$bpID, 'tID'=>$tID ), 'http://tenon.io/bestpractice.php' ) );
 			$ref = "<strong>" . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$href'>$result->resultTitle</a>";
 			$return .= "
-				<div class='tenon-result'>
+				<div class='tenon-result' id='tenon-notes-$xpathID'>
 					<h3>
 						<span>$i</span>. $result->errorTitle 
 					</h3>
@@ -201,9 +202,9 @@ function am_format_tenon_array( $results, $errors ) {
 					<pre lang='html'>".$result->errorSnippet."</pre>					
 					<p>$result->errorDescription $ref</p>
 					<div class='xpath-data'>
-					<h4>Xpath:</h4> <pre><code data-comments='" . esc_attr( $result->errorDescription ) . "' data-id='tenon-" . md5( $result->xpath ) . "'>$result->xpath</code></pre>
+					<h4>Xpath:</h4> <pre><code data-certainty='$cert' data-priority='$prio' data-title='" . $i . '. ' . esc_attr( $result->errorTitle ) . "' data-id='tenon-" . $xpathID . "'>$result->xpath</code></pre>
 					</div>
-	
+					<p><a href='#source-tenon-$xpathID'>Find error $i</a></p>
 				</div>";
 		}
 	} else {
