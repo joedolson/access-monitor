@@ -64,7 +64,7 @@ function am_pass_query() {
 			add_post_meta( $post_id, '_tenon_test_results', array( 'date' => current_time( 'timestamp' ), 'results' => $results ) );
 			add_post_meta( $post_id, '_tenon_test_hash', $hash );
 		}
-		echo "<div class='tenon-results' id='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button>" . $format . "</div>";
+		echo "<div class='tenon-results' id='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button><div class='tenon-processing'>Processing...</div>" . $format . "</div>";
 	}
 }
 
@@ -237,8 +237,9 @@ function am_admin_enqueue_scripts() {
 		
 		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
 		wp_localize_script( 'am.view', 'ami18n', array( 
-			'expand' => __( 'Expand', 'access-monitor' ), 
-			'collapse' => __( 'Collapse', 'access-monitor' ) 
+			'expand'   => __( 'Expand', 'access-monitor' ), 
+			'collapse' => __( 'Collapse', 'access-monitor' ),
+			'vuiew'    => __( 'View', 'access-monitor' )
 		) );
 		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );	
 	}

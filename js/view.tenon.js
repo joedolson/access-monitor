@@ -11,6 +11,7 @@
 		var display  = $( path ).css( 'display' );
 		var priority = $( this ).attr( 'data-priority' );
 		var certainty = 'cert-' + $( this ).attr( 'data-certainty' );
+		
 		$( path )
 			.wrap( '<div class="tenon-error ' + priority + ' ' + certainty + '" style="display: ' + display + ';" id="source-tenon-' + noteID + '" tabindex="-1"></div>' )
 			.attr( 'aria-describedby', id ).css( { 'outline' : '2px solid red' } )

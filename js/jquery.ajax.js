@@ -1,16 +1,14 @@
 (function ($) {
+	
 	$(function() {
-		if ( am_current_screen == 'dashboard' ) {
-			var src = document.documentElement.outerHTML; 		
-		} else {
-			var src = document.getElementById('wpbody-content').outerHTML; 
-		}
+		var src = document.documentElement.outerHTML;
 		var query = {
 				'action' : am_ajax_action,
 				'tenon' : src,
 				'current_screen' : am_current_screen
 			};
 		$( '#wp-admin-bar-tenonCheck a' ).on( 'click', function() {
+			$( '.tenon-processing' ).show();
 			$.ajax({
 				type: 'POST',
 				url: am_ajax_url,
@@ -19,6 +17,29 @@
 				success: function( data ) {
 					var response = data.formatted;
 					$( '#tenon' ).html( response );
+					
+					var xpaths = $( '.xpath-data code' );
+					xpaths.each(function () {
+						var xpath     = this.innerHTML;
+						var title     = $( this ).attr( 'data-title' ).replace( '`', "<code>" ).replace( '`', "</code>" );
+						var id        = $( this ).attr( 'data-id' );
+						var noteID    = id.replace( 'tenon-', '' );
+						var notes     = "<a href='#tenon-notes-" + noteID + "'>" + title + "</a>";
+						var path      = xPathToCss( xpath );
+						var display   = $( path ).css( 'display' );
+						var priority  = $( this ).attr( 'data-priority' );
+						var certainty = 'cert-' + $( this ).attr( 'data-certainty' );
+								
+						$( path )
+							.wrap( '<div class="tenon-error ' + priority + ' ' + certainty + '" style="display: ' + display + ';" id="source-tenon-' + noteID + '" tabindex="-1"></div>' )
+							.attr( 'aria-describedby', noteID ).css( { 'outline' : '2px solid red' } )
+							.attr( 'aria-describedby', noteID ).css( { 'outline' : '2px solid red' } )
+							.after( '<a href="#tenon-notes-' + noteID + '" class="toggle-view ' + priority + ' ' + certainty + '"><span class="dashicons dashicons-arrow-down" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.visit + '</span></a>' )
+							;
+					});
+					$( '.tenon-error-comment' ).hide();					
+					
+					
 				},
 				error: function(data) {
 					$( '#tenon' ).html( "Tenon request failed" );

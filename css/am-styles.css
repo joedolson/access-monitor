@@ -205,6 +205,13 @@ button.close:hover, button.close:focus {
 
 .toggle-view:hover, .toggle-view:focus, .toggle-view:active {
 	opacity: 1;
+	color: inherit;
+}
+
+.toggle-view .dashicons {
+	width: 1em;
+	height: 1em;
+	font-size: 1.2em;
 }
 
 .tenon-error-comment {
