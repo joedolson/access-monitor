@@ -187,25 +187,49 @@ button.close:hover, button.close:focus {
 	position: absolute;
 	top: 1px;
 	left: 1px;
-	color: #fff;
+	color: #fff !important;
 	background-color: #900 !important;
 	border-radius: 4px;
+}
+
+.tenon-updating {
+	font-family: dashicons !important;
+}
+
+.tenon-updating.animating {
+	animation-name: tenon-updating;
+	animation-duration: 6s;
+	animation-iteration-count: 10;	
+}
+
+.tenon-updating.complete {
+	color: #7f7;
+}
+
+@keyframes tenon-updating {
+	0% { transform: rotate( 45deg ); }
+	12.5% { transform: rotate( 90deg ); }
+	25% { transform: rotate( 136deg ); }
+	37.5% { transform: rotate( 180deg ); }
+	50% { transform: rotate( 225deg ); }
+	62.5% { transform: rotate( 270deg ); }
+	75% { transform: rotate( 315deg ); }
+	87.5% { transform: rotate( 360deg ); }
 }
 
 
 .toggle-view.medium {
 	background-color: #3ff !important;
-	color: #000;
+	color: #000 !important;
 }
 
 .toggle-view.low {
 	background-color: #333 !important;
-	color: #fff;
+	color: #fff !important;
 }
 
 .toggle-view:hover, .toggle-view:focus, .toggle-view:active {
 	opacity: 1;
-	color: inherit;
 }
 
 .toggle-view .dashicons {

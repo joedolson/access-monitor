@@ -7,8 +7,10 @@
 				'tenon' : src,
 				'current_screen' : am_current_screen
 			};
+		$( '#wp-admin-bar-tenonCheck a' ).append( ' <span class="tenon-updating dashicons dashicons-update" aria-hidden="true"></span>' );
+	
 		$( '#wp-admin-bar-tenonCheck a' ).on( 'click', function() {
-			$( '.tenon-processing' ).show();
+			$( this ).find( '.tenon-updating' ).addClass( 'animating' );
 			$.ajax({
 				type: 'POST',
 				url: am_ajax_url,
@@ -25,7 +27,8 @@
 						var id        = $( this ).attr( 'data-id' );
 						var noteID    = id.replace( 'tenon-', '' );
 						var notes     = "<a href='#tenon-notes-" + noteID + "'>" + title + "</a>";
-						var path      = xPathToCss( xpath );
+						var path      = xPathToCss( xpath ).replace( 'table:eq(0) > tr', 'table:eq(0) > tbody:eq(0) > tr' );
+											
 						var display   = $( path ).css( 'display' );
 						var priority  = $( this ).attr( 'data-priority' );
 						var certainty = 'cert-' + $( this ).attr( 'data-certainty' );
@@ -34,17 +37,18 @@
 							.wrap( '<div class="tenon-error ' + priority + ' ' + certainty + '" style="display: ' + display + ';" id="source-tenon-' + noteID + '" tabindex="-1"></div>' )
 							.attr( 'aria-describedby', noteID ).css( { 'outline' : '2px solid red' } )
 							.attr( 'aria-describedby', noteID ).css( { 'outline' : '2px solid red' } )
-							.after( '<a href="#tenon-notes-' + noteID + '" class="toggle-view ' + priority + ' ' + certainty + '"><span class="dashicons dashicons-arrow-down" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.visit + '</span></a>' )
-							;
-					});
-					$( '.tenon-error-comment' ).hide();					
-					
+							.after( '<a href="#tenon-notes-' + noteID + '" class="toggle-view ' + priority + ' ' + certainty + '"><span class="dashicons dashicons-arrow-down" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.visit + '</span></a>' );
+					});					
 					
 				},
 				error: function(data) {
 					$( '#tenon' ).html( "Tenon request failed" );
+				},
+				complete: function(data) {
+					$( '#wp-admin-bar-tenonCheck a .tenon-updating' ).removeClass( 'animating' ).addClass( 'complete' );
 				}
 			});
+			
 		});
 	});
 	
