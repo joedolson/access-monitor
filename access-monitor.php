@@ -64,7 +64,7 @@ function am_pass_query() {
 			add_post_meta( $post_id, '_tenon_test_results', array( 'date' => current_time( 'timestamp' ), 'results' => $results ) );
 			add_post_meta( $post_id, '_tenon_test_hash', $hash );
 		}
-		echo "<div class='tenon-results' id='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button><div class='tenon-processing'>Processing...</div>" . $format . "</div>";
+		echo "<div class='tenon-results' id='tenon-results'><button class='toggle-results' aria-expanded='true'>Collapse</button>" . $format . "</div>";
 	}
 }
 
