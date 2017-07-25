@@ -7,7 +7,7 @@ Author: Joseph C Dolson
 Author URI: http://www.joedolson.com
 Text Domain: access-monitor
 Domain Path: lang
-Version: 1.1.8
+Version: 1.2.0-beta
 */
 /*  Copyright 2014-2017  Joe Dolson (email : plugins@joedolson.com)
 

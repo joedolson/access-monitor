@@ -3,10 +3,10 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, section508, tenon
 Requires at least: 4.2
-Tested up to: 4.7
+Tested up to: 4.8
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.1.8
+Stable tag: 1.2.0-beta
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -65,6 +65,14 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 	- Measure most common errors 
 * Create ignore list
 * [Note:] Issues data: will be adding content field
+
+= 1.2.0 =
+
+* Feature: Add visualization of errors 
+* Feature: Display relevant WCAG guidelines
+* Improvement: Indication of current process
+* Improvement: Full page test on all WordPress screens (to obtain valid xPath)
+* 
 
 = 1.1.8 =
 
