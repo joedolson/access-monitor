@@ -11,7 +11,7 @@
 		var display  = $( path ).css( 'display' );
 		var priority = $( this ).attr( 'data-priority' );
 		var certainty = 'cert-' + $( this ).attr( 'data-certainty' );
-		
+				
 		$( path )
 			.wrap( '<div class="tenon-error ' + priority + ' ' + certainty + '" style="display: ' + display + ';" id="source-tenon-' + noteID + '" tabindex="-1"></div>' )
 			.attr( 'aria-describedby', id ).css( { 'outline' : '2px solid red' } )
@@ -23,9 +23,12 @@
 		e.preventDefault();
 		var expanded = $( this ).attr( 'aria-expanded' );
 		if ( expanded == 'true' ) {
-			$( '.tenon-results' ).css( 'height', '6em' );
+			$( '.tenon-results' ).css( 'height', '120px' );
+			$( 'body' ).css( 'padding-bottom', '120px' );
 			$( this ).attr( 'aria-expanded', 'false' ).html( '<span class="dashicons dashicons-plus" aria-hidden="true"></span>' + ami18n.expand );			
 		} else {
+			var padding = ( window.innerHeight ) / 2;
+			$( 'body' ).css( 'padding-bottom', padding );
 			$( '.tenon-results' ).css( 'height', '50%' );
 			$( this ).attr( 'aria-expanded', 'true' ).html( '<span class="dashicons dashicons-minus" aria-hidden="true"></span>' + ami18n.collapse );
 		}
