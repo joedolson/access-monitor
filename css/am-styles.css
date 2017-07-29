@@ -140,7 +140,8 @@ button.close:hover, button.close:focus {
 }
 
 .tenon-results button {
-	float: right;
+	position: fixed;
+	right: 2em;
 }
 
 .tenon-view-container {
@@ -180,16 +181,17 @@ button.close:hover, button.close:focus {
 .toggle-view {
 	padding: .1em!important;
 	font-size: 1em!important;
-	width: 1.2em;
-	height: 1.2em;
-	opacity: .5;
+	width: 1.2em !important;
+	height: 1.2em !important;
 	z-index: 5;
 	position: absolute;
-	top: 1px;
-	left: 1px;
+	top: 3px !important;
+	left: -1.8em !important;
 	color: #fff !important;
 	background-color: #900 !important;
-	border-radius: 4px;
+	border-radius: 4px !important;
+	border: 1px solid transparent !important;
+	text-decoration: none !important;
 }
 
 .tenon-updating {
@@ -229,7 +231,7 @@ button.close:hover, button.close:focus {
 }
 
 .toggle-view:hover, .toggle-view:focus, .toggle-view:active {
-	opacity: 1;
+	border: 1px solid #fff !important;
 }
 
 .toggle-view .dashicons {
