@@ -169,7 +169,7 @@ function am_format_tenon( $body ) {
 }
 
 function am_format_tenon_array( $results, $errors ) {
-	$return = "<section><h2>".sprintf( __( '%s accessibility issues identified.', 'access-monitor' ), "<em>$errors</em>" )."</h2>";
+	$return = "<section><h2>".sprintf( _n( '%s accessibility issue identified.', '%s accessibility issues identified.', $errors, 'access-monitor' ), "<em>$errors</em>" )."</h2>";
 	$i = 0;
 	if ( !empty( $results ) ) {
 		foreach( $results as $result ) {

@@ -72,7 +72,8 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * Feature: Display relevant WCAG guidelines
 * Improvement: Indication of current process
 * Improvement: Full page test on all WordPress screens (to obtain valid xPath)
-* 
+* Bug fix: Modify collapsible display to allow full scrolling
+* Bug fix: heading pluralization
 
 = 1.1.8 =
 
