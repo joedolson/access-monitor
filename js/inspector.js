@@ -11,6 +11,17 @@ jQuery( document ).ready( function( $ ) {
 		});
 	}
 	
+	// toggle publish button based on override condition
+	$( '#am_override' ).on( 'change', function( e ) {
+		if ( $( '#am_override' ).is( ':checked' ) ) {
+			$( '#publish[name="publish"]' ).attr( 'disabled', false ).removeClass( 'button-secondary' ).addClass( 'button-primary' );
+			$( '#save-post' ).removeClass( 'button-primary' );
+		} else {
+			$( '#publish[name="publish"]' ).attr( 'disabled', 'disabled' ).removeClass( 'button-primary' ).addClass( 'button-secondary' );
+			$( '#save-post' ).addClass( 'button-primary' );			
+		}
+	});
+	
 	$( '#publish[name="publish"], button.inspect-a11y' ).on( 'click', function( e ) {		
 		var override = $( '#am_override' ).is( ':checked' );
 		if ( override ) {
