@@ -152,6 +152,7 @@ button.close:hover, button.close:focus {
 	position: absolute;
 	top: 0;
 	right: 0;
+	left: auto!important;
 }
 
 .tenon-view-container h3 {
@@ -176,6 +177,13 @@ button.close:hover, button.close:focus {
 .tenon-error {
 	position: relative;
 	display: inline;
+}
+
+.toggle-results .dashicons {
+	width: auto;
+	height: auto;
+	font-size: inherit;
+	vertical-align: middle;
 }
 
 .toggle-view {

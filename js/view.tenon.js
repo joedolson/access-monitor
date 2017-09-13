@@ -25,12 +25,12 @@
 		if ( expanded == 'true' ) {
 			$( '.tenon-results' ).css( 'height', '120px' );
 			$( 'body' ).css( 'padding-bottom', '120px' );
-			$( this ).attr( 'aria-expanded', 'false' ).html( '<span class="dashicons dashicons-plus" aria-hidden="true"></span>' + ami18n.expand );			
+			$( this ).attr( 'aria-expanded', 'false' ).html( '<span class="dashicons dashicons-plus" aria-hidden="true"></span> ' + ami18n.expand );			
 		} else {
 			var padding = ( window.innerHeight ) / 2;
 			$( 'body' ).css( 'padding-bottom', padding );
 			$( '.tenon-results' ).css( 'height', '50%' );
-			$( this ).attr( 'aria-expanded', 'true' ).html( '<span class="dashicons dashicons-minus" aria-hidden="true"></span>' + ami18n.collapse );
+			$( this ).attr( 'aria-expanded', 'true' ).html( '<span class="dashicons dashicons-minus" aria-hidden="true"></span> ' + ami18n.collapse );
 		}
 	});
 	
@@ -43,10 +43,10 @@
 		var noteID   = $( this ).attr( 'data-notes' );
 		if ( expanded == 'true' ) {
 			$( '#' + controls ).hide();
-			$( this ).attr( 'aria-expanded', 'false' ).html( '<span class="dashicons dashicons-plus" aria-hidden="true"></span><span class="screen-reader-text">' + ami18n.expand+ '</span>' );
+			$( this ).attr( 'aria-expanded', 'false' ).html( '<span class="dashicons dashicons-plus" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.expand+ '</span>' );
 		} else {
 			$( '#' + controls ).show();
-			$( this ).attr( 'aria-expanded', 'true' ).html( '<span class="dashicons dashicons-minus" aria-hidden="true"></span><span class="screen-reader-text">' + ami18n.collapse + '</span>' );
+			$( this ).attr( 'aria-expanded', 'true' ).html( '<span class="dashicons dashicons-minus" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.collapse + '</span>' );
 			$( '#' + noteID ).addClass( 'highlight-error' );
 			
 		}
