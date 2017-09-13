@@ -74,6 +74,7 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * Improvement: Full page test on all WordPress screens (to obtain valid xPath)
 * Bug fix: Modify collapsible display to allow full scrolling
 * Bug fix: heading pluralization
+* Allow admins to disable accessibility test results before saving draft.
 
 = 1.1.8 =
 
