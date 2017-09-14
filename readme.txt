@@ -64,7 +64,6 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 	- Create rules UI for whether post publish should be blocked.
 	- Measure most common errors 
 * Create ignore list
-* [Note:] Issues data: will be adding content field
 
 = 1.2.0 =
 
@@ -72,10 +71,10 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * Feature: Display relevant WCAG guidelines
 * Improvement: Indication of current process
 * Improvement: Full page test on all WordPress screens (to obtain valid xPath)
+* Improvement: Allow admins to disable accessibility test results before saving draft.
 * Bug fix: Modify collapsible display to allow full scrolling
 * Bug fix: heading pluralization
-* Allow admins to disable accessibility test results before saving draft.
-* Rename primary menu item for space and clarity
+* Change: Rename primary menu item for space and clarity
 
 = 1.1.8 =
 
