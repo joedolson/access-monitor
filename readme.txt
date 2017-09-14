@@ -6,7 +6,7 @@ Requires at least: 4.2
 Tested up to: 4.8
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.2.0-beta
+Stable tag: 1.2.0
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -75,6 +75,7 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 * Bug fix: Modify collapsible display to allow full scrolling
 * Bug fix: heading pluralization
 * Allow admins to disable accessibility test results before saving draft.
+* Rename primary menu item for space and clarity
 
 = 1.1.8 =
 
