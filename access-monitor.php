@@ -214,7 +214,7 @@ function am_format_tenon_array( $results, $errors ) {
 					<div class='tenon-standards'>
 						$standards
 					</div>					
-					<p><a href='#source-tenon-$xpathID'>Find error $i</a></p>
+					<p><a class='find-error' href='#source-tenon-$xpathID'>Find error $i</a></p>
 				</div>";
 		}
 	} else {

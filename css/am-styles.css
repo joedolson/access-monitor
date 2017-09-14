@@ -106,7 +106,13 @@ button.close:hover, button.close:focus {
 
 #access-monitor h1 .dashicons-universal-access { font-size: 1.3em; width: 1.3em; }
 
-.tenon-result code, .tenon-result pre { margin: 0!important; padding: .5em!important; }
+.tenon-result code, .tenon-result pre { margin: 1em 0!important; padding: .5em!important; 
+ white-space: pre-wrap;       /* css-3 */
+ white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+ white-space: -pre-wrap;      /* Opera 4-6 */
+ white-space: -o-pre-wrap;    /* Opera 7 */
+ word-wrap: break-word;       /* Internet Explorer 5.5+ */
+}
 
 #am-errors { display: none; }
 
@@ -202,6 +208,11 @@ button.close:hover, button.close:focus {
 	text-decoration: none !important;
 }
 
+.toggle-view .dashicons {
+	position: relative;
+	left: -3px;
+}
+
 .tenon-updating {
 	font-family: dashicons !important;
 }
@@ -239,7 +250,7 @@ button.close:hover, button.close:focus {
 }
 
 .toggle-view:hover, .toggle-view:focus, .toggle-view:active {
-	border: 1px solid #fff !important;
+	border: 1px solid #111 !important;
 }
 
 .toggle-view .dashicons {
@@ -261,6 +272,11 @@ button.close:hover, button.close:focus {
 	border: 1px solid #666;
 }
 
+.tenon-error-comment p {
+	margin: 0;
+	padding: 0;
+}
+
 /* Xpath Data is intentionally hidden to make this view more compact */
 .tenon-results .xpath-data {
 	display: none; 
@@ -269,6 +285,11 @@ button.close:hover, button.close:focus {
 .tenon-results .tenon-standards ul {
 	margin: 0;
 	margin-left: 2em;
+}
+
+.tenon-results .tenon-standards li {
+	list-style-type: disc;
+	line-height: 1.7;
 }
 
 .tenon-results p.am-meta, .tenon-results p.meta {
