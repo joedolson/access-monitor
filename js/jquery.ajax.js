@@ -1,6 +1,9 @@
 (function ($) {
 	
 	$(function() {
+		
+		$( 'a.menu-icon-tenon-report .wp-menu-name' ).text( am_plugin_name );
+		
 		var src = document.documentElement.outerHTML;
 		var query = {
 				'action' : am_ajax_action,
