@@ -48,7 +48,6 @@ Run a one-time test or schedule a test to be run on a weekly or monthly basis. A
 
 You can test the page you're viewing using a link in the admin bar labeled 'A11y Check'.
 
-* In the admin, the entirety of the WordPress admin HTML is only tested on the Dashboard. On other admin pages, only the code inside the `wpbody-content` container is passed to Tenon.
 * On the front-end, only Pages and individual posts or custom post type pages can be tested. Archive pages are not currently passed to Tenon.
 
 Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plugins/access-monitor/)!
@@ -64,6 +63,11 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 	- Create rules UI for whether post publish should be blocked.
 	- Measure most common errors 
 * Create ignore list
+
+
+= 1.2.1 =
+
+* Remove 'create_function' for PHP 7.2 compatibility
 
 = 1.2.0 =
 

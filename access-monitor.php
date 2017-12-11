@@ -797,19 +797,23 @@ add_action( 'admin_head', 'am_setup_admin_notice' );
 function am_setup_admin_notice() {
 	if ( !( isset( $_POST['tenon_api_key'] ) && $_POST['tenon_api_key'] != '' ) && !( isset( $_POST['tenon_multisite_key'] ) && $_POST['tenon_multisite_key'] != '' ) ) {
 		$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
-		$key = ( is_multisite() && get_site_option( 'tenon_multisite_key' ) != '' ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];		
+		$key      = ( is_multisite() && get_site_option( 'tenon_multisite_key' ) != '' ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];		
 		if ( !$key ) {
-			if ( isset( $_GET['page'] ) && $_GET['page'] == 'access-monitor/access-monitor.php' ) {
-				$url = '#settings';
-			} else {
-				$url = admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php#settings');
-			}
-			$message = sprintf(__("You must <a href='%s'>enter a Tenon API key</a> to use Access Monitor.", 'access-monitor'), $url );
-			add_action('admin_notices', create_function( '', "if ( ! current_user_can( 'manage_options' ) ) { return; } else { echo \"<div class='error'><p>$message</p></div>\";}" ) );
+				add_action( 'admin_notices', 'am_admin_notice' ) );
 		}
 	}
 }
 
+function am_admin_notice() {
+	if ( isset( $_GET['page'] ) && $_GET['page'] == 'access-monitor/access-monitor.php' ) {
+		$url = '#settings';
+	} else {
+		$url = admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php#settings');
+	}
+	$message = sprintf(__("You must <a href='%s'>enter a Tenon API key</a> to use Access Monitor.", 'access-monitor'), $url );
+			
+	if ( ! current_user_can( 'manage_options' ) ) { return; } else { echo \"<div class='error'><p>$message</p></div>\";}
+}
 
 function am_settings() {
 	$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
