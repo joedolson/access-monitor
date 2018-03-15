@@ -155,8 +155,8 @@ function am_query_tenon( $post ) {
 		$formatted = am_format_tenon( $body );
 		$object    = json_decode( $body );
 		if ( property_exists( $object, 'resultSet' ) ) {
-			$results = $object->resultSet;
-			$errors  = $object->clientScriptErrors;
+			$results = $object->resultSet; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
+			$errors  = $object->clientScriptErrors; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
 		} else {
 			$results = array();
 		}
@@ -195,13 +195,13 @@ function am_format_tenon( $body ) {
 	$object = json_decode( $body );
 	if ( is_object( $object ) && property_exists( $object, 'resultSummary' ) ) {
 		// unchecked object references.
-		$errors = $object->resultSummary->issues->totalIssues;
+		$errors = $object->resultSummary->issues->totalIssues; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
 	} else {
 		$errors = 0;
 	}
 
 	if ( property_exists( $object, 'resultSet' ) ) {
-		$results = $object->resultSet;
+		$results = $object->resultSet;// phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
 	} else {
 		$results = array();
 	}
@@ -245,8 +245,8 @@ function am_format_tenon_array( $results, $errors ) {
 				default:
 					$prio = 'low';
 			}
-			$bpid      = $result->bpID;
-			$tid       = $result->tID;
+			$bpid      = $result->bpID; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
+			$tid       = $result->tID; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
 			$xpathid   = md5( $result->xpath );
 			$href      = esc_url( add_query_arg( array(
 				'bpID' => $bpid,
@@ -261,6 +261,9 @@ function am_format_tenon_array( $results, $errors ) {
 				$standards = '<h4>' . __( 'Relevant Accessibility Standards', 'access-monitor' ) . "</h4>
 				<ul>$standards</ul>";
 			}
+			$error_snippet = $result->errorSnippet; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
+			$error_title   = $result->errorTitle; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
+			$error_desc    = $result->error_description; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
 			$return .= "
 				<div class='tenon-result' id='tenon-notes-$xpathid'>
 					<h3>
@@ -271,10 +274,10 @@ function am_format_tenon_array( $results, $errors ) {
 						<span class='priority $prio'>" . __( 'Priority:', 'access-monitor' ) . " $result->priority%" . "</span>
 					</p>
 					<h4 class='screen-reader-text'>Error Source</h4>
-					<pre lang='html'>" . $result->errorSnippet . "</pre>
-					<p>$result->errorDescription $ref</p>
+					<pre lang='html'>" . $error_snippet . "</pre>
+					<p>$error_desc $ref</p>
 					<div class='xpath-data'>
-					<h4>Xpath:</h4> <pre><code data-certainty='$cert' data-priority='$prio' data-title='" . $i . '. ' . esc_attr( $result->errorTitle ) . "' data-id='tenon-" . $xpathid . "'>$result->xpath</code></pre>
+					<h4>Xpath:</h4> <pre><code data-certainty='$cert' data-priority='$prio' data-title='" . $i . '. ' . esc_attr( $error_title ) . "' data-id='tenon-" . $xpathid . "'>$result->xpath</code></pre>
 					</div>
 					<div class='tenon-standards'>
 						$standards
