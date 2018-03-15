@@ -16,12 +16,12 @@ if ( ! defined( 'ABSPATH' ) ) {
  *    This class submits a request against the Tenon API for automatic
  *    accessibility testing.
  *
- *    Essentially all this does is populate a variable, $tenonResponse, with the JSON response from Tenon
+ *    Essentially all this does is populate a variable, $tenon_response, with the JSON response from Tenon
  *
  */
 class Tenon {
     protected $url, $opts;
-    public $tenonResponse;
+    public $tenon_response;
 
     /**
      * Class constructor
@@ -30,9 +30,9 @@ class Tenon {
      * @param array  $opts options for the request.
      */
     public function __construct( $url, $opts ) {
-        $this->url           = $url;
-        $this->opts          = $opts;
-        $this->tenonResponse = '';
+        $this->url            = $url;
+        $this->opts           = $opts;
+        $this->tenon_response = '';
     }
 
     /**
@@ -66,10 +66,10 @@ class Tenon {
         }
 
 		if ( is_wp_error( $result ) ) {
-			$this->tenonResponse = $result->errors;
+			$this->tenon_response = $result->errors;
 		} else {
 			//the test results.
-			$this->tenonResponse = $result;
+			$this->tenon_response = $result;
 		}
     }
 }
