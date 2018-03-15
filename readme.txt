@@ -64,7 +64,6 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 	- Measure most common errors 
 * Create ignore list
 
-
 = 1.2.1 =
 
 * Remove 'create_function' for PHP 7.2 compatibility
