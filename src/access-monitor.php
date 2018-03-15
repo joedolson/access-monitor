@@ -433,9 +433,9 @@ function am_posttypes() {
 		'edit_item'          => __( 'Modify Accessibility Report','access-monitor' ),
 		'new_item'           => __( 'New Accessibility Report','access-monitor' ),
 		'view_item'          => __( 'View Accessibility Report','access-monitor' ),
-		'search_items'       => __( 'Search Accessibility Reports','access-monitor' ) ),
+		'search_items'       => __( 'Search Accessibility Reports','access-monitor' ),
 		'not_found'          => __( 'No accessibility reports found','access-monitor' ),
-		'not_found_in_trash' => __( 'No accessibility reports found in Trash','access-monitor' ) ),
+		'not_found_in_trash' => __( 'No accessibility reports found in Trash','access-monitor' ),
 		'parent_item_colon'  => '',
 	);
 	$args = array(
