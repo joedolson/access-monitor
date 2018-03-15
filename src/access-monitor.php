@@ -1,30 +1,43 @@
 <?php
+/**
+ * Access Monitor, Automated Accessibility Testing for WordPress
+ *
+ * @package     AccessMonitor
+ * @author      Joe Dolson
+ * @copyright   2014-2018 Joe Dolson
+ * @license     GPL-2.0+
+ *
+ * @wordpress-plugin
+ * Plugin Name: Access Monitor
+ * Plugin URI: http://www.joedolson.com/access-monitor/
+ * Description: Inspect & monitor WordPress sites for accessibility issues using the Tenon accessibility API.
+ * Author: Joseph C Dolson
+ * Author URI: http://www.joedolson.com
+ * Text Domain: access-monitor
+ * License:     GPL-2.0+
+ * License URI: http://www.gnu.org/license/gpl-2.0.txt
+ * Domain Path: lang
+ * Version:     1.2.0
+ */
+
 /*
-Plugin Name: Access Monitor
-Plugin URI: http://www.joedolson.com/access-monitor/
-Description: Inspect & monitor WordPress sites for accessibility issues using the Tenon accessibility API.
-Author: Joseph C Dolson
-Author URI: http://www.joedolson.com
-Text Domain: access-monitor
-Domain Path: lang
-Version: 1.2.0
+	Copyright 2014-2018  Joe Dolson (email : joe@joedolson.com)
+
+	This program is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation; either version 2 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program; if not, write to the Free Software
+	Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/*  Copyright 2014-2018 Joe Dolson (email : plugins@joedolson.com)
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
-*/
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 // Enable internationalisation
@@ -39,7 +52,7 @@ function am_load_textdomain() {
 define( 'TENON_API_URL', 'https://tenon.io/api/' );
 define( 'AM_DEBUG', false );
 
-require_once( 't/tenon.php' );
+require_once( 't/class-tenon.php' );
 require_once( 'am-post-inspection.php' );
 
 $am_version = '1.2.0';
@@ -53,13 +66,13 @@ function am_pass_query() {
 		if ( ! wp_verify_nonce( $_GET['tenon'], 'public-tenon-query' ) ) {
 			die( __( 'Security verification failed', 'access-monitor' ) );
 		}
-		$args      = am_get_arguments();
-		$results   = am_query_tenon( $args );
-		$format    = $results['formatted'];
-		$post_id   = get_the_ID();
-		$hash      = md5( $format );
-		$past      = get_post_meta( $post_id, '_tenon_test_hash' );
-		$exists    = false;
+		$args    = am_get_arguments();
+		$results = am_query_tenon( $args );
+		$format  = $results['formatted'];
+		$post_id = get_the_ID();
+		$hash    = md5( $format );
+		$past    = get_post_meta( $post_id, '_tenon_test_hash' );
+		$exists  = false;
 		if ( ! empty( $past ) ) {
 			if ( in_array( $hash, $past ) ) {
 				$exists = true;
@@ -83,7 +96,7 @@ function am_get_arguments() {
 	$priority  = isset( $_GET['tenon-priority'] ) ? $_GET['tenon-priority'] : '0';
 	$certainty = isset( $_GET['tenon-certainty'] ) ? $_GET['tenon-certainty'] : '';
 
-	switch( $level ) {
+	switch ( $level ) {
 		case 'A':
 		case 'AA':
 		case 'AAA':
@@ -205,7 +218,7 @@ function am_format_tenon_array( $results, $errors ) {
 	if ( ! empty( $results ) ) {
 		foreach ( $results as $result ) {
 			$i++;
-			switch( $result->certainty ) {
+			switch ( $result->certainty ) {
 				case ( $result->certainty >= 80 ):
 					$cert = 'high';
 					break;
@@ -215,7 +228,7 @@ function am_format_tenon_array( $results, $errors ) {
 				default:
 					$cert = 'low';
 			}
-			switch( $result->priority ) {
+			switch ( $result->priority ) {
 				case ( $result->priority >= 80 ):
 					$prio = 'high';
 					break;
@@ -927,8 +940,8 @@ function am_format_tenon_report( $results, $name ) {
 		$return .= "<p><strong>Congratulations!</strong> Tenon didn't find any issues on this page.</p>";
 	}
 	$header = sprintf( $header, $count );
-	return array( 
-		'total' => $total, 
+	return array(
+		'total' => $total,
 		'html'  => $header . $return,
 	);
 }
@@ -1022,16 +1035,16 @@ function am_admin_notice() {
  */
 function am_settings() {
 	$settings             = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
-	$settings             = array_merge( array( 
-		'tenon_api_key'     => '', 
-		'tenon_pre_publish' => '', 
-		'am_post_types'     => array(), 
-		'am_post_grade'     => '', 
+	$settings             = array_merge( array(
+		'tenon_api_key'     => '',
+		'tenon_pre_publish' => '',
+		'am_post_types'     => array(),
+		'am_post_grade'     => '',
 		'am_criteria'       => array(),
 	), $settings );
 	$multisite            = get_site_option( 'tenon_multisite_key' );
-	$post_types           = get_post_types( array( 
-		'public'  => true, 
+	$post_types           = get_post_types( array(
+		'public'  => true,
 		'show_ui' => true,
 	), 'objects' );
 	$am_post_types        = isset( $settings['am_post_types'] ) ? $settings['am_post_types'] : array();
@@ -1077,24 +1090,24 @@ function am_settings() {
 				<legend><?php _e( 'Accessibility Test Settings', 'access-monitor' ); ?></legend>
 		<?php
 			$criteria = array(
-				'level'     => array( 
-					'label'   => __( 'Required WCAG Level', 'access-monitor' ), 
+				'level'     => array(
+					'label'   => __( 'Required WCAG Level', 'access-monitor' ),
 					'default' => 'AA' ),
-				'certainty' => array( 
-					'label'   =>  __( 'Minimum certainty', 'access-monitor' ), 
+				'certainty' => array(
+					'label'   =>  __( 'Minimum certainty', 'access-monitor' ),
 					'default' => '60' ),
-				'priority'  => array( 
-					'label'   => __( 'Minimum priority', 'access-monitor' ), 
+				'priority'  => array(
+					'label'   => __( 'Minimum priority', 'access-monitor' ),
 					'default' => '20' ),
-				'grade'     => array( 
-					'label'   => __( 'Minimum percentage grade to publish', 'access-monitor' ), 
+				'grade'     => array(
+					'label'   => __( 'Minimum percentage grade to publish', 'access-monitor' ),
 					'default' => '90' ),
-				'store'     => array( 
-					'label'   => __( 'Store data at Tenon.io?', 'access-monitor' ), 
+				'store'     => array(
+					'label'   => __( 'Store data at Tenon.io?', 'access-monitor' ),
 					'default' => '0' ),
-				'container' => array( 
-					'label'   => __( 'Post content container', 'access-monitor' ), 
-					'default' => '.access-monitor-content' 
+				'container' => array(
+					'label'   => __( 'Post content container', 'access-monitor' ),
+					'default' => '.access-monitor-content'
 				),
 			);
 			echo '<ul>';
@@ -1164,9 +1177,9 @@ function am_report() {
 			<label for='am_report_pages'>" . __( 'URL or post ID to test', 'access-monitor' ) . "</label>
 			<input type='text' class='widefat' id='am_report_pages' name='am_report_pages[]' value='".esc_url( home_url() )."' />
 			</li>";
-			$last       = wp_get_recent_posts( array( 
-				'numberposts' => 1, 
-				'post_type'   => 'page', 
+			$last       = wp_get_recent_posts( array(
+				'numberposts' => 1,
+				'post_type'   => 'page',
 				'post_status' => 'publish' ,
 			) );
 			$last_link  = get_permalink( $last[0]['ID'] );
@@ -1176,8 +1189,8 @@ function am_report() {
 			<label for='am_report_pages_second'>" . __( 'Most recent page', 'access-monitor' )." ($last_title)</label>
 			<input type='text' class='widefat' id='am_report_pages_second' name='am_report_pages[]' value='".esc_url( $last_link )."' />
 			</li>";
-			$last       = wp_get_recent_posts( array( 
-				'numberposts' => 1, 
+			$last       = wp_get_recent_posts( array(
+				'numberposts' => 1,
 				'post_status' => 'publish',
 			) );
 			$last_link  = get_permalink( $last[0]['ID'] );
@@ -1311,9 +1324,9 @@ function am_setup_report() {
  */
 function am_list_reports( $count = 10 ) {
 	$count   = (int) $count;
-	$reports = wp_get_recent_posts( array( 
-		'post_type'   => 'tenon-report', 
-		'numberposts' => $count, 
+	$reports = wp_get_recent_posts( array(
+		'post_type'   => 'tenon-report',
+		'numberposts' => $count,
 		'post_status' => 'publish',
 	), 'OBJECT' );
 	if ( is_array( $reports ) ) {
@@ -1350,7 +1363,7 @@ function am_support_page() {
 							if ( isset( $_GET['report'] ) && is_numeric( $_GET['report'] ) ) {
 								am_show_report();
 							}
-							am_report(); 
+							am_report();
 							?>
 						</div>
 					</div>
@@ -1409,11 +1422,11 @@ function am_show_support_box() {
 	?>
 <div class="postbox-container" style="width:20%">
 <div class="metabox-holder">
-	<?php 
+	<?php
 	if ( isset( $_GET['signup'] ) && 'dismiss' == $_GET['signup'] ) {
 		update_option( 'am-tenon-signup', 1 );
-	} 
-	if ( '1' != get_option( 'am-tenon-signup' ) ) { 
+	}
+	if ( '1' != get_option( 'am-tenon-signup' ) ) {
 	?>
 	<div class="meta-box-sortables">
 		<div class="postbox" id="tenon-signup">
@@ -1422,16 +1435,16 @@ function am_show_support_box() {
 			<div class="inside subscribe">
 				<a href="https://tenon.io/pricing.php"><img src="<?php echo plugins_url( 'img/tenon-logo-no-border-light.png', __FILE__ ); ?>" alt="<?php _e( 'Sign up for Tenon.io', 'access-monitor' ); ?>" /></a>
 				<p>
-					<?php 
+					<?php
 					// Translators: Access Monitor subscribe URL.
-					printf( __( "Access Monitor can't exist without Tenon.io subscribers. <a href='%s'>Subscribe now!</a>", 'access-monitor' ), 'http://www.tenon.io?rfsn=236617.3c55e' ); 
+					printf( __( "Access Monitor can't exist without Tenon.io subscribers. <a href='%s'>Subscribe now!</a>", 'access-monitor' ), 'http://www.tenon.io?rfsn=236617.3c55e' );
 					?>
 				</p>
 			</div>
 		</div>
 	</div>
-	<?php 
-	} 
+	<?php
+	}
 	?>
 
 	<div class="meta-box-sortables">
@@ -1467,9 +1480,9 @@ function am_show_support_box() {
 		<h2 class="hndle"><?php _e('Get Help','access-monitor'); ?></h2>
 		<div id="help" class="inside resources">
 			<p>
-				<?php 
+				<?php
 				// Translators: Access Monitor support form.
-				printf( __( 'Access Monitor has two parts: the plug-in, and the API it interacts with. If your issue is in the plug-in, use the <a href="%s">support form</a>. If your issue is with the API or on tenon.io, <a href="mailto:support@tenon.io">email Tenon support</a>. Thanks!', 'access-monitor' ), '#support-form' ); 
+				printf( __( 'Access Monitor has two parts: the plug-in, and the API it interacts with. If your issue is in the plug-in, use the <a href="%s">support form</a>. If your issue is with the API or on tenon.io, <a href="mailto:support@tenon.io">email Tenon support</a>. Thanks!', 'access-monitor' ), '#support-form' );
 				?>
 			</p>
 		</div>
@@ -1664,7 +1677,7 @@ add_action( 'current_screen', 'am_redirect_new' );
 function am_redirect_new() {
 	$screen = get_current_screen();
 	if ( 'tenon-report' == $screen->id && ! isset( $_GET['action'] ) ) {
-		wp_safe_redirect( admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php') );
+		wp_safe_redirect( admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) );
 	}
 }
 
@@ -1677,8 +1690,8 @@ add_filter('plugin_action_links', 'am_plugin_action', 10, 2);
  *
  * @return array links.
  */
-function am_plugin_action($links, $file) {
-	if ( $file == plugin_basename( dirname( __FILE__ ) . '/access-monitor.php' ) ) {
+function am_plugin_action( $links, $file ) {
+	if ( plugin_basename( dirname( __FILE__ ) . '/access-monitor.php' == $file ) ) {
 		$links[] = "<a href='" . admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) . "'>" . __( 'Access Monitor Settings', 'access-monitor' ) . '</a>';
 	}
 	return $links;

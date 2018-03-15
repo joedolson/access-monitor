@@ -1,25 +1,31 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
-
 /**
- * AJAX function to do an on-the-fly inspection. Trigger from post meta box. On the fly inspection only checks container if that option is set.
+ * On the fly inspections of post content checked before publication.
+ *
+ * @category Publish
+ * @package  Access Monitor
+ * @author   Joe Dolson
+ * @license  GPLv2 or later
+ * @link     https://www.joedolson.com/access-monitor/
  */
- 
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+add_action( 'post_submitbox_misc_actions', 'am_inspect_post' );
 /**
  * Insert 'test accessibility' button in Publish box.
  */
-add_action( 'post_submitbox_misc_actions', 'am_inspect_post' );
 function am_inspect_post() {
 	global $post;
-	$post_ID = $post->ID;
-	$status = 'new';
+	$status  = 'new';
 	if ( isset( $_GET['post'] ) ) {
 		$status = 'edit';
 	}
-	if ( $post_ID && am_in_post_type( $post_ID ) ) {
+	if ( $post->ID && am_in_post_type( $post->ID ) ) {
 		$control = '';
 		if ( current_user_can( 'manage_options' ) ) {
-			$control = "<p><input type='checkbox' id='am_override' value='1' name='am_override' /> <label for='am_override'>" . __( 'Override Accessibility Test Results', 'access-monitor' ) . "</label></p>";
+			$control = "<p><input type='checkbox' id='am_override' value='1' name='am_override' /> <label for='am_override'>" . __( 'Override Accessibility Test Results', 'access-monitor' ) . '</label></p>';
 		} else {
 			$settings = get_option( 'am_settings' );
 			$notify = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
@@ -30,24 +36,26 @@ function am_inspect_post() {
 		echo '
 			<div class="misc-pub-section misc-pub-section-last" style="border-top: 1px solid #eee;">
 				<input type="hidden" value="' . $status . '" name="am-status" id="am_status" />
-				<button type="button" class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Check Accessibility', 'access-monitor' ) . '</button>' . 
+				<button type="button" class="inspect-a11y button"><span class="dashicons dashicons-universal-access" aria-hidden="true"></span> ' . __( 'Check Accessibility', 'access-monitor' ) . '</button>' .
 				$control . '
 				<input type="submit" name="publish" id="ampublish" class="screen-reader-text" value="Publish" />
 			</div>';
 	}
 }
- 
-/** 
- * JS that executes when 'Publish' pressed and only executes the command if Tenon results pass.
- */
+
 add_action( 'admin_enqueue_scripts', 'am_pre_publish' );
-function am_pre_publish( $hook ) { 
+/**
+ * Enqueue JS that executes when 'Publish' pressed and executes the command if Tenon results pass.
+ *
+ * @param string $hook current screen.
+ */
+function am_pre_publish( $hook ) {
 	global $post;
 	$options = get_option( 'am_settings' );
-	$check = isset( $options['tenon_pre_publish'] ) ? $options['tenon_pre_publish'] : 0;
-	$args = isset( $options['am_criteria'] ) ? $options['am_criteria'] : array();
-	if ( $check == 1 ) {
-		if ( $hook == 'post-new.php' || $hook == 'post.php' ) {
+	$check   = isset( $options['tenon_pre_publish'] ) ? $options['tenon_pre_publish'] : 0;
+	$args    = isset( $options['am_criteria'] ) ? $options['am_criteria'] : array();
+	if ( 1 == $check ) {
+		if ( 'post-new.php' == $hook || 'post.php' == $hook ) {
 			if ( am_in_post_type( $post->ID ) ) {
 				wp_enqueue_script( 'tenon.inspector', plugins_url( 'js/inspector.js', __FILE__ ), array( 'jquery' ), '', true );
 				$settings = array(
@@ -66,84 +74,86 @@ function am_pre_publish( $hook ) {
 				);
 				wp_localize_script( 'tenon.inspector', 'am', $settings );
 				wp_localize_script( 'tenon.inspector', 'am_ajax_notify', 'am_ajax_notify' );
-				
-				$user_ID = get_current_user_ID();
-				$post_ID = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : false;
+
+				$user_ID  = get_current_user_ID();
+				$post_ID  = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : false;
 				$security = wp_create_nonce( 'am_notify_admin' );
 
-				$notify = array( 
+				$notify = array(
 					'user'     => $user_ID,
 					'post_ID'  => $post_ID,
 					'security' => $security,
-					'error'    => __( "Accessibility Review Request failed to send.", 'access-monitor' )
+					'error'    => __( 'Accessibility Review Request failed to send.', 'access-monitor' )
 				);
-				wp_localize_script( 'tenon.inspector', 'amn', $notify );				
+				wp_localize_script( 'tenon.inspector', 'amn', $notify );
 			}
 		}
 	}
 }
- 
+
 /**
  * Check whether a given post is in an allowed post type and has an update template configured.
- * 
+ *
  * @param integer $id Post ID.
  *
  * @return boolean True if post is allowed, false otherwise.
  */
 function am_in_post_type( $id ) {
-	$settings = get_option( 'am_settings' );
+	$settings           = get_option( 'am_settings' );
 	$post_type_settings = isset( $settings['am_post_types'] ) ? $settings['am_post_types'] : array();
 	if ( is_array( $post_type_settings ) && !empty( $post_type_settings ) ) {
-		$type               = get_post_type( $id );
+		$type = get_post_type( $id );
 		if ( in_array( $type, $post_type_settings ) ) {
 			return true;
 		}
 	}
-	
+
 	return false;
 }
 
+add_action( 'edit_form_top', 'am_edit_form_after_title' );
 /**
  * Add hidden notice to post edit page.
+ *
+ * @param object $post Post object.
  */
-add_action( 'edit_form_top', 'am_edit_form_after_title' );
 function am_edit_form_after_title( $post ) {
-	if ( am_in_post_type( $post->ID ) ) { 
-		echo '
-		<div class="am-errors"><p>' 
-			. sprintf( __( 'Score: %s / %s %s', 'access-monitor' ), '<strong class="score"></strong>', '<span class="am-message"></span>', '<a href="#am-errors" class="am-toggle" aria-expanded="false">Show Results</a>' ) 
+	if ( am_in_post_type( $post->ID ) ) {
+		// Translators: Score container, message container, toggle to show results.
+		echo '<div class="am-errors"><p>' . sprintf( __( 'Score: %1$s / %2$s %3$s', 'access-monitor' ), '<strong class="score"></strong>', '<span class="am-message"></span>', '<a href="#am-errors" class="am-toggle" aria-expanded="false">Show Results</a>' )
 			. "</p><div class='am-errors-display' id='am-errors'></div>
 		</div>";
 	}
 }
 
 /**
- * Generate percentage grade for page.
- * For now, use overall error density scoring. Later, add error-specific exits.
+ * Generate percentage grade for page. For now, use overall error density scoring. Later, add error-specific exits.
+ *
+ * @param object $results Tenon results object.
+ *
+ * @return mixed float/boolean Percentage or false.
  */
 function am_percentage( $results ) {
 	$status = $results->status;
-	if ( $status == 200 ) {
-		$stats = $results->globalStats;	
-		$max = $stats->allDensity + (3 * $stats->stdDev);
-		
-		// test against all errors & warnings
+	if ( 200 == $status ) {
+		$stats = $results->globalStats;
+		$max   = $stats->allDensity + (3 * $stats->stdDev);
+
+		// test against all errors & warnings.
 		$score    = $results->resultSummary->density->allDensity;
-		/*
-			Alternate scoring options to be added in future releases
-			
-			// test against errors only
-			$score    = $results->resultSummary->density->errorDensity;
-			// test against error count only
-			$score    = $results->resultSummary->issues->totalErrors;
-			// test against error count by class
-			$scoreA   = $results->resultSummary->issuesByLevel->A->count;
-			$scoreAA  = $results->resultSummary->issuesByLevel->AA->count;
-			$scoreAAA = $results->resultSummary->issuesByLevel->AAA->count;
-		*/
-		
+
+		// Alternate scoring options to be added in future releases.
+		// test against errors only.
+		$scoreErrors = $results->resultSummary->density->errorDensity;
+		// test against error count only.
+		$scoreTotal = $results->resultSummary->issues->totalErrors;
+		// test against error count by class.
+		$scoreA   = $results->resultSummary->issuesByLevel->A->count;
+		$scoreAA  = $results->resultSummary->issuesByLevel->AA->count;
+		$scoreAAA = $results->resultSummary->issuesByLevel->AAA->count;
+
 		$min = 0;
-		
+
 		if ( $score > $max ) {
 			$return = 0;
 		} else if ( $score <= $min ) {
@@ -154,59 +164,74 @@ function am_percentage( $results ) {
 	} else {
 		$return = false;
 	}
-	
+
 	return apply_filters( 'am_modify_grade', $return, $results );
 }
 
 add_action('wp_ajax_am_ajax_notify', 'am_ajax_notify');
+/**
+ * Send notification to a11y approver email that a post needs manual review.
+ */
 function am_ajax_notify() {
 	if ( isset( $_REQUEST['security'] ) ) {
 		if ( ! check_ajax_referer( 'am_notify_admin', 'security', false ) ) {
-			wp_send_json( array( 'response' => 0, 'message' => __( 'Invalid Security Check', 'access-monitor' ) ) );
+			wp_send_json( array(
+				'response' => 0,
+				'message'  => __( 'Invalid Security Check', 'access-monitor' ),
+			) );
 		} else {
 			$settings = get_option( 'am_settings' );
 			$notify = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
 			if ( $notify ) {
-				$email = $settings['am_notify'];
-				$post_ID = $_REQUEST['post_ID'];
-				$user_ID = $_REQUEST['user'];
-				$post = get_post( $post_ID );
-				$user = get_user_by( 'id', $user_ID );
+				$email     = $settings['am_notify'];
+				$post_ID   = $_REQUEST['post_ID'];
+				$user_ID   = $_REQUEST['user'];
+				$post      = get_post( $post_ID );
+				$user      = get_user_by( 'id', $user_ID );
 				$edit_link = get_edit_post_link( $post_ID );
-				
-				$body = sprintf( __( 'Accessibility review on "%s" requested by %s. Review post: %s', 'access-monitor' ), $post->post_title, $user->user_login, $edit_link );
-				
+
+				// Translators: Post title, requesting user, edit link.
+				$body = sprintf( __( 'Accessibility review on "%1$s" requested by %2$s. Review post: %3$s', 'access-monitor' ), $post->post_title, $user->user_login, $edit_link );
+
 				$notice = wp_mail( $email, __( 'Request for Accessibility Review', 'access-monitor' ), $body );
 				wp_send_json(
-					array( 
-						'response' => 1, 
-						'message' => __( 'Review request sent!', 'access-monitor' ) 
-					) 
+					array(
+						'response' => 1,
+						'message'  => __( 'Review request sent!', 'access-monitor' ),
+					)
 				);
 			} else {
-				wp_send_json( array( 'response' => 0, 'message' => __( 'Invalid Email provided for accessibility reviewer', 'access-monitor' ) ) );
+				wp_send_json( array(
+					'response' => 0,
+					'message'  => __( 'Invalid Email provided for accessibility reviewer', 'access-monitor' )
+				) );
 			}
 		}
 	}
 }
 
+add_filter( 'the_content', 'am_testable_post_content' );
 /**
  * If custom value is not set for Access Monitor content container, add independent container and test that.
+ *
+ * @param  string $content Post content to test.
+ *
+ * @return content
  */
-add_filter( 'the_content', 'am_testable_post_content' );
 function am_testable_post_content( $content ) {
 	global $post;
 	if ( am_in_post_type( $post->ID ) ) {
-		$options = get_option( 'am_settings' );
-		$args = isset( $options['am_criteria'] ) ? $options['am_criteria'] : array();
-		$test = ( isset( $options['tenon_pre_publish'] ) && $options['tenon_pre_publish'] == 1 ) ? true : false;
-		$container = isset( $args['container'] ) ? $args['container'] : false; 
+		$options   = get_option( 'am_settings' );
+		$args      = isset( $options['am_criteria'] ) ? $options['am_criteria'] : array();
+		$test      = ( isset( $options['tenon_pre_publish'] ) && 1 == $options['tenon_pre_publish'] ) ? true : false;
+		$container = isset( $args['container'] ) ? $args['container'] : false;
 		if ( $test ) {
-			if ( !$container || $container == '.access-monitor-content' ) {
+			if ( !$container || '.access-monitor-content' == $container ) {
 				$content = '<div class="access-monitor-content">' . $content . '</div>';
 			}
 		}
 	}
-	
+
 	return $content;
 }
+
