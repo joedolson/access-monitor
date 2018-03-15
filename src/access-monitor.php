@@ -994,7 +994,7 @@ function am_setup_admin_notice() {
 		$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
 		$key      = ( is_multisite() && get_site_option( 'tenon_multisite_key' ) != '' ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];
 		if ( ! $key ) {
-			add_action( 'admin_notices', 'am_admin_notice' ) );
+			add_action( 'admin_notices', 'am_admin_notice' );
 		}
 	}
 }
