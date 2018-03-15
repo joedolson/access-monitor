@@ -262,9 +262,11 @@ function am_format_tenon_array( $results, $errors ) {
 				<ul>$standards</ul>";
 			}
 			// phpcs:disable WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar
+			// @codingStandardsIgnoreStart
 			$error_snippet = $result->errorSnippet; 
 			$error_title   = $result->errorTitle; 
-			$error_desc    = $result->error_description; 
+			$error_desc    = $result->error_description;
+			// @codingStandardsIgnoreEnd
 			// phpcs: enable
 			$return .= "
 				<div class='tenon-result' id='tenon-notes-$xpathid'>
