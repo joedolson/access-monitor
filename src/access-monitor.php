@@ -155,8 +155,8 @@ function am_query_tenon( $post ) {
 		$formatted = am_format_tenon( $body );
 		$object    = json_decode( $body );
 		if ( property_exists( $object, 'resultSet' ) ) {
-			$results = $object->resultSet; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
-			$errors  = $object->clientScriptErrors; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
+			$results = $object->resultSet; 
+			$errors  = $object->clientScriptErrors; 
 		} else {
 			$results = array();
 		}
@@ -195,13 +195,13 @@ function am_format_tenon( $body ) {
 	$object = json_decode( $body );
 	if ( is_object( $object ) && property_exists( $object, 'resultSummary' ) ) {
 		// unchecked object references.
-		$errors = $object->resultSummary->issues->totalIssues; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
+		$errors = $object->resultSummary->issues->totalIssues; 
 	} else {
 		$errors = 0;
 	}
 
 	if ( property_exists( $object, 'resultSet' ) ) {
-		$results = $object->resultSet;// phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
+		$results = $object->resultSet;
 	} else {
 		$results = array();
 	}
@@ -245,8 +245,8 @@ function am_format_tenon_array( $results, $errors ) {
 				default:
 					$prio = 'low';
 			}
-			$bpid      = $result->bpID; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
-			$tid       = $result->tID; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
+			$bpid      = $result->bpID; 
+			$tid       = $result->tID; 
 			$xpathid   = md5( $result->xpath );
 			$href      = esc_url( add_query_arg( array(
 				'bpID' => $bpid,
@@ -261,9 +261,11 @@ function am_format_tenon_array( $results, $errors ) {
 				$standards = '<h4>' . __( 'Relevant Accessibility Standards', 'access-monitor' ) . "</h4>
 				<ul>$standards</ul>";
 			}
-			$error_snippet = $result->errorSnippet; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
-			$error_title   = $result->errorTitle; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
-			$error_desc    = $result->error_description; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar.
+			// phpcs:disable WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar
+			$error_snippet = $result->errorSnippet; 
+			$error_title   = $result->errorTitle; 
+			$error_desc    = $result->error_description; 
+			// phpcs: enable
 			$return .= "
 				<div class='tenon-result' id='tenon-notes-$xpathid'>
 					<h3>
