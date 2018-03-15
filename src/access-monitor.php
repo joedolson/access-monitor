@@ -172,7 +172,7 @@ function am_query_tenon( $post ) {
 		}
 		return array(
 			'formatted' => $formatted,
-			'results'  => $results,
+			'results'   => $results,
 			'errors'    => $errors,
 			'grade'     => $grade,
 		);
@@ -461,6 +461,8 @@ function am_add_outer_box() {
 add_action( 'add_meta_boxes', 'am_post_reports_data' );
 /**
  * Add meta box for report data.
+ *
+ * @param string $type Post Type being viewed.
  */
 function am_post_reports_data( $type ) {
 	$types = get_post_types( array( 'public' => true ) );
@@ -659,10 +661,10 @@ function am_schedule_report( $report_id, $pages, $name, $params ) {
 /**
  * Generate an accessibility report.
  *
- * @param string               $name name of report.
- * @param mixed boolean/array  $pages Array of pages to test.
- * @param mixed string/int     $schedule Post ID containing report details or 'none'.
- * @param array                $params report parameters.
+ * @param string              $name name of report.
+ * @param mixed boolean/array $pages Array of pages to test.
+ * @param mixed string/int    $schedule Post ID containing report details or 'none'.
+ * @param array               $params report parameters.
  *
  * @return Report ID.
  */
@@ -858,10 +860,10 @@ function am_return_value( $value, $column_name, $id ) {
 	return $value;
 }
 
+add_action( 'admin_init', 'am_add' );
 /**
  * Add custom filters & actions for post columns.
  */
-add_action( 'admin_init', 'am_add' );
 function am_add() {
 	add_filter( 'manage_tenon-report_posts_columns', 'am_column' );
 	add_action( 'manage_tenon-report_posts_custom_column', 'am_custom_column', 10, 2 );
@@ -874,7 +876,6 @@ function am_add() {
  * @param string $name Name of this report.
  */
 function am_format_tenon_report( $results, $name ) {
-	$header    = '<h4>' . stripslashes( $name ) . '; ' . __( 'Results from %d pages tested', 'access-monitor' ) . '</h4>';
 	$return    = '';
 	$tbody     = '';
 	$displayed = false;
@@ -955,7 +956,8 @@ function am_format_tenon_report( $results, $name ) {
 	} else {
 		$return .= "<p><strong>Congratulations!</strong> Tenon didn't find any issues on this page.</p>";
 	}
-	$header = sprintf( $header, $count );
+	// Translators: number of pages tested.
+	$header = '<h4>' . stripslashes( $name ) . '; ' . sprintf( __( 'Results from %d pages tested', 'access-monitor' ), $count ) . '</h4>';
 	return array(
 		'total' => $total,
 		'html'  => $header . $return,
@@ -972,7 +974,7 @@ add_filter( 'cron_schedules', 'am_custom_schedules' );
  */
 function am_custom_schedules( $schedules ) {
 	// Adds once weekly to the existing schedules.
-	$schedules['weekly'] = array(
+	$schedules['weekly']  = array(
 		'interval' => 604800,
 		'display'  => __( 'Once Weekly', 'access-monitor' ),
 	);
@@ -1081,7 +1083,7 @@ function am_settings() {
 	}
 
 	echo "
-	<form method='post' action='" . admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php') . "'>
+	<form method='post' action='" . admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) . "'>
 		<div><input type='hidden' name='_wpnonce' value='" . wp_create_nonce('access-monitor-nonce') . "' /></div>
 		<div><input type='hidden' name='am_settings' value='update' /></div>
 		<p>
@@ -1094,74 +1096,74 @@ function am_settings() {
 		</p>";
 	}
 	echo "
-		<p class='checkbox'>
-			<input type='checkbox' name='tenon_pre_publish' id='tenon_pre_publish' value='1' " . checked( $settings['tenon_pre_publish'], 1, false ) ."' /> <label for='tenon_pre_publish'>" . __( 'Prevent inaccessible posts from being published', 'access-monitor' ) . "</label>
-		</p>";
-		if ( 1 == $settings['tenon_pre_publish'] ) {
-		?>
-			<fieldset>
-				<legend><?php _e( 'Test these post types before publishing:', 'my-tickets' ); ?></legend>
-				<p class='checkbox'><?php echo $am_post_type_options; ?></p>
-			</fieldset>
-			<fieldset>
-				<legend><?php _e( 'Accessibility Test Settings', 'access-monitor' ); ?></legend>
-		<?php
-			$criteria = array(
-				'level'     => array(
-					'label'   => __( 'Required WCAG Level', 'access-monitor' ),
-					'default' => 'AA'
-				),
-				'certainty' => array(
-					'label'   =>  __( 'Minimum certainty', 'access-monitor' ),
-					'default' => '60'
-				),
-				'priority'  => array(
-					'label'   => __( 'Minimum priority', 'access-monitor' ),
-					'default' => '20'
-				),
-				'grade'     => array(
-					'label'   => __( 'Minimum percentage grade to publish', 'access-monitor' ),
-					'default' => '90'
-				),
-				'store'     => array(
-					'label'   => __( 'Store data at Tenon.io?', 'access-monitor' ),
-					'default' => '0'
-				),
-				'container' => array(
-					'label'   => __( 'Post content container', 'access-monitor' ),
-					'default' => '.access-monitor-content',
-				),
-			);
-			echo '<ul>';
-			foreach ( $criteria as $key => $values ) {
-				$label = $values['label'];
-				$value = ( isset( $am_criteria[$key] ) && '' != $am_criteria[$key] ) ? $am_criteria[$key] : $values['default'];
-				if ( 'store' == $key ) {
-					echo "<li><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . ">" . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . '>' . __( 'No', 'access-monitor' ) . '</option></select></li>';
+	<p class='checkbox'>
+		<input type='checkbox' name='tenon_pre_publish' id='tenon_pre_publish' value='1' " . checked( $settings['tenon_pre_publish'], 1, false ) . "' /> <label for='tenon_pre_publish'>" . __( 'Prevent inaccessible posts from being published', 'access-monitor' ) . '</label>
+	</p>';
+	if ( 1 == $settings['tenon_pre_publish'] ) {
+	?>
+		<fieldset>
+			<legend><?php _e( 'Test these post types before publishing:', 'my-tickets' ); ?></legend>
+			<p class='checkbox'><?php echo $am_post_type_options; ?></p>
+		</fieldset>
+		<fieldset>
+			<legend><?php _e( 'Accessibility Test Settings', 'access-monitor' ); ?></legend>
+	<?php
+		$criteria = array(
+			'level'     => array(
+				'label'   => __( 'Required WCAG Level', 'access-monitor' ),
+				'default' => 'AA',
+			),
+			'certainty' => array(
+				'label'   =>  __( 'Minimum certainty', 'access-monitor' ),
+				'default' => '60',
+			),
+			'priority'  => array(
+				'label'   => __( 'Minimum priority', 'access-monitor' ),
+				'default' => '20',
+			),
+			'grade'     => array(
+				'label'   => __( 'Minimum percentage grade to publish', 'access-monitor' ),
+				'default' => '90',
+			),
+			'store'     => array(
+				'label'   => __( 'Store data at Tenon.io?', 'access-monitor' ),
+				'default' => '0',
+			),
+			'container' => array(
+				'label'   => __( 'Post content container', 'access-monitor' ),
+				'default' => '.access-monitor-content',
+			),
+		);
+		echo '<ul>';
+		foreach ( $criteria as $key => $values ) {
+			$label = $values['label'];
+			$value = ( isset( $am_criteria[$key] ) && '' != $am_criteria[$key] ) ? $am_criteria[$key] : $values['default'];
+			if ( 'store' == $key ) {
+				echo "<li><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . '>' . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . '>' . __( 'No', 'access-monitor' ) . '</option></select></li>';
+			} else {
+				if ( is_numeric( $value ) ) {
+					echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='" . intval( $value ) . "' /></li>";
 				} else {
-					if ( is_numeric( $value ) ) {
-						echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='" . intval( $value ) . "' /></li>";
-					} else {
-						echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='" . esc_attr( $value ) . "' /></li>";
-					}
+					echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='" . esc_attr( $value ) . "' /></li>";
 				}
 			}
-			echo '</ul>
-			</fieldset>';
-		?>
-		<p>
-			<label for='am_notify'><?php _e( 'Email address to send requests for accessibility review', 'access-monitor' ); ?></label>
-			<input type='email' value='<?php echo esc_attr( $am_notify ); ?>' id='am_notify' name='am_notify' />
-		</p>
-		<?php
 		}
+		echo '</ul>
+		</fieldset>';
+	?>
+	<p>
+		<label for='am_notify'><?php _e( 'Email address to send requests for accessibility review', 'access-monitor' ); ?></label>
+		<input type='email' value='<?php echo esc_attr( $am_notify ); ?>' id='am_notify' name='am_notify' />
+	</p>
+	<?php
+	}
 
-		echo '<div>';
-		echo "<p>
-		<input type='submit' value='" . __('Update Settings', 'access-monitor')."' name='am_settings' class='button-primary' />
-		</p>
-		</div>
-	</form>";
+	echo '<div>';
+	echo "<p>
+	<input type='submit' value='" . __('Update Settings', 'access-monitor')."' name='am_settings' class='button-primary' />
+	</p>
+	</div>
+</form>";
 }
 
 /**
@@ -1186,8 +1188,8 @@ function am_report() {
 	$theme_version = $theme->get( 'Version' );
 	$name          = $theme_name . ' ' . $theme_version;
 	echo "$message
-	<form method='post' action='" . admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php') . "'>
-		<div><input type='hidden' name='_wpnonce' value='" . wp_create_nonce('access-monitor-nonce') . "' /></div>
+	<form method='post' action='" . admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php'  ) . "'>
+		<div><input type='hidden' name='_wpnonce' value='" . wp_create_nonce( 'access-monitor-nonce' ) . "' /></div>
 		<div><input type='hidden' name='am_get_report' value='report' /></div>";
 		echo "
 		<div>
@@ -1199,7 +1201,7 @@ function am_report() {
 			<label for='am_report_pages'>" . __( 'URL or post ID to test', 'access-monitor' ) . "</label>
 			<input type='text' class='widefat' id='am_report_pages' name='am_report_pages[]' value='" . esc_url( home_url() ) . "' />
 			</li>";
-			$last = wp_get_recent_posts( array(
+			$last       = wp_get_recent_posts( array(
 				'numberposts' => 1,
 				'post_type'   => 'page',
 				'post_status' => 'publish',
@@ -1211,7 +1213,7 @@ function am_report() {
 			<label for='am_report_pages_second'>" . __( 'Most recent page', 'access-monitor' ) . " ($last_title)</label>
 			<input type='text' class='widefat' id='am_report_pages_second' name='am_report_pages[]' value='" . esc_url( $last_link ) . "' />
 			</li>";
-			$last = wp_get_recent_posts( array(
+			$last       = wp_get_recent_posts( array(
 				'numberposts' => 1,
 				'post_status' => 'publish',
 			) );
@@ -1300,7 +1302,7 @@ function am_report() {
 				</p>
 		</div>
 		<p>
-			<input id='tenon-submit' type='submit'$disabled value='" . __('Create Accessibility Report', 'access-monitor') . "' name='am_generate' class='button-primary' />
+			<input id='tenon-submit' type='submit'$disabled value='" . __( 'Create Accessibility Report', 'access-monitor' ) . "' name='am_generate' class='button-primary' />
 		</p>
 		</div>
 	</form>";
@@ -1423,7 +1425,8 @@ function am_support_page() {
 								<p>
 									<?php
 									// Translators: Donation URL.
-									printf( __( 'Please, <a href="%s">consider a donation</a> to support Access Monitor!', 'access-monitor' ), 'https://www.joedolson.com/donate/' ); ?>
+									printf( __( 'Please, <a href="%s">consider a donation</a> to support Access Monitor!', 'access-monitor' ), 'https://www.joedolson.com/donate/' );
+									?>
 								</p>
 							</div>
 							<?php am_get_support_form(); ?>
@@ -1453,7 +1456,7 @@ function am_show_support_box() {
 	<div class="meta-box-sortables">
 		<div class="postbox" id="tenon-signup">
 			<a href="<?php echo admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php&signup=dismiss' ); ?>" class='am-dismiss'><span class='dashicons dashicons-no' aria-hidden='true'><span class="screen-reader-text"><?php _e( 'Dismiss', 'access-monitor' ); ?></span></a>
-			<h2 class="heading hndle"><?php _e('Sign-up with Tenon.io', 'access-monitor'); ?></h2>
+			<h2 class="heading hndle"><?php _e( 'Sign-up with Tenon.io', 'access-monitor' ); ?></h2>
 			<div class="inside subscribe">
 				<a href="https://tenon.io/pricing.php"><img src="<?php echo plugins_url( 'img/tenon-logo-no-border-light.png', __FILE__ ); ?>" alt="<?php _e( 'Sign up for Tenon.io', 'access-monitor' ); ?>" /></a>
 				<p>
@@ -1471,7 +1474,7 @@ function am_show_support_box() {
 
 	<div class="meta-box-sortables">
 		<div class="postbox">
-		<h2 class="hndle"><?php _e('Support this Plug-in', 'access-monitor'); ?></h2>
+		<h2 class="hndle"><?php _e( 'Support this Plug-in', 'access-monitor' ); ?></h2>
 		<div id="support" class="inside resources">
 		<ul>
 			<li>
@@ -1499,7 +1502,7 @@ function am_show_support_box() {
 
 	<div class="meta-box-sortables">
 		<div class="postbox">
-		<h2 class="hndle"><?php _e('Get Help', 'access-monitor'); ?></h2>
+		<h2 class="hndle"><?php _e( 'Get Help', 'access-monitor' ); ?></h2>
 		<div id="help" class="inside resources">
 			<p>
 				<?php
@@ -1513,7 +1516,7 @@ function am_show_support_box() {
 
 	<div class="meta-box-sortables">
 		<div class="postbox">
-		<h2 class="hndle"><?php _e('Disclaimer', 'access-monitor'); ?></h2>
+		<h2 class="hndle"><?php _e( 'Disclaimer', 'access-monitor' ); ?></h2>
 		<div id="disclaimer" class="inside resources">
 			<p>
 				<?php _e( 'Access Monitor uses Tenon.io. The Tenon.io API is designed to examine aspects of accessibility that are machine-testable in a reliable way. No errors does not mean that your site is accessible.', 'access-monitor' ); ?>
@@ -1537,7 +1540,7 @@ add_action( 'admin_menu', 'am_add_support_page' );
  * Add the administrative settings to the "Settings" menu.
  */
 function am_add_support_page() {
-    if ( function_exists( 'add_submenu_page' ) ) {
+	if ( function_exists( 'add_submenu_page' ) ) {
 		$permissions = apply_filters( 'am_use_monitor', 'manage_options' );
 		$plugin_page = add_submenu_page( 'edit.php?post_type=tenon-report', __( 'Access Monitor > Add New Report', 'access-monitor' ), __( 'Add Report/Settings', 'access-monitor' ), $permissions, __FILE__, 'am_support_page' );
 		add_action( 'load-' . $plugin_page, 'am_load_admin_styles' );
@@ -1558,17 +1561,20 @@ function am_admin_styles() {
 	wp_enqueue_style( 'am-admin-styles', plugins_url( 'css/am-admin-styles.css', __FILE__ ) );
 }
 
+/**
+ * Display Access Monitor get support form.
+ */
 function am_get_support_form() {
 	global $current_user, $am_version;
 	$current_user = wp_get_current_user();
 	// send fields for Access Monitor.
 	$version = $am_version;
 	// send fields for all plugins.
-	$wp_version = get_bloginfo('version');
+	$wp_version = get_bloginfo( 'version' );
 	$home_url   = home_url();
 	$wp_url     = site_url();
-	$language   = get_bloginfo('language');
-	$charset    = get_bloginfo('charset');
+	$language   = get_bloginfo( 'language' );
+	$charset    = get_bloginfo( 'charset' );
 	// server.
 	$php_version = phpversion();
 
@@ -1582,15 +1588,15 @@ function am_get_support_form() {
 	// plugin data.
 	$plugins        = get_plugins();
 	$plugins_string = '';
-		foreach ( array_keys($plugins) as $key ) {
-			if ( is_plugin_active( $key ) ) {
-				$plugin          =& $plugins[ $key ];
-				$plugin_name     = $plugin['Name'];
-				$plugin_uri      = $plugin['PluginURI'];
-				$plugin_version  = $plugin['Version'];
-				$plugins_string .= "$plugin_name: $plugin_version; $plugin_uri\n";
-			}
+	foreach ( array_keys( $plugins ) as $key ) {
+		if ( is_plugin_active( $key ) ) {
+			$plugin          =& $plugins[ $key ];
+			$plugin_name     = $plugin['Name'];
+			$plugin_uri      = $plugin['PluginURI'];
+			$plugin_version  = $plugin['Version'];
+			$plugins_string .= "$plugin_name: $plugin_version; $plugin_uri\n";
 		}
+	}
 	$data = "
 ================ Installation Data ====================
 Version: $version
@@ -1618,8 +1624,8 @@ $plugins_string
 ";
 	if ( isset( $_POST['am_support'] ) ) {
 		$nonce = $_REQUEST['_wpnonce'];
-		if ( ! wp_verify_nonce($nonce,'access-monitor-nonce') ) {
-			die('Security check failed');
+		if ( ! wp_verify_nonce( $nonce, 'access-monitor-nonce' ) ) {
+			die( 'Security check failed' );
 		}
 		$request      = stripslashes( $_POST['support_request'] );
 		$has_donated  = ( isset( $_POST['has_donated'] ) && 'on' == $_POST['has_donated'] ) ? 'Donor' : 'No donation';
@@ -1659,13 +1665,13 @@ $plugins_string
 		<label for='support_request'>" . __( 'Support Request', 'access-monitor' ) . ":</label><br /><textarea name='support_request' required aria-required='true' id='support_request' cols='80' rows='10'>" . stripslashes( $request ) . "</textarea>
 		</p>
 		<p>
-		<input type='submit' value='" . __('Send Support Request', 'access-monitor') . "' name='am_support' class='button-primary' />
+		<input type='submit' value='" . __( 'Send Support Request', 'access-monitor' ) . "' name='am_support' class='button-primary' />
 		</p>
 		<p>" .
 		__( 'The following additional information will be sent with your support request:', 'access-monitor' )
 		 . "</p>
 		<div class='am_support'>
-		" . wpautop($data) . '
+		" . wpautop( $data ) . '
 		</div>
 		</div>
 	</form>';
@@ -1703,7 +1709,7 @@ function am_redirect_new() {
 	}
 }
 
-add_filter('plugin_action_links', 'am_plugin_action', 10, 2);
+add_filter( 'plugin_action_links', 'am_plugin_action', 10, 2 );
 /**
  * Add "Settings" link into Plug-in list
  *

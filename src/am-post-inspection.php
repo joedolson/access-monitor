@@ -8,6 +8,7 @@
  * @license  GPLv2 or later
  * @link     https://www.joedolson.com/access-monitor/
  */
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -18,7 +19,7 @@ add_action( 'post_submitbox_misc_actions', 'am_inspect_post' );
  */
 function am_inspect_post() {
 	global $post;
-	$status  = 'new';
+	$status = 'new';
 	if ( isset( $_GET['post'] ) ) {
 		$status = 'edit';
 	}
@@ -28,7 +29,7 @@ function am_inspect_post() {
 			$control = "<p><input type='checkbox' id='am_override' value='1' name='am_override' /> <label for='am_override'>" . __( 'Override Accessibility Test Results', 'access-monitor' ) . '</label></p>';
 		} else {
 			$settings = get_option( 'am_settings' );
-			$notify = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
+			$notify   = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
 			if ( $notify ) {
 				$control = ' ' . "<p><button type='button' class='button' id='am_notify'>" . __( 'Request A11y Review', 'access-monitor' ) . "</button></p><div id='am_notified' aria-live='assertive'></div>";
 			}
@@ -59,18 +60,18 @@ function am_pre_publish( $hook ) {
 			if ( am_in_post_type( $post->ID ) ) {
 				wp_enqueue_script( 'tenon.inspector', plugins_url( 'js/inspector.js', __FILE__ ), array( 'jquery' ), '', true );
 				$settings = array(
-					'level'          => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
-					'certainty'      => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '60',
-					'priority'       => ( isset( $args['priority'] ) ) ? $args['priority'] : '20',
-					'container'      => ( isset( $args['container'] ) && !empty( $args['container'] ) ) ? $args['container'] : '.access-monitor-content',
-					'store'          => ( isset( $args['store'] ) ) ? $args['store'] : '0',
-					'grade'          => ( isset( $args['grade'] ) ) ? $args['grade'] : '90',
-					'hide'           => __( 'Hide issues', 'access-monitor' ),
-					'show'           => __( 'Show issues', 'access-monitor' ),
-					'failed'         => __( 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.', 'access-monitor' ),
-					'error'          => __( '<strong>Post may not be published</strong>: does not meet minimum accessibility requirements.', 'access-monitor' ),
-					'pass'           => __( '<strong>Post may be published!</strong>: meets your accessibility requirements.', 'access-monitor' ),
-					'ajaxerror'        => __( '<strong>There was an error sending your post to Tenon.io</strong>.', 'access-monitor' )
+					'level'     => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
+					'certainty' => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '60',
+					'priority'  => ( isset( $args['priority'] ) ) ? $args['priority'] : '20',
+					'container' => ( isset( $args['container'] ) && !empty( $args['container'] ) ) ? $args['container'] : '.access-monitor-content',
+					'store'     => ( isset( $args['store'] ) ) ? $args['store'] : '0',
+					'grade'     => ( isset( $args['grade'] ) ) ? $args['grade'] : '90',
+					'hide'      => __( 'Hide issues', 'access-monitor' ),
+					'show'      => __( 'Show issues', 'access-monitor' ),
+					'failed'    => __( 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.', 'access-monitor' ),
+					'error'     => __( '<strong>Post may not be published</strong>: does not meet minimum accessibility requirements.', 'access-monitor' ),
+					'pass'      => __( '<strong>Post may be published!</strong>: meets your accessibility requirements.', 'access-monitor' ),
+					'ajaxerror' => __( '<strong>There was an error sending your post to Tenon.io</strong>.', 'access-monitor' ),
 				);
 				wp_localize_script( 'tenon.inspector', 'am', $settings );
 				wp_localize_script( 'tenon.inspector', 'am_ajax_notify', 'am_ajax_notify' );
@@ -83,7 +84,7 @@ function am_pre_publish( $hook ) {
 					'user'     => $user_ID,
 					'post_ID'  => $post_ID,
 					'security' => $security,
-					'error'    => __( 'Accessibility Review Request failed to send.', 'access-monitor' )
+					'error'    => __( 'Accessibility Review Request failed to send.', 'access-monitor' ),
 				);
 				wp_localize_script( 'tenon.inspector', 'amn', $notify );
 			}
@@ -101,7 +102,7 @@ function am_pre_publish( $hook ) {
 function am_in_post_type( $id ) {
 	$settings           = get_option( 'am_settings' );
 	$post_type_settings = isset( $settings['am_post_types'] ) ? $settings['am_post_types'] : array();
-	if ( is_array( $post_type_settings ) && !empty( $post_type_settings ) ) {
+	if ( is_array( $post_type_settings ) && ! empty( $post_type_settings ) ) {
 		$type = get_post_type( $id );
 		if ( in_array( $type, $post_type_settings ) ) {
 			return true;
@@ -137,26 +138,26 @@ function am_percentage( $results ) {
 	$status = $results->status;
 	if ( 200 == $status ) {
 		$stats = $results->globalStats;
-		$max   = $stats->allDensity + (3 * $stats->stdDev);
+		$max   = $stats->allDensity + ( 3 * $stats->stdDev );
 
 		// test against all errors & warnings.
-		$score    = $results->resultSummary->density->allDensity;
+		$score = $results->resultSummary->density->allDensity;
 
 		// Alternate scoring options to be added in future releases.
 		// test against errors only.
-		$scoreErrors = $results->resultSummary->density->errorDensity;
+		$score_errors = $results->resultSummary->density->errorDensity;
 		// test against error count only.
-		$scoreTotal = $results->resultSummary->issues->totalErrors;
+		$score_total = $results->resultSummary->issues->totalErrors;
 		// test against error count by class.
-		$scoreA   = $results->resultSummary->issuesByLevel->A->count;
-		$scoreAA  = $results->resultSummary->issuesByLevel->AA->count;
-		$scoreAAA = $results->resultSummary->issuesByLevel->AAA->count;
+		$score_a   = $results->resultSummary->issuesByLevel->A->count;
+		$score_aa  = $results->resultSummary->issuesByLevel->AA->count;
+		$score_aaa = $results->resultSummary->issuesByLevel->AAA->count;
 
 		$min = 0;
 
 		if ( $score > $max ) {
 			$return = 0;
-		} else if ( $score <= $min ) {
+		} elseif ( $score <= $min ) {
 			$return = 100;
 		} else {
 			$return = 100 - (( $score / $max ) * 100 );
@@ -168,7 +169,7 @@ function am_percentage( $results ) {
 	return apply_filters( 'am_modify_grade', $return, $results );
 }
 
-add_action('wp_ajax_am_ajax_notify', 'am_ajax_notify');
+add_action( 'wp_ajax_am_ajax_notify', 'am_ajax_notify' );
 /**
  * Send notification to a11y approver email that a post needs manual review.
  */
@@ -181,7 +182,7 @@ function am_ajax_notify() {
 			) );
 		} else {
 			$settings = get_option( 'am_settings' );
-			$notify = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
+			$notify   = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
 			if ( $notify ) {
 				$email     = $settings['am_notify'];
 				$post_ID   = $_REQUEST['post_ID'];
@@ -203,7 +204,7 @@ function am_ajax_notify() {
 			} else {
 				wp_send_json( array(
 					'response' => 0,
-					'message'  => __( 'Invalid Email provided for accessibility reviewer', 'access-monitor' )
+					'message'  => __( 'Invalid Email provided for accessibility reviewer', 'access-monitor' ),
 				) );
 			}
 		}
@@ -226,7 +227,7 @@ function am_testable_post_content( $content ) {
 		$test      = ( isset( $options['tenon_pre_publish'] ) && 1 == $options['tenon_pre_publish'] ) ? true : false;
 		$container = isset( $args['container'] ) ? $args['container'] : false;
 		if ( $test ) {
-			if ( !$container || '.access-monitor-content' == $container ) {
+			if ( ! $container || '.access-monitor-content' == $container ) {
 				$content = '<div class="access-monitor-content">' . $content . '</div>';
 			}
 		}
