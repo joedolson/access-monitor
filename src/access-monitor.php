@@ -264,7 +264,7 @@ function am_format_tenon_array( $results, $errors ) {
 			$error_snippet = $result->errorSnippet;
 			$error_title   = $result->errorTitle;
 			$error_desc    = $result->error_description;
-			$return .= "
+			$return       .= "
 				<div class='tenon-result' id='tenon-notes-$xpathid'>
 					<h3>
 						<span>$i</span> . $result->errorTitle
@@ -1087,7 +1087,7 @@ function am_settings() {
 
 	echo "
 	<form method='post' action='" . admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) . "'>
-		<div><input type='hidden' name='_wpnonce' value='" . wp_create_nonce('access-monitor-nonce') . "' /></div>
+		<div><input type='hidden' name='_wpnonce' value='" . wp_create_nonce( 'access-monitor-nonce' ) . "' /></div>
 		<div><input type='hidden' name='am_settings' value='update' /></div>
 		<p>
 			<label for='tenon_api_key'>" . __( 'Tenon API Key', 'access-monitor' ) . "</label> <input type='text' name='tenon_api_key' id='tenon_api_key' size='40' value='" . esc_attr( $settings['tenon_api_key'] ) . "' />
@@ -1191,7 +1191,7 @@ function am_report() {
 	$theme_version = $theme->get( 'Version' );
 	$name          = $theme_name . ' ' . $theme_version;
 	echo "$message
-	<form method='post' action='" . admin_url('edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php'  ) . "'>
+	<form method='post' action='" . admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) . "'>
 		<div><input type='hidden' name='_wpnonce' value='" . wp_create_nonce( 'access-monitor-nonce' ) . "' /></div>
 		<div><input type='hidden' name='am_get_report' value='report' /></div>";
 		echo "

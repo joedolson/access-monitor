@@ -22,15 +22,33 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @copyright 2015
  * @license   GPLv2 or later
  * @version   1.0
- *
- * @param string $url URL to post request to.
- * @param array  $opts Options to pas to tenon.
- * @param object $tenon_response Server response from tenon.
  */
 class Tenon {
-	protected $url, $opts;
+	
+	// {{{ properties
+	
+	/**
+	 * The target URL to post requests to.
+	 *
+	 * @var string
+	 */
+	protected $url;
+	
+	/**
+	 * The array of options submitted to Tenon to control response.
+	 *
+	 * @var array
+	 */
+	protected $opts;
+	
+	/**
+	 * The response received from the Tenon API.
+	 *
+	 * @var object
+	 */
 	public $tenon_response;
 
+	// }}}
 	/**
 	 * Class constructor
 	 *
@@ -47,8 +65,6 @@ class Tenon {
 	 * Submits the HTML source for testing
 	 *
 	 * @param boolean $print_info whether or not to print the output from curl_getinfo (usually for debugging only).
-	 *
-	 * @return string the results, formatted as JSON
 	 */
 	public function submit( $print_info = false ) {
 
@@ -58,7 +74,7 @@ class Tenon {
 			echo '</pre>';
 		}
 
-		$args = array(
+		$args   = array(
 			'method'    => 'POST',
 			'body'      => $this->opts,
 			'headers'   => '',
