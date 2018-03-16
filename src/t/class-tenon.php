@@ -22,7 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @copyright 2015
  * @license   GPLv2 or later
  * @version   1.0
- */ 
+ *
+ * @param string $url URL to post request to.
+ * @param array  $opts Options to pas to tenon.
+ * @param object $tenon_response Server response from tenon.
+ */
 class Tenon {
 	protected $url, $opts;
 	public $tenon_response;
@@ -42,13 +46,13 @@ class Tenon {
 	/**
 	 * Submits the HTML source for testing
 	 *
-	 * @param boolean $printInfo whether or not to print the output from curl_getinfo (usually for debugging only).
+	 * @param boolean $print_info whether or not to print the output from curl_getinfo (usually for debugging only).
 	 *
 	 * @return string the results, formatted as JSON
 	 */
-	public function submit( $printInfo = false ) {
+	public function submit( $print_info = false ) {
 
-		if ( true == $printInfo ) {
+		if ( true == $print_info ) {
 			echo '<h2>Options Passed To Tenon</h2><pre><br>';
 			var_dump( $this->opts );
 			echo '</pre>';
@@ -63,7 +67,7 @@ class Tenon {
 		);
 		$result = wp_remote_post( $this->url, $args );
 
-		if ( true == $printInfo ) {
+		if ( true == $print_info ) {
 			echo '<h2>Query Info</h2><pre>';
 			print_r( $result );
 			echo '</pre>';
@@ -72,7 +76,7 @@ class Tenon {
 		if ( is_wp_error( $result ) ) {
 			$this->tenon_response = $result->errors;
 		} else {
-			//the test results.
+			// the test results.
 			$this->tenon_response = $result;
 		}
 	}

@@ -155,8 +155,8 @@ function am_query_tenon( $post ) {
 		$formatted = am_format_tenon( $body );
 		$object    = json_decode( $body );
 		if ( property_exists( $object, 'resultSet' ) ) {
-			$results = $object->resultSet; 
-			$errors  = $object->clientScriptErrors; 
+			$results = $object->resultSet;
+			$errors  = $object->clientScriptErrors;
 		} else {
 			$results = array();
 		}
@@ -195,7 +195,7 @@ function am_format_tenon( $body ) {
 	$object = json_decode( $body );
 	if ( is_object( $object ) && property_exists( $object, 'resultSummary' ) ) {
 		// unchecked object references.
-		$errors = $object->resultSummary->issues->totalIssues; 
+		$errors = $object->resultSummary->issues->totalIssues;
 	} else {
 		$errors = 0;
 	}
@@ -245,8 +245,8 @@ function am_format_tenon_array( $results, $errors ) {
 				default:
 					$prio = 'low';
 			}
-			$bpid      = $result->bpID; 
-			$tid       = $result->tID; 
+			$bpid      = $result->bpID;
+			$tid       = $result->tID;
 			$xpathid   = md5( $result->xpath );
 			$href      = esc_url( add_query_arg( array(
 				'bpID' => $bpid,
@@ -261,13 +261,9 @@ function am_format_tenon_array( $results, $errors ) {
 				$standards = '<h4>' . __( 'Relevant Accessibility Standards', 'access-monitor' ) . "</h4>
 				<ul>$standards</ul>";
 			}
-			// phpcs:disable WordPress.NamingConventions.ValidVariableName.NotSnakeCseMemberVar
-			// @codingStandardsIgnoreStart
-			$error_snippet = $result->errorSnippet; 
-			$error_title   = $result->errorTitle; 
+			$error_snippet = $result->errorSnippet;
+			$error_title   = $result->errorTitle;
 			$error_desc    = $result->error_description;
-			// @codingStandardsIgnoreEnd
-			// phpcs: enable
 			$return .= "
 				<div class='tenon-result' id='tenon-notes-$xpathid'>
 					<h3>
@@ -1115,48 +1111,48 @@ function am_settings() {
 		<fieldset>
 			<legend><?php _e( 'Accessibility Test Settings', 'access-monitor' ); ?></legend>
 	<?php
-		$criteria = array(
-			'level'     => array(
-				'label'   => __( 'Required WCAG Level', 'access-monitor' ),
-				'default' => 'AA',
-			),
-			'certainty' => array(
-				'label'   =>  __( 'Minimum certainty', 'access-monitor' ),
-				'default' => '60',
-			),
-			'priority'  => array(
-				'label'   => __( 'Minimum priority', 'access-monitor' ),
-				'default' => '20',
-			),
-			'grade'     => array(
-				'label'   => __( 'Minimum percentage grade to publish', 'access-monitor' ),
-				'default' => '90',
-			),
-			'store'     => array(
-				'label'   => __( 'Store data at Tenon.io?', 'access-monitor' ),
-				'default' => '0',
-			),
-			'container' => array(
-				'label'   => __( 'Post content container', 'access-monitor' ),
-				'default' => '.access-monitor-content',
-			),
-		);
-		echo '<ul>';
-		foreach ( $criteria as $key => $values ) {
-			$label = $values['label'];
-			$value = ( isset( $am_criteria[$key] ) && '' != $am_criteria[$key] ) ? $am_criteria[$key] : $values['default'];
-			if ( 'store' == $key ) {
-				echo "<li><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . '>' . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . '>' . __( 'No', 'access-monitor' ) . '</option></select></li>';
+	$criteria = array(
+		'level'     => array(
+			'label'   => __( 'Required WCAG Level', 'access-monitor' ),
+			'default' => 'AA',
+		),
+		'certainty' => array(
+			'label'   => __( 'Minimum certainty', 'access-monitor' ),
+			'default' => '60',
+		),
+		'priority'  => array(
+			'label'   => __( 'Minimum priority', 'access-monitor' ),
+			'default' => '20',
+		),
+		'grade'     => array(
+			'label'   => __( 'Minimum percentage grade to publish', 'access-monitor' ),
+			'default' => '90',
+		),
+		'store'     => array(
+			'label'   => __( 'Store data at Tenon.io?', 'access-monitor' ),
+			'default' => '0',
+		),
+		'container' => array(
+			'label'   => __( 'Post content container', 'access-monitor' ),
+			'default' => '.access-monitor-content',
+		),
+	);
+	echo '<ul>';
+	foreach ( $criteria as $key => $values ) {
+		$label = $values['label'];
+		$value = ( isset( $am_criteria[ $key ] ) && '' != $am_criteria[ $key ] ) ? $am_criteria[ $key ] : $values['default'];
+		if ( 'store' == $key ) {
+			echo "<li><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . '>' . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . '>' . __( 'No', 'access-monitor' ) . '</option></select></li>';
+		} else {
+			if ( is_numeric( $value ) ) {
+				echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='" . intval( $value ) . "' /></li>";
 			} else {
-				if ( is_numeric( $value ) ) {
-					echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='" . intval( $value ) . "' /></li>";
-				} else {
-					echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='" . esc_attr( $value ) . "' /></li>";
-				}
+				echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[ $key ]' id='am_$key' value='" . esc_attr( $value ) . "' /></li>";
 			}
 		}
-		echo '</ul>
-		</fieldset>';
+	}
+	echo '</ul>
+	</fieldset>';
 	?>
 	<p>
 		<label for='am_notify'><?php _e( 'Email address to send requests for accessibility review', 'access-monitor' ); ?></label>
@@ -1167,7 +1163,7 @@ function am_settings() {
 
 	echo '<div>';
 	echo "<p>
-	<input type='submit' value='" . __('Update Settings', 'access-monitor')."' name='am_settings' class='button-primary' />
+	<input type='submit' value='" . __( 'Update Settings', 'access-monitor' ) . "' name='am_settings' class='button-primary' />
 	</p>
 	</div>
 </form>";
@@ -1183,7 +1179,7 @@ function am_report() {
 
 	if ( '' == $settings['tenon_api_key'] && '' == $multisite ) {
 		$disabled = " disabled='disabled'";
-		$message  = "<p><strong><a href='http://www.tenon.io?rfsn=236617.3c55e'>" . __( 'Sign up with Tenon to get an API key', 'access-monitor' ) . "</a></strong> &bull; <a href='#settings'>" . __( 'Add your API key', 'access-monitor' ) . "</a></p>";
+		$message  = "<p><strong><a href='http://www.tenon.io?rfsn=236617.3c55e'>" . __( 'Sign up with Tenon to get an API key', 'access-monitor' ) . "</a></strong> &bull; <a href='#settings'>" . __( 'Add your API key', 'access-monitor' ) . '</a></p>';
 	} else {
 		$disabled = '';
 		$message  = '';
@@ -1639,10 +1635,10 @@ $plugins_string
 		$has_read_faq = ( isset( $_POST['has_read_faq'] ) && 'on' == $_POST['has_read_faq'] ) ? 'Read FAQ' : true; // has no faq, for now.
 		$subject      = "Access Monitor support request. $has_donated";
 		$message      = $request . "\n\n" . $data;
-		// Get the site domain and get rid of www. from pluggable.php
+		// Get the site domain and get rid of www. from pluggable.php.
 		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
 		if ( 'www.' == substr( $sitename, 0, 4 ) ) {
-				$sitename = substr( $sitename, 4 );
+			$sitename = substr( $sitename, 4 );
 		}
 		$from_email = 'wordpress@' . $sitename;
 		$from       = "From: \"$current_user->display_name\" <$from_email>\r\nReply-to: \"$current_user->display_name\" <$current_user->user_email>\r\n";
@@ -1675,11 +1671,8 @@ $plugins_string
 		<input type='submit' value='" . __( 'Send Support Request', 'access-monitor' ) . "' name='am_support' class='button-primary' />
 		</p>
 		<p>" .
-		__( 'The following additional information will be sent with your support request:', 'access-monitor' )
-		 . "</p>
-		<div class='am_support'>
-		" . wpautop( $data ) . '
-		</div>
+		__( 'The following additional information will be sent with your support request:', 'access-monitor' ) . "</p>
+		<div class='am_support'>" . wpautop( $data ) . '</div>
 		</div>
 	</form>';
 }

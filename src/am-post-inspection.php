@@ -63,7 +63,7 @@ function am_pre_publish( $hook ) {
 					'level'     => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
 					'certainty' => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '60',
 					'priority'  => ( isset( $args['priority'] ) ) ? $args['priority'] : '20',
-					'container' => ( isset( $args['container'] ) && !empty( $args['container'] ) ) ? $args['container'] : '.access-monitor-content',
+					'container' => ( isset( $args['container'] ) && ! empty( $args['container'] ) ) ? $args['container'] : '.access-monitor-content',
 					'store'     => ( isset( $args['store'] ) ) ? $args['store'] : '0',
 					'grade'     => ( isset( $args['grade'] ) ) ? $args['grade'] : '90',
 					'hide'      => __( 'Hide issues', 'access-monitor' ),
@@ -160,7 +160,7 @@ function am_percentage( $results ) {
 		} elseif ( $score <= $min ) {
 			$return = 100;
 		} else {
-			$return = 100 - (( $score / $max ) * 100 );
+			$return = 100 - ( ( $score / $max ) * 100 );
 		}
 	} else {
 		$return = false;
