@@ -24,23 +24,21 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @version   1.0
  */
 class Tenon {
-	
-	// {{{ properties
-	
+
 	/**
 	 * The target URL to post requests to.
 	 *
 	 * @var string
 	 */
 	protected $url;
-	
+
 	/**
 	 * The array of options submitted to Tenon to control response.
 	 *
 	 * @var array
 	 */
 	protected $opts;
-	
+
 	/**
 	 * The response received from the Tenon API.
 	 *
@@ -48,7 +46,6 @@ class Tenon {
 	 */
 	public $tenon_response;
 
-	// }}}
 	/**
 	 * Class constructor
 	 *
