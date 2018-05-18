@@ -1,6 +1,6 @@
 # Access Monitor
 
-Accessing the Accessibility of your WordPress site using the Tenon.io API.
+Assessing the Accessibility of your WordPress site using the Tenon.io API.
 
 [![Build Status](https://travis-ci.org/joedolson/access-monitor.svg)](https://travis-ci.org/joedolson/access-monitor) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://www.gnu.org/license/gpl-2.0.html)
 
