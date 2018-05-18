@@ -224,60 +224,61 @@ function am_format_tenon_array( $results, $errors ) {
 	$i      = 0;
 	if ( ! empty( $results ) ) {
 		foreach ( $results as $result ) {
+			$result = (array) $result;
 			$i++;
-			switch ( $result->certainty ) {
-				case ( $result->certainty >= 80 ):
+			switch ( $result['certainty'] ) {
+				case ( $result['certainty'] >= 80 ):
 					$cert = 'high';
 					break;
-				case ( $result->certainty >= 40 ):
+				case ( $result['certainty'] >= 40 ):
 					$cert = 'medium';
 					break;
 				default:
 					$cert = 'low';
 			}
-			switch ( $result->priority ) {
-				case ( $result->priority >= 80 ):
+			switch ( $result['priority'] ) {
+				case ( $result['priority'] >= 80 ):
 					$prio = 'high';
 					break;
-				case ( $result->priority >= 40 ):
+				case ( $result['priority'] >= 40 ):
 					$prio = 'medium';
 					break;
 				default:
 					$prio = 'low';
 			}
-			$bpid      = $result->bpID;
-			$tid       = $result->tID;
-			$xpathid   = md5( $result->xpath );
+			$bpid      = $result['bpID'];
+			$tid       = $result['tID'];
+			$xpathid   = md5( $result['xpath'] );
 			$href      = esc_url( add_query_arg( array(
 				'bpID' => $bpid,
 				'tID'  => $tid,
 			), 'http://tenon.io/bestpractice.php' ) );
-			$ref       = '<strong>' . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$href'>$result->resultTitle</a>";
+			$ref       = '<strong>' . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$href'>$result[resultTitle]</a>";
 			$standards = '';
-			foreach ( $result->standards as $guideline ) {
+			foreach ( $result['standards'] as $guideline ) {
 				$standards .= "<li>$guideline</li>";
 			}
 			if ( '' != $standards ) {
 				$standards = '<h4>' . __( 'Relevant Accessibility Standards', 'access-monitor' ) . "</h4>
 				<ul>$standards</ul>";
 			}
-			$error_snippet = $result->errorSnippet;
-			$error_title   = $result->errorTitle;
-			$error_desc    = ( property_exists( $result, 'errorDescription' ) ) ? $result->errorDescription : '';
+			$error_snippet = $result['errorSnippet'];
+			$error_title   = $result['errorTitle'];
+			$error_desc    = ( isset( $result['errorDescription'] ) ) ? $result['errorDescription'] : '';
 			$return       .= "
 				<div class='tenon-result' id='tenon-notes-$xpathid'>
 					<h3>
-						<span>$i</span> . $result->errorTitle
+						<span>$i</span> . $result[errorTitle]
 					</h3>
 					<p class='am-meta'>
-						<span class='certainty $cert'>" . __( 'Certainty:', 'access-monitor' ) . " $result->certainty%" . "</span>
-						<span class='priority $prio'>" . __( 'Priority:', 'access-monitor' ) . " $result->priority%" . "</span>
+						<span class='certainty $cert'>" . __( 'Certainty:', 'access-monitor' ) . " $result[certainty]%" . "</span>
+						<span class='priority $prio'>" . __( 'Priority:', 'access-monitor' ) . " $result[priority]%" . "</span>
 					</p>
 					<h4 class='screen-reader-text'>Error Source</h4>
 					<pre lang='html'>" . $error_snippet . "</pre>
 					<p>$error_desc $ref</p>
 					<div class='xpath-data'>
-					<h4>Xpath:</h4> <pre><code data-certainty='$cert' data-priority='$prio' data-title='" . $i . '. ' . esc_attr( $error_title ) . "' data-id='tenon-" . $xpathid . "'>$result->xpath</code></pre>
+					<h4>Xpath:</h4> <pre><code data-certainty='$cert' data-priority='$prio' data-title='" . $i . '. ' . esc_attr( $error_title ) . "' data-id='tenon-" . $xpathid . "'>$result[xpath]</code></pre>
 					</div>
 					<div class='tenon-standards'>
 						$standards
