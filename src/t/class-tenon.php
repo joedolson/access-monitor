@@ -75,7 +75,6 @@ class Tenon {
 			'method'    => 'POST',
 			'body'      => $this->opts,
 			'headers'   => '',
-			'sslverify' => false,
 			'timeout'   => 60,
 		);
 		$result = wp_remote_post( $this->url, $args );
