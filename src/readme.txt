@@ -69,6 +69,7 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 * Remove 'create_function' for PHP 7.2 compatibility
 * Bug fix: error_description should be errorDescription
+* Bug fix: Create new report broken due to redirect
 * Remove sslverify=false
 * Add Requires PHP 5.3 to readme
 * Code conformance

@@ -624,8 +624,13 @@ function am_remove_menu_item() {
  * @return Post ID.
  */
 function am_set_report( $name = false ) {
+	$date = date_i18n( 'Y-m-d H:i', current_time( 'timestamp' ) );
 	if ( ! $name ) {
-		$name = date_i18n( 'Y-m-d H:i:s', current_time( 'timestamp' ) );
+		$name = $date;
+	} else {
+		$name  = explode( ';', $name );
+		$name  = $name[0];
+		$name .= '; ' . $date;
 	}
 	$report_id = wp_insert_post( array(
 		'post_content' => '',
@@ -1714,7 +1719,8 @@ add_action( 'current_screen', 'am_redirect_new' );
  */
 function am_redirect_new() {
 	$screen = get_current_screen();
-	if ( 'tenon-report' == $screen->id && ! isset( $_GET['action'] ) ) {
+
+	if ( 'tenon-report' == $screen->id && ! isset( $_GET['action'] ) && ! isset( $_POST['save'] ) ) {
 		wp_safe_redirect( admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) );
 	}
 }
