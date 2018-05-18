@@ -263,7 +263,7 @@ function am_format_tenon_array( $results, $errors ) {
 			}
 			$error_snippet = $result->errorSnippet;
 			$error_title   = $result->errorTitle;
-			$error_desc    = ( property_exists( $result, 'error_description' ) ) ? $result->error_description : '';
+			$error_desc    = ( property_exists( $result, 'errorDescription' ) ) ? $result->errorDescription : '';
 			$return       .= "
 				<div class='tenon-result' id='tenon-notes-$xpathid'>
 					<h3>
