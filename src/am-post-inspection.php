@@ -135,25 +135,16 @@ function am_edit_form_after_title( $post ) {
  * @return mixed float/boolean Percentage or false.
  */
 function am_percentage( $results ) {
-	$status = $results->status;
+	$status  = $results->status;
+	$results = (array) $results;
 	if ( 200 == $status ) {
-		$stats = $results->globalStats;
-		$max   = $stats->allDensity + ( 3 * $stats->stdDev );
+		$stats = (array) $results['globalStats'];
+		$max   = $stats['allDensity'] + ( 3 * $stats['stdDev'] );
 
 		// test against all errors & warnings.
-		$score = $results->resultSummary->density->allDensity;
-
-		// Alternate scoring options to be added in future releases.
-		// test against errors only.
-		$score_errors = $results->resultSummary->density->errorDensity;
-		// test against error count only.
-		$score_total = $results->resultSummary->issues->totalErrors;
-		// test against error count by class.
-		$score_a   = $results->resultSummary->issuesByLevel->A->count;
-		$score_aa  = $results->resultSummary->issuesByLevel->AA->count;
-		$score_aaa = $results->resultSummary->issuesByLevel->AAA->count;
-
-		$min = 0;
+		$score = (array) $results['resultSummary']->density; 
+		$score = $score['allDensity'];
+		$min   = 0;
 
 		if ( $score > $max ) {
 			$return = 0;

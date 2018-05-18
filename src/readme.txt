@@ -68,6 +68,12 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 = 1.2.1 =
 
 * Remove 'create_function' for PHP 7.2 compatibility
+* Bug fix: error_description should be errorDescription
+* Remove sslverify=false
+* Add Requires PHP 5.3 to readme
+* Code conformance
+* Minor file restructuring
+* Change objects into arrays where necessary to meet code standards
 
 = 1.2.0 =
 

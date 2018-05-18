@@ -155,8 +155,9 @@ function am_query_tenon( $post ) {
 		$formatted = am_format_tenon( $body );
 		$object    = json_decode( $body );
 		if ( property_exists( $object, 'resultSet' ) ) {
-			$results = $object->resultSet;
-			$errors  = $object->clientScriptErrors;
+			$array   = (array) $object;
+			$results = $array['resultSet'];
+			$errors  = $array['clientScriptErrors'];
 		} else {
 			$results = array();
 		}
@@ -194,14 +195,18 @@ function am_format_tenon( $body ) {
 	}
 	$object = json_decode( $body );
 	if ( is_object( $object ) && property_exists( $object, 'resultSummary' ) ) {
-		// unchecked object references.
-		$errors = $object->resultSummary->issues->totalIssues;
+		// Need to parse this into arrays due to WordPress code standards.
+		$array   = (array) $object;
+		$summary = (array) $array['resultSummary'];
+		$issues  = (array) $summary['issues'];
+		$errors  = $issues['totalIssues'];
 	} else {
 		$errors = 0;
 	}
 
 	if ( property_exists( $object, 'resultSet' ) ) {
-		$results = $object->resultSet;
+		$array   = (array) $object;
+		$results = $array['resultSet'];
 	} else {
 		$results = array();
 	}
@@ -890,29 +895,31 @@ function am_format_tenon_report( $results, $name ) {
 	if ( ! empty( $results ) ) {
 		$reported = array();
 		$count    = count( $results );
-		foreach ( $results as $url => $resultSet ) {
+		foreach ( $results as $url => $result_set ) {
 			$tbody        = '';
 			$thead        = '';
-			$result_count = count( $resultSet );
+			$result_count = count( $result_set );
 			if ( $result_count > 0 ) {
-				foreach ( $resultSet as $result ) {
+				foreach ( $result_set as $result ) {
+					$result = (array) $result;
+
 					$i++;
-					$hash = md5( $result->resultTitle . $result->ref . $result->errorSnippet . $result->xpath );
+					$hash = md5( $result['resultTitle'] . $result['ref'] . $result['errorSnippet'] . $result['xpath'] );
 					if ( ! in_array( $hash, $reported ) ) {
 						$displayed = true;
 						$total ++;
 						$href   = esc_url( add_query_arg( array(
-							'bpid' => $result->bpID,
-							'tid'  => $result->tID,
+							'bpid' => $result['bpID'],
+							'tid'  => $result['tID'],
 						), 'https://tenon.io/bestpractice.php' ) );
-						$ref    = "<a href='$href'>$result->errorTitle</a>";
+						$ref    = "<a href='$href'>$result[errorTitle]</a>";
 						$tbody .= "
 							<tr>
-								<td>$ref<p><strong>$result->resultTitle</strong>; $result->errorDescription</p></td>
-								<td>$result->certainty</td>
-								<td>$result->priority</td>
-								<td><button class='snippet' data-target='snippet$i' aria-controls='snippet$i' aria-expanded='false'>Source</button> <div class='codepanel' id='snippet$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result->errorSnippet</code></div></td>
-								<td><button class='snippet' data-target='xpath$i' aria-controls='xpath$i' aria-expanded='false'>xPath</button> <div class='codepanel' id='xpath$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result->xpath</code></div></td>
+								<td>$ref<p><strong>$result[resultTitle]</strong>; $result[errorDescription]</p></td>
+								<td>$result[certainty]</td>
+								<td>$result[priority]</td>
+								<td><button class='snippet' data-target='snippet$i' aria-controls='snippet$i' aria-expanded='false'>Source</button> <div class='codepanel' id='snippet$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result[errorSnippet]</code></div></td>
+								<td><button class='snippet' data-target='xpath$i' aria-controls='xpath$i' aria-expanded='false'>xPath</button> <div class='codepanel' id='xpath$i'><button class='close'><span class='screen-reader-text'>Close</span><span class='dashicons dashicons-no' aria-hidden='true'></span></button> <code class='am_code'>$result[xpath]</code></div></td>
 							</tr>";
 					} else {
 						$displayed = false;
@@ -1017,6 +1024,7 @@ function am_update_settings() {
 				'am_notify'         => $am_notify,
 			)
 		);
+
 		echo "<div class='updated'><p>" . __( 'Access Monitor Settings Updated', 'access-monitor' ) . '</p></div>';
 	}
 }
@@ -1075,7 +1083,6 @@ function am_settings() {
 	$am_criteria          = isset( $settings['am_criteria'] ) ? $settings['am_criteria'] : array();
 	$am_notify            = isset( $settings['am_notify'] ) ? $settings['am_notify'] : get_option( 'admin_email' );
 	$am_post_type_options = '';
-
 	foreach ( $post_types as $type ) {
 		if ( in_array( $type->name, $am_post_types ) ) {
 			$selected = ' checked="checked"';
@@ -1149,7 +1156,7 @@ function am_settings() {
 			if ( is_numeric( $value ) ) {
 				echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='" . intval( $value ) . "' /></li>";
 			} else {
-				echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[ $key ]' id='am_$key' value='" . esc_attr( $value ) . "' /></li>";
+				echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='" . esc_attr( $value ) . "' /></li>";
 			}
 		}
 	}
@@ -1323,7 +1330,7 @@ function am_setup_report() {
 		$schedule = ( isset( $_POST['report_schedule'] ) ) ? $_POST['report_schedule'] : 'none';
 
 		$store          = ( isset( $_POST['store'] ) ) ? 1 : 0;
-		$projectID      = ( isset( $_POST['projectID'] ) ) ? sanitize_text_field( $_POST['projectID'] ) : '';
+		$project_id     = ( isset( $_POST['projectID'] ) ) ? sanitize_text_field( $_POST['projectID'] ) : '';
 		$viewport       = ( isset( $_POST['viewport'] ) ) ? explode( 'x', $_POST['viewport'] ) : array( '1024', '768' );
 		$viewportheight = $viewport[1];
 		$viewportwidth  = $viewport[0];
@@ -1333,7 +1340,7 @@ function am_setup_report() {
 
 		$args = array(
 			'store'          => $store,
-			'projectID'      => $projectID,
+			'projectID'      => $project_id,
 			'viewPortHeight' => $viewportheight,
 			'viewPortWidth'  => $viewportwidth,
 			'level'          => $level,
