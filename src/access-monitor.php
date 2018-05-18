@@ -288,6 +288,7 @@ function am_format_tenon_array( $results, $errors ) {
 	} else {
 		$return .= "<p><strong>Congratulations!</strong> Tenon didn't find any issues on this page.</p>";
 	}
+
 	return $return . '</section><hr />';
 }
 

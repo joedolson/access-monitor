@@ -72,10 +72,10 @@ class Tenon {
 		}
 
 		$args   = array(
-			'method'    => 'POST',
-			'body'      => $this->opts,
-			'headers'   => '',
-			'timeout'   => 60,
+			'method'  => 'POST',
+			'body'    => $this->opts,
+			'headers' => '',
+			'timeout' => 60,
 		);
 		$result = wp_remote_post( $this->url, $args );
 
