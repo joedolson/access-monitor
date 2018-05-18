@@ -65,14 +65,14 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 	- Measure most common errors 
 * Create ignore list
 
-= 1.2.1 =
+= 1.3.0 =
 
 * Remove 'create_function' for PHP 7.2 compatibility
 * Bug fix: error_description should be errorDescription
 * Bug fix: Create new report broken due to redirect
 * Remove sslverify=false
 * Add Requires PHP 5.3 to readme
-* Code conformance
+* Code conformance with WordPress code standards
 * Minor file restructuring
 * Change objects into arrays where necessary to meet code standards
 
