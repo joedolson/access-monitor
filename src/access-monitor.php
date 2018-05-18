@@ -1686,7 +1686,7 @@ $plugins_string
 	</form>';
 }
 
-add_filter( 'gettext', 'change_publish_button', 10, 2 );
+add_filter( 'gettext', 'am_change_publish_button', 10, 2 );
 /**
  * Changes the publish button from saying 'Update' to 'Re-run this test'
  *
@@ -1695,7 +1695,7 @@ add_filter( 'gettext', 'change_publish_button', 10, 2 );
  *
  * @return Custom text.
  */
-function change_publish_button( $translation, $text ) {
+function am_change_publish_button( $translation, $text ) {
 	if ( is_admin() && isset( $_GET['action'] ) && 'edit' == $_GET['action'] ) {
 		global $post;
 		if ( is_object( $post ) ) {
@@ -1704,6 +1704,7 @@ function change_publish_button( $translation, $text ) {
 			}
 		}
 	}
+
 	return $translation;
 }
 

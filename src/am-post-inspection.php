@@ -142,7 +142,7 @@ function am_percentage( $results ) {
 		$max   = $stats['allDensity'] + ( 3 * $stats['stdDev'] );
 
 		// test against all errors & warnings.
-		$score = (array) $results['resultSummary']->density; 
+		$score = (array) $results['resultSummary']->density;
 		$score = $score['allDensity'];
 		$min   = 0;
 
