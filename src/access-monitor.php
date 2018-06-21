@@ -1119,62 +1119,62 @@ function am_settings() {
 		<input type='checkbox' name='tenon_pre_publish' id='tenon_pre_publish' value='1' " . checked( $settings['tenon_pre_publish'], 1, false ) . "' /> <label for='tenon_pre_publish'>" . __( 'Prevent inaccessible posts from being published', 'access-monitor' ) . '</label>
 	</p>';
 	if ( 1 == $settings['tenon_pre_publish'] ) {
-	?>
+		?>
 		<fieldset>
 			<legend><?php _e( 'Test these post types before publishing:', 'my-tickets' ); ?></legend>
 			<p class='checkbox'><?php echo $am_post_type_options; ?></p>
 		</fieldset>
 		<fieldset>
 			<legend><?php _e( 'Accessibility Test Settings', 'access-monitor' ); ?></legend>
-	<?php
-	$criteria = array(
-		'level'     => array(
-			'label'   => __( 'Required WCAG Level', 'access-monitor' ),
-			'default' => 'AA',
-		),
-		'certainty' => array(
-			'label'   => __( 'Minimum certainty', 'access-monitor' ),
-			'default' => '60',
-		),
-		'priority'  => array(
-			'label'   => __( 'Minimum priority', 'access-monitor' ),
-			'default' => '20',
-		),
-		'grade'     => array(
-			'label'   => __( 'Minimum percentage grade to publish', 'access-monitor' ),
-			'default' => '90',
-		),
-		'store'     => array(
-			'label'   => __( 'Store data at Tenon.io?', 'access-monitor' ),
-			'default' => '0',
-		),
-		'container' => array(
-			'label'   => __( 'Post content container', 'access-monitor' ),
-			'default' => '.access-monitor-content',
-		),
-	);
-	echo '<ul>';
-	foreach ( $criteria as $key => $values ) {
-		$label = $values['label'];
-		$value = ( isset( $am_criteria[ $key ] ) && '' != $am_criteria[ $key ] ) ? $am_criteria[ $key ] : $values['default'];
-		if ( 'store' == $key ) {
-			echo "<li><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . '>' . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . '>' . __( 'No', 'access-monitor' ) . '</option></select></li>';
-		} else {
-			if ( is_numeric( $value ) ) {
-				echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='" . intval( $value ) . "' /></li>";
+		<?php
+		$criteria = array(
+			'level'     => array(
+				'label'   => __( 'Required WCAG Level', 'access-monitor' ),
+				'default' => 'AA',
+			),
+			'certainty' => array(
+				'label'   => __( 'Minimum certainty', 'access-monitor' ),
+				'default' => '60',
+			),
+			'priority'  => array(
+				'label'   => __( 'Minimum priority', 'access-monitor' ),
+				'default' => '20',
+			),
+			'grade'     => array(
+				'label'   => __( 'Minimum percentage grade to publish', 'access-monitor' ),
+				'default' => '90',
+			),
+			'store'     => array(
+				'label'   => __( 'Store data at Tenon.io?', 'access-monitor' ),
+				'default' => '0',
+			),
+			'container' => array(
+				'label'   => __( 'Post content container', 'access-monitor' ),
+				'default' => '.access-monitor-content',
+			),
+		);
+		echo '<ul>';
+		foreach ( $criteria as $key => $values ) {
+			$label = $values['label'];
+			$value = ( isset( $am_criteria[ $key ] ) && '' != $am_criteria[ $key ] ) ? $am_criteria[ $key ] : $values['default'];
+			if ( 'store' == $key ) {
+				echo "<li><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . '>' . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . '>' . __( 'No', 'access-monitor' ) . '</option></select></li>';
 			} else {
-				echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='" . esc_attr( $value ) . "' /></li>";
+				if ( is_numeric( $value ) ) {
+					echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='" . intval( $value ) . "' /></li>";
+				} else {
+					echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='" . esc_attr( $value ) . "' /></li>";
+				}
 			}
 		}
-	}
-	echo '</ul>
-	</fieldset>';
-	?>
+		echo '</ul>
+		</fieldset>';
+		?>
 	<p>
 		<label for='am_notify'><?php _e( 'Email address to send requests for accessibility review', 'access-monitor' ); ?></label>
 		<input type='email' value='<?php echo esc_attr( $am_notify ); ?>' id='am_notify' name='am_notify' />
 	</p>
-	<?php
+		<?php
 	}
 
 	echo '<div>';
@@ -1471,7 +1471,7 @@ function am_show_support_box() {
 		update_option( 'am-tenon-signup', 1 );
 	}
 	if ( '1' != get_option( 'am-tenon-signup' ) ) {
-	?>
+		?>
 	<div class="meta-box-sortables">
 		<div class="postbox" id="tenon-signup">
 			<a href="<?php echo admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php&signup=dismiss' ); ?>" class='am-dismiss'><span class='dashicons dashicons-no' aria-hidden='true'><span class="screen-reader-text"><?php _e( 'Dismiss', 'access-monitor' ); ?></span></a>
@@ -1487,7 +1487,7 @@ function am_show_support_box() {
 			</div>
 		</div>
 	</div>
-	<?php
+		<?php
 	}
 	?>
 
@@ -1551,7 +1551,7 @@ function am_show_support_box() {
 	</div>
 </div>
 </div>
-<?php
+	<?php
 }
 
 add_action( 'admin_menu', 'am_add_support_page' );
