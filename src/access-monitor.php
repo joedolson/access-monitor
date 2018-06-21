@@ -167,8 +167,8 @@ function am_query_tenon( $post ) {
 			if ( trim( $object->message ) == 'Bad Request - Either src or url parameter must be supplied' ) {
 				$message = __( 'Save your post as a draft in order to test for accessibility.', 'access-monitor' );
 			} else {
-				$info    = ( property_exists( $object, 'info' ) ) ? $object->info : '';
-				$message = $object->message . ': ' . $info . ' ' . $object->log;
+				$info    = $object->status;
+				$message = $object->message . ': ' . $info;
 			}
 			$formatted = '<p><strong>' . __( 'Tenon error:', 'access-monitor' ) . '</strong> ' . $message . '</pre>' . '</p>';
 			$grade     = 0;
@@ -1512,7 +1512,7 @@ function am_show_support_box() {
 					</div>
 				</form>
 			</li>
-			<li><a href="http://profiles.wordpress.org/users/joedolson/"><?php _e( 'Check out my other plug-ins', 'access-monitor' ); ?></a></li>
+			<li><a href="http://profiles.wordpress.org/joedolson/"><?php _e( 'Check out my other plug-ins', 'access-monitor' ); ?></a></li>
 			<li><a href="http://wordpress.org/extend/plugins/access-monitor/"><?php _e( 'Rate this plug-in', 'access-monitor' ); ?></a></li>
 		</ul>
 		</div>
