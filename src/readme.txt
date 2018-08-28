@@ -56,14 +56,9 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 == Changelog ==
 
-= Future =
+= 1.3.1 =
 
-* Add clientScriptErrors data to resultset.
-* Add filters and filters and filters. 
-	- Relate reports to authors
-	- Create rules UI for whether post publish should be blocked.
-	- Measure most common errors 
-* Create ignore list
+* Prevent Gutenberg from use if pre-publish checks are enabled.
 
 = 1.3.0 =
 
