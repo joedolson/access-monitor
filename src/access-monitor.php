@@ -479,7 +479,14 @@ add_action( 'add_meta_boxes', 'am_post_reports_data' );
 function am_post_reports_data( $type ) {
 	$types = get_post_types( array( 'public' => true ) );
 	if ( in_array( $type, $types ) ) {
-		add_meta_box( 'am_public_report', __( 'Accessibility Reports', 'access-monitor' ), 'am_show_public_report', $type );
+		$settings               = get_option( 'am_settings' );
+		$access_options_enabled = ( 1 == $settings['tenon_pre_publish'] ) ? true : false;
+		if ( $access_options_enabled ) {
+			// Disable Gutenberg if this option is enabled.
+			add_meta_box( 'am_public_report', __( 'Accessibility Reports', 'access-monitor' ), 'am_show_public_report', $type, 'normal', 'high', array( '__block_editor_compatible_meta_box' => false ) );
+		} else {
+			add_meta_box( 'am_public_report', __( 'Accessibility Reports', 'access-monitor' ), 'am_show_public_report', $type );
+		}
 	}
 }
 
@@ -1042,8 +1049,9 @@ add_action( 'admin_head', 'am_setup_admin_notice' );
  */
 function am_setup_admin_notice() {
 	if ( ! ( isset( $_POST['tenon_api_key'] ) && '' != $_POST['tenon_api_key'] ) && ! ( isset( $_POST['tenon_multisite_key'] ) && '' != $_POST['tenon_multisite_key'] ) ) {
-		$settings = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
-		$key      = ( is_multisite() && '' != get_site_option( 'tenon_multisite_key' ) ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];
+		$settings      = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
+		$tenon_api_key = ( isset( $settings['tenon_api_key'] ) ) ? $settings['tenon_api_key'] : false;
+		$key           = ( is_multisite() && '' != get_site_option( 'tenon_multisite_key' ) ) ? get_site_option( 'tenon_multisite_key' ) : $tenon_api_key;
 		if ( ! $key ) {
 			add_action( 'admin_notices', 'am_admin_notice' );
 		}
@@ -1114,9 +1122,10 @@ function am_settings() {
 			<label for='tenon_multisite_key'>" . __( 'Tenon API Key (Network-wide)', 'access-monitor' ) . "</label> <input type='text' name='tenon_multisite_key' id='tenon_multisite_key' size='40' value='" . esc_attr( $multisite ) . "' />
 		</p>";
 	}
+	$message = ( 1 == $settings['tenon_pre_publish'] ) ? '<span class="am-alert">' . __( 'Pre-publication checks are not compatible with the Gutenberg editor.', 'access-monitor' ) . '</span>' : '';
 	echo "
 	<p class='checkbox'>
-		<input type='checkbox' name='tenon_pre_publish' id='tenon_pre_publish' value='1' " . checked( $settings['tenon_pre_publish'], 1, false ) . "' /> <label for='tenon_pre_publish'>" . __( 'Prevent inaccessible posts from being published', 'access-monitor' ) . '</label>
+		<input type='checkbox' name='tenon_pre_publish' id='tenon_pre_publish' value='1' " . checked( $settings['tenon_pre_publish'], 1, false ) . "' /> <label for='tenon_pre_publish'>" . __( 'Prevent inaccessible posts from being published', 'access-monitor' ) . $message . '</label>
 	</p>';
 	if ( 1 == $settings['tenon_pre_publish'] ) {
 		?>
@@ -1465,91 +1474,91 @@ function am_support_page() {
 function am_show_support_box() {
 	?>
 <div class="postbox-container" style="width:20%">
-<div class="metabox-holder">
-	<?php
-	if ( isset( $_GET['signup'] ) && 'dismiss' == $_GET['signup'] ) {
-		update_option( 'am-tenon-signup', 1 );
-	}
-	if ( '1' != get_option( 'am-tenon-signup' ) ) {
+	<div class="metabox-holder">
+		<?php
+		if ( isset( $_GET['signup'] ) && 'dismiss' == $_GET['signup'] ) {
+			update_option( 'am-tenon-signup', 1 );
+		}
+		if ( '1' != get_option( 'am-tenon-signup' ) ) {
+			?>
+		<div class="meta-box-sortables">
+			<div class="postbox" id="tenon-signup">
+				<a href="<?php echo admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php&signup=dismiss' ); ?>" class='am-dismiss'><span class='dashicons dashicons-no' aria-hidden='true'><span class="screen-reader-text"><?php _e( 'Dismiss', 'access-monitor' ); ?></span></a>
+				<h2 class="heading hndle"><?php _e( 'Sign-up with Tenon.io', 'access-monitor' ); ?></h2>
+				<div class="inside subscribe">
+					<a href="https://tenon.io/pricing.php"><img src="<?php echo plugins_url( 'img/tenon-logo-no-border-light.png', __FILE__ ); ?>" alt="<?php _e( 'Sign up for Tenon.io', 'access-monitor' ); ?>" /></a>
+					<p>
+						<?php
+						// Translators: Access Monitor subscribe URL.
+						printf( __( "Access Monitor can't exist without Tenon.io subscribers. <a href='%s'>Subscribe now!</a>", 'access-monitor' ), 'http://www.tenon.io?rfsn=236617.3c55e' );
+						?>
+					</p>
+				</div>
+			</div>
+		</div>
+			<?php
+		}
 		?>
-	<div class="meta-box-sortables">
-		<div class="postbox" id="tenon-signup">
-			<a href="<?php echo admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php&signup=dismiss' ); ?>" class='am-dismiss'><span class='dashicons dashicons-no' aria-hidden='true'><span class="screen-reader-text"><?php _e( 'Dismiss', 'access-monitor' ); ?></span></a>
-			<h2 class="heading hndle"><?php _e( 'Sign-up with Tenon.io', 'access-monitor' ); ?></h2>
-			<div class="inside subscribe">
-				<a href="https://tenon.io/pricing.php"><img src="<?php echo plugins_url( 'img/tenon-logo-no-border-light.png', __FILE__ ); ?>" alt="<?php _e( 'Sign up for Tenon.io', 'access-monitor' ); ?>" /></a>
+
+		<div class="meta-box-sortables">
+			<div class="postbox">
+			<h2 class="hndle"><?php _e( 'Support this Plug-in', 'access-monitor' ); ?></h2>
+			<div id="support" class="inside resources">
+			<ul>
+				<li>
+				<p>
+					<a href="https://twitter.com/intent/follow?screen_name=joedolson" class="twitter-follow-button" data-size="small" data-related="joedolson">Follow @joedolson</a>
+					<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if (!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+				</p>
+				</li>
+				<li><p><?php _e( '<a href="http://www.joedolson.com/donate/">Make a donation today!</a> Every donation counts - donate $10, $20, or $100 and help me keep this plug-in running!', 'access-monitor' ); ?></p>
+					<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
+						<div>
+						<input type="hidden" name="cmd" value="_s-xclick" />
+						<input type="hidden" name="hosted_button_id" value="B75RYAX9BMX6S" />
+						<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt=	"Donate" />
+						<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1" />
+						</div>
+					</form>
+				</li>
+				<li><a href="http://profiles.wordpress.org/joedolson/"><?php _e( 'Check out my other plug-ins', 'access-monitor' ); ?></a></li>
+				<li><a href="http://wordpress.org/extend/plugins/access-monitor/"><?php _e( 'Rate this plug-in', 'access-monitor' ); ?></a></li>
+			</ul>
+			</div>
+			</div>
+		</div>
+
+		<div class="meta-box-sortables">
+			<div class="postbox">
+			<h2 class="hndle"><?php _e( 'Get Help', 'access-monitor' ); ?></h2>
+			<div id="help" class="inside resources">
 				<p>
 					<?php
-					// Translators: Access Monitor subscribe URL.
-					printf( __( "Access Monitor can't exist without Tenon.io subscribers. <a href='%s'>Subscribe now!</a>", 'access-monitor' ), 'http://www.tenon.io?rfsn=236617.3c55e' );
+					// Translators: Access Monitor support form.
+					printf( __( 'Access Monitor has two parts: the plug-in, and the API it interacts with. If your issue is in the plug-in, use the <a href="%s">support form</a>. If your issue is with the API or on tenon.io, <a href="mailto:support@tenon.io">email Tenon support</a>. Thanks!', 'access-monitor' ), '#support-form' );
 					?>
 				</p>
 			</div>
+			</div>
 		</div>
-	</div>
-		<?php
-	}
-	?>
 
-	<div class="meta-box-sortables">
-		<div class="postbox">
-		<h2 class="hndle"><?php _e( 'Support this Plug-in', 'access-monitor' ); ?></h2>
-		<div id="support" class="inside resources">
-		<ul>
-			<li>
-			<p>
-				<a href="https://twitter.com/intent/follow?screen_name=joedolson" class="twitter-follow-button" data-size="small" data-related="joedolson">Follow @joedolson</a>
-				<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if (!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="https://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-			</p>
-			</li>
-			<li><p><?php _e( '<a href="http://www.joedolson.com/donate/">Make a donation today!</a> Every donation counts - donate $10, $20, or $100 and help me keep this plug-in running!', 'access-monitor' ); ?></p>
-				<form action="https://www.paypal.com/cgi-bin/webscr" method="post">
-					<div>
-					<input type="hidden" name="cmd" value="_s-xclick" />
-					<input type="hidden" name="hosted_button_id" value="B75RYAX9BMX6S" />
-					<input type="image" src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" border="0" name="submit" alt=	"Donate" />
-					<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1" />
-					</div>
-				</form>
-			</li>
-			<li><a href="http://profiles.wordpress.org/joedolson/"><?php _e( 'Check out my other plug-ins', 'access-monitor' ); ?></a></li>
-			<li><a href="http://wordpress.org/extend/plugins/access-monitor/"><?php _e( 'Rate this plug-in', 'access-monitor' ); ?></a></li>
-		</ul>
-		</div>
+		<div class="meta-box-sortables">
+			<div class="postbox">
+			<h2 class="hndle"><?php _e( 'Disclaimer', 'access-monitor' ); ?></h2>
+			<div id="disclaimer" class="inside resources">
+				<p>
+					<?php _e( 'Access Monitor uses Tenon.io. The Tenon.io API is designed to examine aspects of accessibility that are machine-testable in a reliable way. No errors does not mean that your site is accessible.', 'access-monitor' ); ?>
+				</p>
+				<p>
+					<?php echo '<a href="http://tenon.io/documentation/what-tenon-tests.php">' . __( 'What Tenon Tests', 'access-monitor' ) . '</a>'; ?>
+				</p>
+				<p>
+					<?php _e( 'Note: all links to Tenon are affiliate links. Please use them and help support me!', 'access-monitor' ); ?>
+				</p>
+			</div>
+			</div>
 		</div>
 	</div>
-
-	<div class="meta-box-sortables">
-		<div class="postbox">
-		<h2 class="hndle"><?php _e( 'Get Help', 'access-monitor' ); ?></h2>
-		<div id="help" class="inside resources">
-			<p>
-				<?php
-				// Translators: Access Monitor support form.
-				printf( __( 'Access Monitor has two parts: the plug-in, and the API it interacts with. If your issue is in the plug-in, use the <a href="%s">support form</a>. If your issue is with the API or on tenon.io, <a href="mailto:support@tenon.io">email Tenon support</a>. Thanks!', 'access-monitor' ), '#support-form' );
-				?>
-			</p>
-		</div>
-		</div>
-	</div>
-
-	<div class="meta-box-sortables">
-		<div class="postbox">
-		<h2 class="hndle"><?php _e( 'Disclaimer', 'access-monitor' ); ?></h2>
-		<div id="disclaimer" class="inside resources">
-			<p>
-				<?php _e( 'Access Monitor uses Tenon.io. The Tenon.io API is designed to examine aspects of accessibility that are machine-testable in a reliable way. No errors does not mean that your site is accessible.', 'access-monitor' ); ?>
-			</p>
-			<p>
-				<?php echo '<a href="http://tenon.io/documentation/what-tenon-tests.php">' . __( 'What Tenon Tests', 'access-monitor' ) . '</a>'; ?>
-			</p>
-			<p>
-				<?php _e( 'Note: all links to Tenon are affiliate links. Please use them and help support me!', 'access-monitor' ); ?>
-			</p>
-		</div>
-		</div>
-	</div>
-</div>
 </div>
 	<?php
 }

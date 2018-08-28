@@ -56,6 +56,15 @@
 	color: #fff;
 }
 
+.am-alert {
+	margin-top: .25em;
+	padding: .5em;
+	background: #fefefe;
+	box-shadow: 2px 2px 3px #bbb;
+	border-left: 4px solid #c00;
+	display: block;
+}
+
 .am-support-me p {
     font-size: 1.6em;
     font-weight: 600;
