@@ -7,7 +7,7 @@ Tested up to: 4.9
 Requires PHP: 5.3
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -58,7 +58,8 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 = 1.3.1 =
 
-* Prevent Gutenberg from use if pre-publish checks are enabled.
+* Prevent Gutenberg editor if pre-publish checks are enabled.
+* Remove 'log' and 'info' property references (no longer exist)
 
 = 1.3.0 =
 
