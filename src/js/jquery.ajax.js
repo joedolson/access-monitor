@@ -1,9 +1,9 @@
 (function ($) {
-	
+
 	$(function() {
-		
+
 		$( 'a.menu-icon-tenon-report .wp-menu-name' ).text( am_plugin_name );
-		
+
 		var src = document.documentElement.outerHTML;
 		var query = {
 				'action' : am_ajax_action,
@@ -11,7 +11,7 @@
 				'current_screen' : am_current_screen
 			};
 		$( '#wp-admin-bar-tenonCheck a' ).attr( 'aria-live', 'polite' ).append( ' <span class="tenon-updating dashicons dashicons-update" aria-hidden="true"></span><span class="screen-reader-text"></span>' );
-	
+
 		$( '#wp-admin-bar-tenonCheck a' ).on( 'click', function(e) {
 			e.preventDefault();
 			$( this ).find( '.tenon-updating' ).addClass( 'animating' );
@@ -24,7 +24,7 @@
 				success: function( data ) {
 					var response = data.formatted;
 					$( '#tenon' ).html( response );
-					
+
 					var xpaths = $( '.xpath-data code' );
 					xpaths.each(function () {
 						var xpath     = this.innerHTML;
@@ -33,11 +33,11 @@
 						var noteID    = id.replace( 'tenon-', '' );
 						var notes     = "<a href='#tenon-notes-" + noteID + "'>" + title + "</a>";
 						var path      = xPathToCss( xpath ).replace( 'table:eq(0) > tr', 'table:eq(0) > tbody:eq(0) > tr' );
-											
+
 						var display   = $( path ).css( 'display' );
 						var priority  = $( this ).attr( 'data-priority' );
 						var certainty = 'cert-' + $( this ).attr( 'data-certainty' );
-						
+
 						var wrapper   = 'div';
 						if ( $( path ).is( 'option' ) ) {
 							if ( $( path ).parent().is( 'optgroup' ) ) {
@@ -46,14 +46,14 @@
 								var wrapper = 'optgroup';
 							}
 						}
-								
+
 						$( path )
 							.wrap( '<' + wrapper + ' class="tenon-error ' + priority + ' ' + certainty + '" style="display: ' + display + ';" id="source-tenon-' + noteID + '" tabindex="-1"></' + wrapper + '>' )
 							.attr( 'aria-describedby', noteID ).css( { 'outline' : '2px solid red' } )
 							.attr( 'aria-describedby', noteID ).css( { 'outline' : '2px solid red' } )
 							.after( '<a href="#tenon-notes-' + noteID + '" class="toggle-view ' + priority + ' ' + certainty + '"><span class="dashicons dashicons-arrow-down" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.visit + '</span></a>' );
-					});						
-					
+					});
+
 				},
 				error: function(data) {
 					$( '#tenon' ).html( "Tenon request failed" );
@@ -63,21 +63,21 @@
 					$( '#wp-admin-bar-tenonCheck a .screen-reader-text' ).text( ami18n.completed );
 				}
 			});
-			
+
 		});
 	});
-	
+
 	$(function() {
 		$( '.codepanel' ).hide();
 		$( 'button.snippet' ).on( 'click', function(e) {
 			e.preventDefault();
 			var target = $( this ).attr( 'data-target' );
-			var visible = $( '#' + target ).is( ':visible' );				
+			var visible = $( '#' + target ).is( ':visible' );
 			$( '.codepanel' ).hide();
 			$( 'button.snippet' ).attr( 'aria-expanded', 'false' );
 			if ( visible ) {
 				$( '#' + target ).hide();
-				$( this ).attr( 'aria-expanded', 'false' );			
+				$( this ).attr( 'aria-expanded', 'false' );
 			} else {
 				$( '#' + target ).show();
 				$( this ).attr( 'aria-expanded', 'true' );
@@ -90,7 +90,7 @@
 			$( 'button[data-target="'+source+'"]' ).attr( 'aria-expanded', 'false' ).focus();
 		});
 	});
-	
+
 	$(function() {
 		$( '.report-options' ).hide();
 		$( 'button.toggle-options' ).on( 'click', function(e) {
@@ -100,16 +100,16 @@
 				$( '.report-options' ).hide();
 				$( this ).attr( 'aria-expanded', 'false' );
 				$( 'button.toggle-options span' ).removeClass( 'dashicons-minus' );
-				$( 'button.toggle-options span' ).addClass( 'dashicons-plus-alt' );				
+				$( 'button.toggle-options span' ).addClass( 'dashicons-plus-alt' );
 			} else {
 				$( '.report-options' ).show();
 				$( this ).attr( 'aria-expanded', 'true' );
 				$( 'button.toggle-options span' ).removeClass( 'dashicons-plus-alt' );
-				$( 'button.toggle-options span' ).addClass( 'dashicons-minus' );				
+				$( 'button.toggle-options span' ).addClass( 'dashicons-minus' );
 			}
 		});
-	});	
-	
+	});
+
 	$(function() {
 		$('#add_field').on( 'click', function (e) {
 			e.preventDefault();
@@ -126,14 +126,14 @@
 
 		$('#del_field').on('click', function (e) {
 			e.preventDefault();
-			var num = $('.clonedInput').length; 
-			$('#field' + num).remove();  
+			var num = $('.clonedInput').length;
+			$('#field' + num).remove();
 			$('#add_field').removeAttr('disabled');
 			if ( num - 1 == 1 ) {
 				$('#del_field').attr('disabled', 'disabled');
 			}
 		});
 		$('#del_field').attr('disabled', 'disabled');
-	});	
-	
+	});
+
 }(jQuery));

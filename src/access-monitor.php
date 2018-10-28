@@ -1733,6 +1733,7 @@ function am_redirect_new() {
 
 	if ( 'tenon-report' == $screen->id && ! isset( $_GET['action'] ) && ! isset( $_POST['save'] ) ) {
 		wp_safe_redirect( admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) );
+		exit;
 	}
 }
 
