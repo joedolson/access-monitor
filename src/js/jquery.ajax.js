@@ -7,8 +7,7 @@
 		var src = document.documentElement.outerHTML;
 		var query = {
 				'action' : am_ajax_action,
-				'tenon' : src,
-				'current_screen' : am_current_screen
+				'tenon' : src
 			};
 		$( '#wp-admin-bar-tenonCheck a' ).attr( 'aria-live', 'polite' ).append( ' <span class="tenon-updating dashicons dashicons-update" aria-hidden="true"></span><span class="screen-reader-text"></span>' );
 

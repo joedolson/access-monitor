@@ -18,11 +18,11 @@ jQuery( document ).ready( function( $ ) {
 			$( '#save-post' ).removeClass( 'button-primary' );
 		} else {
 			$( '#publish[name="publish"]' ).attr( 'disabled', 'disabled' ).removeClass( 'button-primary' ).addClass( 'button-secondary' );
-			$( '#save-post' ).addClass( 'button-primary' );			
+			$( '#save-post' ).addClass( 'button-primary' );
 		}
 	});
 	
-	$( '#publish[name="publish"], button.inspect-a11y' ).on( 'click', function( e ) {		
+	$( '#publish[name="publish"], button.inspect-a11y' ).on( 'click', function( e ) {
 		var override = $( '#am_override' ).is( ':checked' );
 		if ( override ) {
 			// exit without testing
@@ -32,9 +32,9 @@ jQuery( document ).ready( function( $ ) {
 			var preview_container = ( am.container == '' ) ? 'body' : am.container;
 			var response_content = '';
 			var grade = 0;
-			
+
 			e.preventDefault();
-			
+
 			$.ajax({
 			   url:preview_url,
 			   type:'post',
@@ -43,17 +43,16 @@ jQuery( document ).ready( function( $ ) {
 					if ( !preview_content || preview_content == '' ) {
 						preview_content = am.failed;
 					}
-										
+
 					var query = {
 						'action' : am_ajax_action,
 						'tenon' : preview_content,
-						'current_screen' : am_current_screen,
 						'level' : am.level,
 						'certainty' : am.certainty,
 						'priority' : am.priority,
 						'fragment' : '1'
 					};
-										
+
 					$.ajax({
 						type:'post',
 						data: query,
@@ -72,7 +71,7 @@ jQuery( document ).ready( function( $ ) {
 								} else {
 									$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).focus();
 								}
-							} else {							
+							} else {
 								if ( e.target.nodeName == 'INPUT' ) {
 									console.log( "Am here" );
 									$( '#ampublish' ).click();
@@ -94,7 +93,7 @@ jQuery( document ).ready( function( $ ) {
 						}	
 					});
 					
-					return false;			   
+					return false;
 			   },
 			   error: function( data ) {
 					$( '.am-errors' ).addClass( 'updated error' ).show().html( am.ajaxerror ).attr( 'tabindex', '-1' ).focus();
