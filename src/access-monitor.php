@@ -313,7 +313,6 @@ function am_admin_enqueue_scripts() {
 		wp_enqueue_script( 'am.functions', plugins_url( 'js/jquery.ajax.js', __FILE__ ), array( 'jquery' ) );
 		wp_localize_script( 'am.functions', 'am_ajax_url', admin_url( 'admin-ajax.php' ) );
 		wp_localize_script( 'am.functions', 'am_ajax_action', 'am_ajax_query_tenon' );
-		wp_localize_script( 'am.functions', 'am_current_screen', $current_screen->id );
 		wp_localize_script( 'am.functions', 'am_plugin_name', __( 'Access Monitor', 'access-monitor' ) );
 
 		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
@@ -350,17 +349,9 @@ add_action( 'wp_ajax_nopriv_am_ajax_query_tenon', 'am_ajax_query_tenon' );
  */
 function am_ajax_query_tenon() {
 	if ( isset( $_REQUEST['tenon'] ) ) {
-		$screen = $_REQUEST['current_screen'];
 		$args   = array();
 
-		if ( 'dashboard' == $screen ) {
-			$args = array( 'src' => stripslashes( $_REQUEST['tenon'] ) );
-		} else {
-			$args = array(
-				'src'      => stripslashes( $_REQUEST['tenon'] ),
-				'fragment' => 1,
-			);
-		}
+		$args = array( 'src' => stripslashes( $_REQUEST['tenon'] ) );
 
 		if ( isset( $_REQUEST['level'] ) ) {
 			$args['level'] = $_REQUEST['level'];
