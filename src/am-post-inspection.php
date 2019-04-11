@@ -212,14 +212,16 @@ add_filter( 'the_content', 'am_testable_post_content' );
  */
 function am_testable_post_content( $content ) {
 	global $post;
-	if ( am_in_post_type( $post->ID ) ) {
-		$options   = get_option( 'am_settings' );
-		$args      = isset( $options['am_criteria'] ) ? $options['am_criteria'] : array();
-		$test      = ( isset( $options['tenon_pre_publish'] ) && 1 == $options['tenon_pre_publish'] ) ? true : false;
-		$container = isset( $args['container'] ) ? $args['container'] : false;
-		if ( $test ) {
-			if ( ! $container || '.access-monitor-content' == $container ) {
-				$content = '<div class="access-monitor-content">' . $content . '</div>';
+	if ( is_object( $post ) ) {
+		if ( am_in_post_type( $post->ID ) ) {
+			$options   = get_option( 'am_settings' );
+			$args      = isset( $options['am_criteria'] ) ? $options['am_criteria'] : array();
+			$test      = ( isset( $options['tenon_pre_publish'] ) && 1 == $options['tenon_pre_publish'] ) ? true : false;
+			$container = isset( $args['container'] ) ? $args['container'] : false;
+			if ( $test ) {
+				if ( ! $container || '.access-monitor-content' == $container ) {
+					$content = '<div class="access-monitor-content">' . $content . '</div>';
+				}
 			}
 		}
 	}
