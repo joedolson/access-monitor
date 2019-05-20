@@ -82,10 +82,14 @@ function am_pass_query() {
 		}
 		// only save these results if they are different from past results.
 		if ( ! $exists ) {
-			add_post_meta( $post_id, '_tenon_test_results', array(
-				'date'    => current_time( 'timestamp' ),
-				'results' => $results,
-			) );
+			add_post_meta( 
+				$post_id, 
+				'_tenon_test_results', 
+				array(
+					'date'    => current_time( 'timestamp' ),
+					'results' => $results,
+				)
+			);
 			add_post_meta( $post_id, '_tenon_test_hash', $hash );
 		}
 		echo "<div class='tenon-results' id='tenon-results'><button class='toggle-results' aria-expanded='true'><span class='dashicons dashicons-minus' aria-hidden='true'></span> Collapse</button>" . $format . '</div>';
@@ -255,10 +259,15 @@ function am_format_tenon_array( $results, $errors ) {
 			$bpid      = $result['bpID'];
 			$tid       = $result['tID'];
 			$xpathid   = md5( $result['xpath'] );
-			$href      = esc_url( add_query_arg( array(
-				'bpID' => $bpid,
-				'tID'  => $tid,
-			), 'http://tenon.io/bestpractice.php' ) );
+			$href      = esc_url( 
+				add_query_arg( 
+					array(
+						'bpID' => $bpid,
+						'tID'  => $tid,
+					),
+					'http://tenon.io/bestpractice.php' 
+					)
+				);
 			$ref       = '<strong>' . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$href'>$result[resultTitle]</a>";
 			$standards = '';
 			foreach ( $result['standards'] as $guideline ) {
@@ -315,13 +324,17 @@ function am_admin_enqueue_scripts() {
 		wp_localize_script( 'am.functions', 'am_plugin_name', __( 'Access Monitor', 'access-monitor' ) );
 
 		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
-		wp_localize_script( 'am.view', 'ami18n', array(
-			'expand'    => __( 'Expand', 'access-monitor' ),
-			'collapse'  => __( 'Collapse', 'access-monitor' ),
-			'view'      => __( 'View', 'access-monitor' ),
-			'updating'  => __( 'Updating', 'access-monitor' ),
-			'completed' => __( 'Completed', 'access-monitor' ),
-		) );
+		wp_localize_script(
+			'am.view',
+			'ami18n',
+			array(
+				'expand'    => __( 'Expand', 'access-monitor' ),
+				'collapse'  => __( 'Collapse', 'access-monitor' ),
+				'view'      => __( 'View', 'access-monitor' ),
+				'updating'  => __( 'Updating', 'access-monitor' ),
+				'completed' => __( 'Completed', 'access-monitor' ),
+			)
+		);
 		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );
 	}
 }
@@ -334,10 +347,14 @@ function am_wp_enqueue_scripts() {
 	if ( ! is_admin() && isset( $_GET['tenon'] ) ) {
 		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );
 		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
-		wp_localize_script( 'am.view', 'ami18n', array(
-			'expand'   => __( 'Expand', 'access-monitor' ),
-			'collapse' => __( 'Collapse', 'access-monitor' ),
-		) );
+		wp_localize_script(
+			'am.view',
+			'ami18n',
+			array(
+				'expand'   => __( 'Expand', 'access-monitor' ),
+				'collapse' => __( 'Collapse', 'access-monitor' ),
+			)
+		);
 	}
 }
 
@@ -370,12 +387,14 @@ function am_ajax_query_tenon() {
 
 		$results = am_query_tenon( $args );
 
-		wp_send_json( array(
-			'response'  => 1,
-			'results'   => $results['results'],
-			'formatted' => $results['formatted'],
-			'grade'     => $results['grade'],
-		) );
+		wp_send_json(
+			array(
+				'response'  => 1,
+				'results'   => $results['results'],
+				'formatted' => $results['formatted'],
+				'grade'     => $results['grade'],
+			)
+		);
 	}
 }
 

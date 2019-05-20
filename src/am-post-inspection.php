@@ -167,10 +167,12 @@ add_action( 'wp_ajax_am_ajax_notify', 'am_ajax_notify' );
 function am_ajax_notify() {
 	if ( isset( $_REQUEST['security'] ) ) {
 		if ( ! check_ajax_referer( 'am_notify_admin', 'security', false ) ) {
-			wp_send_json( array(
-				'response' => 0,
-				'message'  => __( 'Invalid Security Check', 'access-monitor' ),
-			) );
+			wp_send_json(
+				array(
+					'response' => 0,
+					'message'  => __( 'Invalid Security Check', 'access-monitor' ),
+				)
+			);
 		} else {
 			$settings = get_option( 'am_settings' );
 			$notify   = ( isset( $settings['am_notify'] ) && is_email( $settings['am_notify'] ) );
@@ -193,10 +195,12 @@ function am_ajax_notify() {
 					)
 				);
 			} else {
-				wp_send_json( array(
-					'response' => 0,
-					'message'  => __( 'Invalid Email provided for accessibility reviewer', 'access-monitor' ),
-				) );
+				wp_send_json(
+					array(
+						'response' => 0,
+						'message'  => __( 'Invalid Email provided for accessibility reviewer', 'access-monitor' ),
+					)
+				);
 			}
 		}
 	}
