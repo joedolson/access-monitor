@@ -2,20 +2,20 @@
 
 .tenon-result .am-meta, .tenon-result .meta { font-family: Arial, sans-serif; }
 
-.tenon-result .high {
+.tenon-result .high, .tenon-result .high .dashicons {
 	font-weight: 700;
 	color: white;
 	background: red;
 }
 
-.tenon-result .medium {
+.tenon-result .medium, .tenon-result .medium .dashicons {
 	font-weight: 700;
 	color: black;
 	background: yellow;
 	text-shadow: 1px 1px #fff;
 }
 
-.tenon-result .low {
+.tenon-result .low, .tenon-result .low .dashicons {
 	color: white;
 	background: dark-green;
 }
@@ -194,13 +194,13 @@ button.close:hover, button.close:focus {
 
 .toggle-view {
 	padding: .1em!important;
-	font-size: 1em!important;
+	font-size: 1.5em!important;
 	width: 1.2em !important;
 	height: 1.2em !important;
 	z-index: 5;
 	position: absolute;
-	top: 3px !important;
-	left: -1.8em !important;
+	top: 0px !important;
+	left: -1.6em !important;
 	color: #fff !important;
 	background-color: #900 !important;
 	border-radius: 4px !important;
@@ -211,6 +211,9 @@ button.close:hover, button.close:focus {
 .toggle-view .dashicons {
 	position: relative;
 	left: -3px;
+	display: inline-block;
+	min-width: 1em !important;
+	margin: 0;
 }
 
 .tenon-updating {
