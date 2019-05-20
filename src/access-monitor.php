@@ -51,7 +51,7 @@ function am_load_textdomain() {
 	load_plugin_textdomain( 'access-monitor' );
 }
 
-define( 'TENON_API_URL', 'https://tenon.io/api/' );
+define( 'TENON_API_URL', 'https://tenon.io/api/index.php' );
 define( 'AM_DEBUG', false );
 
 require_once( 't/class-tenon.php' );
@@ -150,7 +150,6 @@ function am_query_tenon( $post ) {
 		$opts['key'] = $key;
 		$tenon       = new tenon( TENON_API_URL, $opts );
 		$tenon->submit( AM_DEBUG );
-
 		$body      = $tenon->tenon_response['body'];
 		$formatted = am_format_tenon( $body );
 		$object    = json_decode( $body );
