@@ -3,11 +3,11 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, section508, tenon
 Requires at least: 4.2
-Tested up to: 4.9
+Tested up to: 5.2
 Requires PHP: 5.3
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -55,6 +55,12 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 
 == Changelog ==
+
+= 1.3.2 =
+
+* Don't attempt post inspection if $post not a valid Post object.
+* Change Tenon API url
+* Updates to inspector CSS so admin issue navigation better.
 
 = 1.3.1 =
 
