@@ -82,9 +82,9 @@ function am_pass_query() {
 		}
 		// only save these results if they are different from past results.
 		if ( ! $exists ) {
-			add_post_meta( 
-				$post_id, 
-				'_tenon_test_results', 
+			add_post_meta(
+				$post_id,
+				'_tenon_test_results',
 				array(
 					'date'    => current_time( 'timestamp' ),
 					'results' => $results,
@@ -259,15 +259,15 @@ function am_format_tenon_array( $results, $errors ) {
 			$bpid      = $result['bpID'];
 			$tid       = $result['tID'];
 			$xpathid   = md5( $result['xpath'] );
-			$href      = esc_url( 
-				add_query_arg( 
+			$href      = esc_url(
+				add_query_arg(
 					array(
 						'bpID' => $bpid,
 						'tID'  => $tid,
 					),
-					'http://tenon.io/bestpractice.php' 
-					)
-				);
+					'http://tenon.io/bestpractice.php'
+				)
+			);
 			$ref       = '<strong>' . __( 'Read more:', 'access-monitor' ) . "</strong> <a href='$href'>$result[resultTitle]</a>";
 			$standards = '';
 			foreach ( $result['standards'] as $guideline ) {
@@ -365,8 +365,6 @@ add_action( 'wp_ajax_nopriv_am_ajax_query_tenon', 'am_ajax_query_tenon' );
  */
 function am_ajax_query_tenon() {
 	if ( isset( $_REQUEST['tenon'] ) ) {
-		$args   = array();
-
 		$args = array( 'src' => stripslashes( $_REQUEST['tenon'] ) );
 
 		if ( isset( $_REQUEST['level'] ) ) {
@@ -542,17 +540,21 @@ function am_add_inner_box() {
  */
 function am_add_related_box() {
 	global $post;
-	$relatives = get_posts( array(
-		'post_type'  => 'tenon-report',
-		'meta_key'   => '_tenon_parent',
-		'meta_value' => $post->ID,
-	) );
+	$relatives = get_posts( 
+		array(
+			'post_type'  => 'tenon-report',
+			'meta_key'   => '_tenon_parent',
+			'meta_value' => $post->ID,
+		)
+	);
 
-	$children = get_posts( array(
-		'post_type'  => 'tenon-report',
-		'meta_key'   => '_tenon_child',
-		'meta_value' => $post->ID,
-	) );
+	$children = get_posts(
+		array(
+			'post_type'  => 'tenon-report',
+			'meta_key'   => '_tenon_child',
+			'meta_value' => $post->ID,
+		)
+	);
 
 	echo '<h3>' . __( 'Child Reports', 'access-monitor' ) . '</h3>';
 	echo am_format_related_reports( $relatives, $post );
@@ -650,12 +652,14 @@ function am_set_report( $name = false ) {
 		$name  = $name[0];
 		$name .= '; ' . $date;
 	}
-	$report_id = wp_insert_post( array(
-		'post_content' => '',
-		'post_title'   => $name,
-		'post_status'  => 'draft',
-		'post_type'    => 'tenon-report',
-	) );
+	$report_id = wp_insert_post(
+		array(
+			'post_content' => '',
+			'post_title'   => $name,
+			'post_status'  => 'draft',
+			'post_type'    => 'tenon-report',
+		)
+	);
 
 	return $report_id;
 }
@@ -743,10 +747,12 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 	$total     = $data['total'];
 	$formatted = $data['html'];
 	remove_action( 'save_post', 'am_run_report' );
-	wp_update_post( array(
-		'ID'           => $report_id,
-		'post_content' => $formatted,
-	) );
+	wp_update_post(
+		array(
+			'ID'           => $report_id,
+			'post_content' => $formatted,
+		)
+	);
 	update_post_meta( $report_id, '_tenon_total', $total );
 	update_post_meta( $report_id, '_tenon_json', $saved );
 	if ( isset( $params['projectID'] ) && '' != $params['projectID'] ) {
@@ -803,11 +809,14 @@ function am_show_report( $report_id = false ) {
 		$output = $report->post_content;
 		$name   = $report->post_title;
 	} else {
-		$reports = wp_get_recent_posts( array(
-			'numberposts' => 1,
-			'post_type'   => 'tenon-report',
-			'post_status' => 'publish',
-		), 'OBJECT' );
+		$reports = wp_get_recent_posts(
+			array(
+				'numberposts' => 1,
+				'post_type'   => 'tenon-report',
+				'post_status' => 'publish',
+			),
+			'OBJECT'
+		);
 		$report  = end( $reports );
 		if ( $report ) {
 			$output = $report->post_content;
@@ -820,10 +829,12 @@ function am_show_report( $report_id = false ) {
 		$data      = am_format_tenon_report( get_post_meta( $report_id, '_tenon_json', true ), $name );
 		$formatted = $data['html'];
 		$total     = $data['total'];
-		wp_update_post( array(
-			'ID'           => $report_id,
-			'post_content' => $formatted,
-		) );
+		wp_update_post(
+			array(
+				'ID'           => $report_id,
+				'post_content' => $formatted,
+			)
+		);
 		update_post_meta( $report_id, '_tenon_total', $total );
 		echo $formatted;
 	}
@@ -931,10 +942,15 @@ function am_format_tenon_report( $results, $name ) {
 					if ( ! in_array( $hash, $reported ) ) {
 						$displayed = true;
 						$total ++;
-						$href   = esc_url( add_query_arg( array(
-							'bpid' => $result['bpID'],
-							'tid'  => $result['tID'],
-						), 'https://tenon.io/bestpractice.php' ) );
+						$href   = esc_url(
+							add_query_arg(
+								array(
+									'bpid' => $result['bpID'],
+									'tid'  => $result['tID'],
+								),
+								'https://tenon.io/bestpractice.php'
+							)
+						);
 						$ref    = "<a href='$href'>$result[errorTitle]</a>";
 						$tbody .= "
 							<tr>
@@ -1091,13 +1107,16 @@ function am_admin_notice() {
  */
 function am_settings() {
 	$settings             = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
-	$settings             = array_merge( array(
-		'tenon_api_key'     => '',
-		'tenon_pre_publish' => '',
-		'am_post_types'     => array(),
-		'am_post_grade'     => '',
-		'am_criteria'       => array(),
-	), $settings );
+	$settings             = array_merge(
+		array(
+			'tenon_api_key'     => '',
+			'tenon_pre_publish' => '',
+			'am_post_types'     => array(),
+			'am_post_grade'     => '',
+			'am_criteria'       => array(),
+		),
+		$settings
+	);
 	$multisite            = get_site_option( 'tenon_multisite_key' );
 	$post_types           = get_post_types( array(
 		'public'  => true,
@@ -1238,11 +1257,13 @@ function am_report() {
 			<label for='am_report_pages'>" . __( 'URL or post ID to test', 'access-monitor' ) . "</label>
 			<input type='text' class='widefat' id='am_report_pages' name='am_report_pages[]' value='" . esc_url( home_url() ) . "' />
 			</li>";
-			$last       = wp_get_recent_posts( array(
-				'numberposts' => 1,
-				'post_type'   => 'page',
-				'post_status' => 'publish',
-			) );
+			$last       = wp_get_recent_posts(
+				array(
+					'numberposts' => 1,
+					'post_type'   => 'page',
+					'post_status' => 'publish',
+				)
+			);
 			$last_link  = get_permalink( $last[0]['ID'] );
 			$last_title = $last[0]['post_title'];
 		echo "
@@ -1385,11 +1406,14 @@ function am_setup_report() {
  */
 function am_list_reports( $count = 10 ) {
 	$count   = (int) $count;
-	$reports = wp_get_recent_posts( array(
-		'post_type'   => 'tenon-report',
-		'numberposts' => $count,
-		'post_status' => 'publish',
-	), 'OBJECT' );
+	$reports = wp_get_recent_posts(
+		array(
+			'post_type'   => 'tenon-report',
+			'numberposts' => $count,
+			'post_status' => 'publish',
+		),
+		'OBJECT'
+	);
 	if ( is_array( $reports ) ) {
 		echo '<ul>';
 		foreach ( $reports as $report_post ) {
