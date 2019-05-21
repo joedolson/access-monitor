@@ -540,7 +540,7 @@ function am_add_inner_box() {
  */
 function am_add_related_box() {
 	global $post;
-	$relatives = get_posts( 
+	$relatives = get_posts(
 		array(
 			'post_type'  => 'tenon-report',
 			'meta_key'   => '_tenon_parent',
@@ -1054,7 +1054,8 @@ function am_update_settings() {
 
 		update_site_option( 'tenon_multisite_key', $tenon_multisite_key );
 
-		update_option( 'am_settings',
+		update_option(
+			'am_settings',
 			array(
 				'tenon_api_key'     => $tenon_api_key,
 				'am_post_types'     => $am_post_types,
@@ -1118,10 +1119,13 @@ function am_settings() {
 		$settings
 	);
 	$multisite            = get_site_option( 'tenon_multisite_key' );
-	$post_types           = get_post_types( array(
-		'public'  => true,
-		'show_ui' => true,
-	), 'objects' );
+	$post_types           = get_post_types(
+		array(
+			'public'  => true,
+			'show_ui' => true,
+		),
+		'objects'
+	);
 	$am_post_types        = isset( $settings['am_post_types'] ) ? $settings['am_post_types'] : array();
 	$am_criteria          = isset( $settings['am_criteria'] ) ? $settings['am_criteria'] : array();
 	$am_notify            = isset( $settings['am_notify'] ) ? $settings['am_notify'] : get_option( 'admin_email' );
@@ -1271,10 +1275,12 @@ function am_report() {
 			<label for='am_report_pages_second'>" . __( 'Most recent page', 'access-monitor' ) . " ($last_title)</label>
 			<input type='text' class='widefat' id='am_report_pages_second' name='am_report_pages[]' value='" . esc_url( $last_link ) . "' />
 			</li>";
-			$last       = wp_get_recent_posts( array(
-				'numberposts' => 1,
-				'post_status' => 'publish',
-			) );
+			$last       = wp_get_recent_posts(
+				array(
+					'numberposts' => 1,
+					'post_status' => 'publish',
+				)
+			);
 			$last_link  = get_permalink( $last[0]['ID'] );
 			$last_title = $last[0]['post_title'];
 		echo "
