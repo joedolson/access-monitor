@@ -7,7 +7,7 @@ Tested up to: 5.2
 Requires PHP: 5.3
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.3.2
+Stable tag: 1.3.3
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -55,6 +55,10 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 
 == Changelog ==
+
+= 1.3.3 =
+
+* Improvements to front-end test CSS
 
 = 1.3.2 =
 
