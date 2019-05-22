@@ -139,10 +139,12 @@ button.close:hover, button.close:focus {
 
 .tenon-results h2 {
 	font-size: 1.6em;
+	text-transform: initial;
 }
 
 .tenon-results h3 {
 	font-size: 1.4em;
+	text-transform: initial;
 }
 
 .tenon-results button {
@@ -168,15 +170,17 @@ button.close:hover, button.close:focus {
 .tenon-results .tenon-result, .tenon-results h2 {
 	padding: .5em;
 	max-width: 760px;
-	margin: 0 auto .5em;	
+	margin: 0 auto .5em;
 }
 
-.tenon-result a {
+.tenon-result a, .tenon-error-comment a {
 	text-decoration: underline !important;
 	border: none !important;
+	color: #22a !important;
 }
 
-.tenon-result a:hover, .tenon-result a:focus {
+.tenon-result a:hover, .tenon-result a:focus,
+.tenon-error-comment a:hover, .tenon-error-comment a:focus {
 	text-decoration: none !important;
 }
 
@@ -257,15 +261,15 @@ button.close:hover, button.close:focus {
 }
 
 .toggle-view .dashicons {
-	width: 1em;
-	height: 1em;
-	font-size: 1.2em;
+	width: 16px !important;
+	height: 16px !important;
+	font-size: 28px !important;
 }
 
 .tenon-error-comment {
 	position: absolute;
 	display: block;
-	left: 1.5em;
+	left: 12em;
 	top: 0;
 	width: 24em;
 	padding: 1em;
@@ -278,6 +282,12 @@ button.close:hover, button.close:focus {
 .tenon-error-comment p {
 	margin: 0;
 	padding: 0;
+	line-height: 1.4;
+}
+
+.tenon-error-comment p * {
+	padding: 2px;
+	margin: 2px;
 }
 
 /* Xpath Data is intentionally hidden to make this view more compact */
@@ -302,3 +312,11 @@ button.close:hover, button.close:focus {
 #access-monitor .hndle {
 	cursor: auto;
 }
+
+.screen-reader-text {
+	clip: rect(1px, 1px, 1px, 1px);
+	position: absolute !important;
+	height: 1px;
+	width: 1px;
+	overflow: hidden;
+	word-wrap: normal !important;
