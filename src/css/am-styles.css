@@ -116,8 +116,6 @@ button.close:hover, button.close:focus {
 
 #am-errors { display: none; }
 
-
-
 .tenon-results {
 	position: fixed;
 	z-index: 10000;
@@ -198,9 +196,10 @@ button.close:hover, button.close:focus {
 
 .toggle-view {
 	padding: .1em!important;
-	font-size: 1.5em!important;
-	width: 1.2em !important;
-	height: 1.2em !important;
+	font-size: 28px!important;
+	width: 28px !important;
+	max-width: 28px !important;
+	height: 28px !important;
 	z-index: 5;
 	position: absolute;
 	top: 0px !important;
@@ -261,17 +260,17 @@ button.close:hover, button.close:focus {
 }
 
 .toggle-view .dashicons {
-	width: 16px !important;
-	height: 16px !important;
-	font-size: 28px !important;
+	width: 24px !important;
+	height: 24px !important;
+	font-size: 24px !important;
 }
 
 .tenon-error-comment {
 	position: absolute;
 	display: block;
-	left: 12em;
+	left: 0;
 	top: 0;
-	width: 24em;
+	width: 20em;
 	padding: 1em;
 	background: #f3f3f3;
 	color: #333;
@@ -320,3 +319,4 @@ button.close:hover, button.close:focus {
 	width: 1px;
 	overflow: hidden;
 	word-wrap: normal !important;
+}
