@@ -56,6 +56,11 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 == Changelog ==
 
+= 1.4.0 =
+
+* Disable adminbar on frontend tests
+* More CSS changes
+
 = 1.3.3 =
 
 * Improvements to front-end test CSS
