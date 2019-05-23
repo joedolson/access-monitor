@@ -345,7 +345,7 @@ add_action( 'wp_enqueue_scripts', 'am_wp_enqueue_scripts' );
  */
 function am_wp_enqueue_scripts() {
 	if ( ! is_admin() && isset( $_GET['tenon'] ) ) {
-		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ) );
+		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ), array( 'dashicons' ) );
 		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
 		wp_localize_script(
 			'am.view',
@@ -402,6 +402,16 @@ add_action( 'admin_footer', 'am_admin_footer' );
  */
 function am_admin_footer() {
 	echo "<div aria-live='assertive' class='feedback' id='tenon' style='color: #333;background:#fff;padding: 2em 2em 4em 14em;clear:both;border-top:1px solid #333'></div>";
+}
+
+add_action( 'init', 'am_disable_admin_bar' );
+/**
+ * If Tenon is run on the front end, disable the admin bar so it isn't incorporated in tests.
+ */
+function am_disable_admin_bar() {
+	if ( isset( $_GET['tenon'] ) ) { 
+		add_filter( 'show_admin_bar', '__return_false' );
+	}
 }
 
 add_action( 'admin_bar_menu', 'am_admin_bar', 200 );
