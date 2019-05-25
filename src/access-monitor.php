@@ -149,7 +149,7 @@ function am_query_tenon( $post ) {
 	}
 
 	$settings = get_option( 'am_settings' );
-	$key      = ( is_multisite() && false !=- (bool) get_site_option( 'tenon_multisite_key' ) ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];
+	$key      = ( is_multisite() && false !== (bool) get_site_option( 'tenon_multisite_key' ) ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];
 	if ( $key ) {
 		$opts['key'] = $key;
 		$tenon       = new tenon( TENON_API_URL, $opts );
@@ -541,7 +541,7 @@ function am_show_public_report() {
  */
 function am_add_inner_box() {
 	global $post;
-	$content  = stripslashes( $post->post_content );
+	$content = stripslashes( $post->post_content );
 	echo '<div class="am_post_fields">' . $content . '</div>';
 }
 
@@ -983,7 +983,8 @@ function am_format_tenon_report( $results, $name ) {
 					// Translators: Count of errors found that were duplicates of other page errors.
 					$return .= '</h4><p>' . sprintf( __( 'The %d errors found on this page were also found on other pages tested.', 'access-monitor' ), $result_count ) . '</p>';
 				} else {
-					$thead  = "<table class='widefat tenon-report' id='tenon-$url_hash'>";
+					$thead = "<table class='widefat tenon-report' id='tenon-$url_hash'>";
+					// Translators: Link to where errors found, number of errors found on that page.
 					$links .= "<li><a href='#tenon-$url_hash'>" . sprintf( __( 'Results for %s (%d)', 'access-monitor' ), $url, $result_count ) . '</a></li>';
 					// Translators: Link to where errors were found.
 					$thead .= '<caption>' . sprintf( __( 'Errors found on %s.', 'access-monitor' ), "<a href='$url'>$url</a>" ) . " (<strong>$result_count</strong>)</caption>";
@@ -1015,7 +1016,7 @@ function am_format_tenon_report( $results, $name ) {
 			} else {
 				// Translators: URL where errors were not found.
 				$return .= '<p id="tenon-' . $url_hash . '">' . sprintf( __( 'No errors found on %s.', 'access-monitor' ), "<a href='$url'>$url</a>" ) . '</p>';
-				$links .= "<li><a href='#tenon-$url_hash'>" . sprintf( __( 'Results for %s (0)', 'access-monitor' ), $url ) . '</a></li>';
+				$links  .= "<li><a href='#tenon-$url_hash'>" . sprintf( __( 'Results for %s (0)', 'access-monitor' ), $url ) . '</a></li>';
 
 			}
 		}
@@ -1023,7 +1024,7 @@ function am_format_tenon_report( $results, $name ) {
 		$return .= "<p><strong>Congratulations!</strong> Tenon didn't find any issues on this page.</p>";
 	}
 	// Translators: number of pages tested.
-	$header = '<h4>' . stripslashes( $name ) . '; ' . sprintf( __( 'Results from %d pages tested', 'access-monitor' ), $count ) . '</h4>';
+	$header  = '<h4>' . stripslashes( $name ) . '; ' . sprintf( __( 'Results from %d pages tested', 'access-monitor' ), $count ) . '</h4>';
 	$header .= '<ul class="test-links">' . $links . '</ul>';
 	return array(
 		'total' => $total,
@@ -1636,8 +1637,8 @@ add_action( 'admin_menu', 'am_add_support_page' );
  */
 function am_add_support_page() {
 	if ( function_exists( 'add_submenu_page' ) ) {
-		$permissions = apply_filters( 'am_use_monitor', 'manage_options' );
-		$plugin_page = add_submenu_page( 'edit.php?post_type=tenon-report', __( 'Access Monitor > Add New Report', 'access-monitor' ), __( 'Add New Report', 'access-monitor' ), $permissions, 'am-report-page', 'am_report_page', 'am-report-page' );
+		$permissions   = apply_filters( 'am_use_monitor', 'manage_options' );
+		$plugin_page   = add_submenu_page( 'edit.php?post_type=tenon-report', __( 'Access Monitor > Add New Report', 'access-monitor' ), __( 'Add New Report', 'access-monitor' ), $permissions, 'am-report-page', 'am_report_page', 'am-report-page' );
 		$settings_page = add_submenu_page( 'edit.php?post_type=tenon-report', __( 'Access Monitor > Access Monitor Settings', 'access-monitor' ), __( 'Access Monitor Settings', 'access-monitor' ), $permissions, 'am-support-page', 'am_support_page' );
 		add_action( 'load-' . $plugin_page, 'am_load_admin_styles' );
 		add_action( 'load-' . $settings_page, 'am_load_admin_styles' );
