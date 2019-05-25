@@ -76,7 +76,7 @@ function am_pass_query() {
 		$past    = get_post_meta( $post_id, '_tenon_test_hash' );
 		$exists  = false;
 		if ( ! empty( $past ) ) {
-			if ( in_array( $hash, $past ) ) {
+			if ( in_array( $hash, $past, true ) ) {
 				$exists = true;
 			}
 		}
@@ -141,7 +141,7 @@ function am_query_tenon( $post ) {
 	$expected_post = array( 'src', 'url', 'level', 'certainty', 'priority', 'docID', 'projectID', 'viewPortHeight', 'viewPortWidth', 'uaString', 'fragment', 'store' );
 
 	foreach ( $post as $k => $v ) {
-		if ( in_array( $k, $expected_post ) ) {
+		if ( in_array( $k, $expected_post, true ) ) {
 			if ( strlen( trim( $v ) ) > 0 ) {
 				$opts[ $k ] = $v;
 			}
@@ -149,7 +149,7 @@ function am_query_tenon( $post ) {
 	}
 
 	$settings = get_option( 'am_settings' );
-	$key      = ( is_multisite() && '' != get_site_option( 'tenon_multisite_key' ) ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];
+	$key      = ( is_multisite() && false !=- (bool) get_site_option( 'tenon_multisite_key' ) ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];
 	if ( $key ) {
 		$opts['key'] = $key;
 		$tenon       = new tenon( TENON_API_URL, $opts );
@@ -167,7 +167,7 @@ function am_query_tenon( $post ) {
 		}
 		$grade = am_percentage( $object );
 		if ( false === $grade ) {
-			if ( trim( $object->message ) == 'Bad Request - Either src or url parameter must be supplied' ) {
+			if ( trim( $object->message ) === 'Bad Request - Either src or url parameter must be supplied' ) {
 				$message = __( 'Save your post as a draft in order to test for accessibility.', 'access-monitor' );
 			} else {
 				$info    = $object->status;
@@ -273,7 +273,7 @@ function am_format_tenon_array( $results, $errors ) {
 			foreach ( $result['standards'] as $guideline ) {
 				$standards .= "<li>$guideline</li>";
 			}
-			if ( '' != $standards ) {
+			if ( '' !== $standards ) {
 				$standards = '<h4>' . __( 'Relevant Accessibility Standards', 'access-monitor' ) . "</h4>
 				<ul>$standards</ul>";
 			}
@@ -314,7 +314,7 @@ add_action( 'admin_enqueue_scripts', 'am_admin_enqueue_scripts' );
  */
 function am_admin_enqueue_scripts() {
 	global $current_screen;
-	if ( 'customize' == $current_screen->id || 'press-this' == $current_screen->id ) {
+	if ( 'customize' === $current_screen->id || 'press-this' === $current_screen->id ) {
 		// We don't want any of this on these screens.
 	} else {
 		// The customizer doesn't have an adminbar; so no reason to enqueue this. Also, it breaks the customizer.
@@ -409,7 +409,7 @@ add_action( 'init', 'am_disable_admin_bar' );
  * If Tenon is run on the front end, disable the admin bar so it isn't incorporated in tests.
  */
 function am_disable_admin_bar() {
-	if ( isset( $_GET['tenon'] ) ) { 
+	if ( isset( $_GET['tenon'] ) ) {
 		add_filter( 'show_admin_bar', '__return_false' );
 	}
 }
@@ -423,7 +423,7 @@ function am_admin_bar() {
 	$api_key   = $settings['tenon_api_key'];
 	$multisite = get_site_option( 'tenon_multisite_key' );
 
-	if ( '' != $api_key || '' != $multisite ) {
+	if ( false !== (bool) $api_key || false !== (bool) $multisite ) {
 		global $wp_admin_bar;
 		if ( is_admin() ) {
 			$url = '#tenon';
@@ -495,7 +495,7 @@ add_action( 'add_meta_boxes', 'am_post_reports_data' );
  */
 function am_post_reports_data( $type ) {
 	$types = get_post_types( array( 'public' => true ) );
-	if ( in_array( $type, $types ) ) {
+	if ( in_array( $type, $types, true ) ) {
 		$settings               = get_option( 'am_settings' );
 		$access_options_enabled = ( 1 == $settings['tenon_pre_publish'] ) ? true : false;
 		if ( $access_options_enabled ) {
@@ -588,7 +588,7 @@ function am_format_related_reports( $relatives, $post ) {
 			$id    = $relative->ID;
 			$link  = get_edit_post_link( $id );
 			$date  = get_the_time( 'M j, Y @ H:i', $id );
-			if ( $id != $post->ID ) {
+			if ( $id !== $post->ID ) {
 				$related .= "<li><a href='$link'>$title</a>: <strong>$date</strong></li>";
 			}
 		}
@@ -623,7 +623,7 @@ function am_add_about_box() {
 		foreach ( $params as $key => $value ) {
 			$key   = stripslashes( trim( $key ) );
 			$value = stripslashes( trim( $value ) );
-			if ( '' == $value ) {
+			if ( '' === $value ) {
 				$value = '<em>' . __( 'Default', 'access-monitor' ) . '</em>';
 			}
 			$label       = ucfirst( $key );
@@ -722,9 +722,9 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 	} else {
 		$pages = array( home_url() );
 	}
-	if ( 'none' != $schedule ) {
+	if ( 'none' !== $schedule ) {
 		if ( ! is_numeric( $schedule ) ) {
-			$timestamp = ( 'weekly' == $schedule ) ? current_time( 'timestamp' ) + 60 * 60 * 24 * 7 : current_time( 'timestamp' ) + ( 60 * 60 * 24 * 30.5 );
+			$timestamp = ( 'weekly' === $schedule ) ? current_time( 'timestamp' ) + 60 * 60 * 24 * 7 : current_time( 'timestamp' ) + ( 60 * 60 * 24 * 30.5 );
 			$args      = array(
 				'report_id' => $report_id,
 				'pages'     => $pages,
@@ -765,7 +765,7 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 	);
 	update_post_meta( $report_id, '_tenon_total', $total );
 	update_post_meta( $report_id, '_tenon_json', $saved );
-	if ( isset( $params['projectID'] ) && '' != $params['projectID'] ) {
+	if ( isset( $params['projectID'] ) && '' !== $params['projectID'] ) {
 		update_post_meta( $report_id, '_tenon_projectID', $params['projectID'] );
 	}
 	update_post_meta( $report_id, '_tenon_params', $params );
@@ -783,11 +783,11 @@ add_action( 'save_post', 'am_run_report' );
  * @param int $id Post ID.
  */
 function am_run_report( $id ) {
-	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE || wp_is_post_revision( $id ) || 'tenon-report' == ! ( get_post_type( $id ) ) ) {
+	if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE || wp_is_post_revision( $id ) || 'tenon-report' === ! ( get_post_type( $id ) ) ) {
 		return;
 	}
 	$post = get_post( $id );
-	if ( 'publish' != $post->post_status ) {
+	if ( 'publish' !== $post->post_status ) {
 		return;
 	}
 
@@ -833,7 +833,7 @@ function am_show_report( $report_id = false ) {
 			$name   = $report->post_title;
 		}
 	}
-	if ( '' != $output ) {
+	if ( '' !== $output ) {
 		echo $output;
 	} else {
 		$data      = am_format_tenon_report( get_post_meta( $report_id, '_tenon_json', true ), $name );
@@ -908,7 +908,7 @@ function am_custom_column( $column_name, $id ) {
  * @return value.
  */
 function am_return_value( $value, $column_name, $id ) {
-	if ( 'am_total' == $column_name || 'am_schedule' == $column_name || 'am_level' == $column_name ) {
+	if ( 'am_total' === $column_name || 'am_schedule' === $column_name || 'am_level' === $column_name ) {
 		$value = $id;
 	}
 	return $value;
@@ -949,7 +949,7 @@ function am_format_tenon_report( $results, $name ) {
 
 					$i++;
 					$hash = md5( $result['resultTitle'] . $result['ref'] . $result['errorSnippet'] . $result['xpath'] );
-					if ( ! in_array( $hash, $reported ) ) {
+					if ( ! in_array( $hash, $reported, true ) ) {
 						$displayed = true;
 						$total ++;
 						$href   = esc_url(
@@ -1084,10 +1084,10 @@ add_action( 'admin_head', 'am_setup_admin_notice' );
  * Create Admin Notice about API keys.
  */
 function am_setup_admin_notice() {
-	if ( ! ( isset( $_POST['tenon_api_key'] ) && '' != $_POST['tenon_api_key'] ) && ! ( isset( $_POST['tenon_multisite_key'] ) && '' != $_POST['tenon_multisite_key'] ) ) {
+	if ( ! ( isset( $_POST['tenon_api_key'] ) && '' !== $_POST['tenon_api_key'] ) && ! ( isset( $_POST['tenon_multisite_key'] ) && '' !== $_POST['tenon_multisite_key'] ) ) {
 		$settings      = ( is_array( get_option( 'am_settings' ) ) ) ? get_option( 'am_settings' ) : array();
 		$tenon_api_key = ( isset( $settings['tenon_api_key'] ) ) ? $settings['tenon_api_key'] : false;
-		$key           = ( is_multisite() && '' != get_site_option( 'tenon_multisite_key' ) ) ? get_site_option( 'tenon_multisite_key' ) : $tenon_api_key;
+		$key           = ( is_multisite() && false !== (bool) get_site_option( 'tenon_multisite_key' ) ) ? get_site_option( 'tenon_multisite_key' ) : $tenon_api_key;
 		if ( ! $key ) {
 			add_action( 'admin_notices', 'am_admin_notice' );
 		}
@@ -1098,7 +1098,7 @@ function am_setup_admin_notice() {
  * Display admin notice about API key.
  */
 function am_admin_notice() {
-	if ( isset( $_GET['page'] ) && 'access-monitor/access-monitor.php' == $_GET['page'] ) {
+	if ( isset( $_GET['page'] ) && 'access-monitor/access-monitor.php' === $_GET['page'] ) {
 		$url = '#settings';
 	} else {
 		$url = admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php#settings' );
@@ -1141,12 +1141,12 @@ function am_settings() {
 	$am_notify            = isset( $settings['am_notify'] ) ? $settings['am_notify'] : get_option( 'admin_email' );
 	$am_post_type_options = '';
 	foreach ( $post_types as $type ) {
-		if ( in_array( $type->name, $am_post_types ) ) {
+		if ( in_array( $type->name, $am_post_types, true ) ) {
 			$selected = ' checked="checked"';
 		} else {
 			$selected = '';
 		}
-		if ( 'attachment' != $type->name ) {
+		if ( 'attachment' !== $type->name ) {
 			$am_post_type_options .= "<input type='checkbox' id='am_$type->name' name='am_post_types[]' value='$type->name'$selected><label for='am_$type->name'>" . $type->labels->name . '</label> ';
 		}
 	}
@@ -1207,8 +1207,8 @@ function am_settings() {
 		echo '<ul>';
 		foreach ( $criteria as $key => $values ) {
 			$label = $values['label'];
-			$value = ( isset( $am_criteria[ $key ] ) && '' != $am_criteria[ $key ] ) ? $am_criteria[ $key ] : $values['default'];
-			if ( 'store' == $key ) {
+			$value = ( isset( $am_criteria[ $key ] ) && '' !== $am_criteria[ $key ] ) ? $am_criteria[ $key ] : $values['default'];
+			if ( 'store' === $key ) {
 				echo "<li><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . '>' . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . '>' . __( 'No', 'access-monitor' ) . '</option></select></li>';
 			} else {
 				if ( is_numeric( $value ) ) {
@@ -1525,10 +1525,10 @@ function am_show_support_box() {
 <div class="postbox-container" style="width:20%">
 	<div class="metabox-holder">
 		<?php
-		if ( isset( $_GET['signup'] ) && 'dismiss' == $_GET['signup'] ) {
+		if ( isset( $_GET['signup'] ) && 'dismiss' === $_GET['signup'] ) {
 			update_option( 'am-tenon-signup', 1 );
 		}
-		if ( '1' != get_option( 'am-tenon-signup' ) ) {
+		if ( '1' !== get_option( 'am-tenon-signup' ) ) {
 			?>
 		<div class="meta-box-sortables">
 			<div class="postbox" id="tenon-signup">
@@ -1705,13 +1705,13 @@ $plugins_string
 			die( 'Security check failed' );
 		}
 		$request      = stripslashes( $_POST['support_request'] );
-		$has_donated  = ( isset( $_POST['has_donated'] ) && 'on' == $_POST['has_donated'] ) ? 'Donor' : 'No donation';
-		$has_read_faq = ( isset( $_POST['has_read_faq'] ) && 'on' == $_POST['has_read_faq'] ) ? 'Read FAQ' : true; // has no faq, for now.
+		$has_donated  = ( isset( $_POST['has_donated'] ) && 'on' === $_POST['has_donated'] ) ? 'Donor' : 'No donation';
+		$has_read_faq = ( isset( $_POST['has_read_faq'] ) && 'on' === $_POST['has_read_faq'] ) ? 'Read FAQ' : true; // has no faq, for now.
 		$subject      = "Access Monitor support request. $has_donated";
 		$message      = $request . "\n\n" . $data;
 		// Get the site domain and get rid of www. from pluggable.php.
 		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
-		if ( 'www.' == substr( $sitename, 0, 4 ) ) {
+		if ( 'www.' === substr( $sitename, 0, 4 ) ) {
 			$sitename = substr( $sitename, 4 );
 		}
 		$from_email = 'wordpress@' . $sitename;
@@ -1722,7 +1722,7 @@ $plugins_string
 		} else {
 			wp_mail( 'plugins@joedolson.com', $subject, $message, $from );
 
-			if ( 'Donor' == $has_donated ) {
+			if ( 'Donor' === $has_donated ) {
 				echo "<div class='message updated'><p>" . __( 'Thank you for supporting the continuing development of this plug-in! I\'ll get back to you as soon as I can.', 'access-monitor' ) . '</p></div>';
 			} else {
 				echo "<div class='message updated'><p>" . __( 'I\'ll get back to you as soon as I can, after dealing with any support requests from plug-in supporters.', 'access-monitor' ) . '</p></div>';
@@ -1761,10 +1761,10 @@ add_filter( 'gettext', 'am_change_publish_button', 10, 2 );
  * @return Custom text.
  */
 function am_change_publish_button( $translation, $text ) {
-	if ( is_admin() && isset( $_GET['action'] ) && 'edit' == $_GET['action'] ) {
+	if ( is_admin() && isset( $_GET['action'] ) && 'edit' === $_GET['action'] ) {
 		global $post;
 		if ( is_object( $post ) ) {
-			if ( 'Update' == $text && 'tenon-report' == $post->post_type ) {
+			if ( 'Update' === $text && 'tenon-report' === $post->post_type ) {
 				$translation = __( 'Re-run this test', 'access-monitor' );
 			}
 		}
@@ -1780,7 +1780,7 @@ add_action( 'current_screen', 'am_redirect_new' );
 function am_redirect_new() {
 	$screen = get_current_screen();
 
-	if ( 'tenon-report' == $screen->id && ! isset( $_GET['action'] ) && ! isset( $_POST['save'] ) ) {
+	if ( 'tenon-report' === $screen->id && ! isset( $_GET['action'] ) && ! isset( $_POST['save'] ) ) {
 		wp_safe_redirect( admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) );
 		exit;
 	}
@@ -1796,7 +1796,7 @@ add_filter( 'plugin_action_links', 'am_plugin_action', 10, 2 );
  * @return array links.
  */
 function am_plugin_action( $links, $file ) {
-	if ( plugin_basename( dirname( __FILE__ ) . '/access-monitor.php' == $file ) ) {
+	if ( plugin_basename( dirname( __FILE__ ) . '/access-monitor.php' === $file ) ) {
 		$links[] = "<a href='" . admin_url( 'edit.php?post_type=tenon-report&page=access-monitor/access-monitor.php' ) . "'>" . __( 'Access Monitor Settings', 'access-monitor' ) . '</a>';
 	}
 	return $links;
