@@ -65,7 +65,7 @@ class Tenon {
 	 */
 	public function submit( $print_info = false ) {
 
-		if ( true == $print_info ) {
+		if ( true === $print_info ) {
 			echo '<h2>Options Passed To Tenon</h2><pre><br>';
 			var_dump( $this->opts );
 			echo '</pre>';
@@ -79,7 +79,7 @@ class Tenon {
 		);
 		$result = wp_remote_post( $this->url, $args );
 
-		if ( true == $print_info ) {
+		if ( true === $print_info ) {
 			echo '<h2>Query Info</h2><pre>';
 			print_r( $result );
 			echo '</pre>';
