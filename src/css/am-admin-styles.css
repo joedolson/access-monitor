@@ -61,6 +61,7 @@
 	padding: .5em;
 	background: #fefefe;
 	box-shadow: 2px 2px 3px #bbb;
+	border: 1px solid #ccc;
 	border-left: 4px solid #c00;
 	display: block;
 }

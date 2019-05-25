@@ -5,7 +5,7 @@
 .tenon-result .high, .tenon-result .high .dashicons {
 	font-weight: 700;
 	color: white;
-	background: red;
+	background: darkred;
 }
 
 .tenon-result .medium, .tenon-result .medium .dashicons {
@@ -17,7 +17,7 @@
 
 .tenon-result .low, .tenon-result .low .dashicons {
 	color: white;
-	background: dark-green;
+	background: darkgreen;
 }
 
 .tenon-result {
@@ -27,7 +27,16 @@
 
 .tenon-result.highlight-error {
 	background: #fff !important;
-	border-left: 6px solid red;
+	border-left: 6px solid darkred;
+}
+
+#am_report_div .tenon-report caption {
+	font-weight: 700;
+	font-size: 1.4em;
+}
+
+#am_report_div .tenon-report:nth-of-type(n+2) caption {
+	margin-top: 1em;
 }
 
 .tenon-result:nth-of-type(even), .tenon-report tr:nth-of-type(even) {
@@ -112,6 +121,22 @@ button.close:hover, button.close:focus {
  white-space: -pre-wrap;      /* Opera 4-6 */
  white-space: -o-pre-wrap;    /* Opera 7 */
  word-wrap: break-word;       /* Internet Explorer 5.5+ */
+ background: #f9f9f9;
+ color: #333;
+}
+
+.tenon-result h3,
+.tenon-result .xpath-data h4 {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.tenon-result p.am-meta {
+	display: inline-block;
+}
+
+.tenon-result-details {
+	max-width: 56em;
 }
 
 #am-errors { display: none; }
@@ -202,8 +227,8 @@ button.close:hover, button.close:focus {
 	height: 24px !important;
 	z-index: 5;
 	position: absolute;
-	top: 0px !important;
-	left: -34px !important;
+	top: 2px !important;
+	left: 2px !important;
 	color: #fff !important;
 	background-color: #900 !important;
 	border-radius: 4px !important;
@@ -244,14 +269,18 @@ button.close:hover, button.close:focus {
 	87.5% { transform: rotate( 360deg ); }
 }
 
+.toggle-view.high {
+	background: darkred !important;
+	color: #fff !important;
+}
 
 .toggle-view.medium {
-	background-color: #3ff !important;
+	background-color: yellow !important;
 	color: #000 !important;
 }
 
 .toggle-view.low {
-	background-color: #333 !important;
+	background-color: darkgreen !important;
 	color: #fff !important;
 }
 
