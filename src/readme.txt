@@ -7,7 +7,7 @@ Tested up to: 5.2
 Requires PHP: 5.3
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.3.3
+Stable tag: 1.4.0
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -15,7 +15,7 @@ Test your WordPress site for accessibility compliance. Run on-demand tests or sc
 
 Access Monitor runs accessibility tests of your WordPress site. It runs an automated scan of your site using the Tenon.io web accessibility service. 
 
-Access Monitor requires an API key for Tenon.io. <a href="http://www.tenon.io?rfsn=236617.3c55e">Get your API key now!</a> (Affiliate link)
+Access Monitor requires an API key for Tenon.io. <a href="https://tenon.io/pricing.php">Get your API key now!</a> (Affiliate link)
 
 = Monitor Site Accessibility =
 
@@ -33,7 +33,7 @@ A perfect score in Access Monitor doesn't mean that your web site is accessible 
 
 = Learn about Tenon and Automated Accessibility =
 
-Go to <a href="http://tenon.io">Tenon.io to run a test of your site</a> or <a href="http://tenon.io/documentation/">read the Tenon.io documentation</a>. Check out Karl Groves' article series <a href="http://www.karlgroves.com/2014/02/13/everything-you-know-about-accessibility-testing-is-wrong-part-1/">Everything You Know About Accessibility Testing is Wrong</a>. Then <a href="http://www.tenon.io?rfsn=236617.3c55e">get yourself an API key</a> (affiliate link).
+Go to <a href="http://tenon.io">Tenon.io to run a test of your site</a> or <a href="http://tenon.io/documentation/">read the Tenon.io documentation</a>. Check out Karl Groves' article series <a href="http://www.karlgroves.com/2014/02/13/everything-you-know-about-accessibility-testing-is-wrong-part-1/">Everything You Know About Accessibility Testing is Wrong</a>. Then <a href="https://tenon.io/pricing.php">get yourself an API key</a> (affiliate link).
 
 Keep up with <a href="https://github.com/joedolson/access-monitor">Access Monitor development on GitHub</a>.
 
@@ -60,6 +60,11 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 * Disable adminbar on frontend tests
 * More CSS changes
+* Remove affiliate links.
+* Split settings and report creation into two separate screens.
+* Improvements to layout of test results. 
+* Add navigation of results pages by section. Design improvements.
+* Remove raw JSON data from default display.
 
 = 1.3.3 =
 

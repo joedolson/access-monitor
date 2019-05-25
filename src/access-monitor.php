@@ -17,7 +17,7 @@
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/license/gpl-2.0.txt
  * Domain Path: lang
- * Version:     1.3.3
+ * Version:     1.4.0
  */
 
 /*
@@ -57,7 +57,7 @@ define( 'AM_DEBUG', false );
 require_once( 't/class-tenon.php' );
 require_once( 'am-post-inspection.php' );
 
-$am_version = '1.3.3';
+$am_version = '1.4.0';
 
 add_action( 'wp_footer', 'am_pass_query' );
 /**
