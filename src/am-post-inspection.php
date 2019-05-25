@@ -55,8 +55,8 @@ function am_pre_publish( $hook ) {
 	$options = get_option( 'am_settings' );
 	$check   = isset( $options['tenon_pre_publish'] ) ? $options['tenon_pre_publish'] : 0;
 	$args    = isset( $options['am_criteria'] ) ? $options['am_criteria'] : array();
-	if ( 1 == $check ) {
-		if ( 'post-new.php' == $hook || 'post.php' == $hook ) {
+	if ( 1 === absint( $check ) ) {
+		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
 			if ( am_in_post_type( $post->ID ) ) {
 				wp_enqueue_script( 'tenon.inspector', plugins_url( 'js/inspector.js', __FILE__ ), array( 'jquery' ), '', true );
 				$settings = array(
@@ -104,7 +104,7 @@ function am_in_post_type( $id ) {
 	$post_type_settings = isset( $settings['am_post_types'] ) ? $settings['am_post_types'] : array();
 	if ( is_array( $post_type_settings ) && ! empty( $post_type_settings ) ) {
 		$type = get_post_type( $id );
-		if ( in_array( $type, $post_type_settings ) ) {
+		if ( in_array( $type, $post_type_settings, true ) ) {
 			return true;
 		}
 	}
@@ -137,7 +137,7 @@ function am_edit_form_after_title( $post ) {
 function am_percentage( $results ) {
 	$status  = $results->status;
 	$results = (array) $results;
-	if ( 200 == $status ) {
+	if ( 200 === absint( $status ) ) {
 		$stats = (array) $results['globalStats'];
 		$max   = $stats['allDensity'] + ( 3 * $stats['stdDev'] );
 
@@ -220,10 +220,10 @@ function am_testable_post_content( $content ) {
 		if ( am_in_post_type( $post->ID ) ) {
 			$options   = get_option( 'am_settings' );
 			$args      = isset( $options['am_criteria'] ) ? $options['am_criteria'] : array();
-			$test      = ( isset( $options['tenon_pre_publish'] ) && 1 == $options['tenon_pre_publish'] ) ? true : false;
+			$test      = ( isset( $options['tenon_pre_publish'] ) && 1 === absint( $options['tenon_pre_publish'] ) ) ? true : false;
 			$container = isset( $args['container'] ) ? $args['container'] : false;
 			if ( $test ) {
-				if ( ! $container || '.access-monitor-content' == $container ) {
+				if ( ! $container || '.access-monitor-content' === $container ) {
 					$content = '<div class="access-monitor-content">' . $content . '</div>';
 				}
 			}
