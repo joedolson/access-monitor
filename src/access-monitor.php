@@ -499,7 +499,7 @@ function am_post_reports_data( $type ) {
 	$types = get_post_types( array( 'public' => true ) );
 	if ( in_array( $type, $types, true ) ) {
 		$settings               = get_option( 'am_settings' );
-		$access_options_enabled = ( 1 == $settings['tenon_pre_publish'] ) ? true : false;
+		$access_options_enabled = ( true === (bool) $settings['tenon_pre_publish'] ) ? true : false;
 		if ( $access_options_enabled ) {
 			// Disable Gutenberg if this option is enabled.
 			add_meta_box( 'am_public_report', __( 'Accessibility Reports', 'access-monitor' ), 'am_show_public_report', $type, 'normal', 'high', array( '__block_editor_compatible_meta_box' => false ) );
@@ -985,7 +985,7 @@ function am_format_tenon_report( $results, $name ) {
 				} else {
 					$thead = "<table class='widefat tenon-report' id='tenon-$url_hash'>";
 					// Translators: Link to where errors found, number of errors found on that page.
-					$links .= "<li><a href='#tenon-$url_hash'>" . sprintf( __( 'Results for %s (%d)', 'access-monitor' ), $url, $result_count ) . '</a></li>';
+					$links .= "<li><a href='#tenon-$url_hash'>" . sprintf( __( 'Results for %1$s (%2$d)', 'access-monitor' ), $url, $result_count ) . '</a></li>';
 					// Translators: Link to where errors were found.
 					$thead .= '<caption>' . sprintf( __( 'Errors found on %s.', 'access-monitor' ), "<a href='$url'>$url</a>" ) . " (<strong>$result_count</strong>)</caption>";
 					$thead .= "
@@ -1016,7 +1016,8 @@ function am_format_tenon_report( $results, $name ) {
 			} else {
 				// Translators: URL where errors were not found.
 				$return .= '<p id="tenon-' . $url_hash . '">' . sprintf( __( 'No errors found on %s.', 'access-monitor' ), "<a href='$url'>$url</a>" ) . '</p>';
-				$links  .= "<li><a href='#tenon-$url_hash'>" . sprintf( __( 'Results for %s (0)', 'access-monitor' ), $url ) . '</a></li>';
+				// Translators: URL where errors were not found.
+				$links .= "<li><a href='#tenon-$url_hash'>" . sprintf( __( 'Results for %s (0)', 'access-monitor' ), $url ) . '</a></li>';
 
 			}
 		}
