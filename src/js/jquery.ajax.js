@@ -50,7 +50,7 @@
 							.wrap( '<' + wrapper + ' class="tenon-error ' + priority + ' ' + certainty + '" style="display: ' + display + ';" id="source-tenon-' + noteID + '" tabindex="-1"></' + wrapper + '>' )
 							.attr( 'aria-describedby', noteID ).css( { 'outline' : '2px solid red' } )
 							.attr( 'aria-describedby', noteID ).css( { 'outline' : '2px solid red' } )
-							.after( '<a href="#tenon-notes-' + noteID + '" class="toggle-view ' + priority + ' ' + certainty + '"><span class="dashicons dashicons-arrow-down" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.visit + '</span></a>' );
+							.after( '<a href="#tenon-notes-' + noteID + '" class="toggle-view ' + priority + ' ' + certainty + '"><span class="dashicons dashicons-arrow-down" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.view + '</span></a>' );
 					});
 
 				},

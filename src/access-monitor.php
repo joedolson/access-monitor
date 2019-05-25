@@ -330,7 +330,7 @@ function am_admin_enqueue_scripts() {
 			array(
 				'expand'    => __( 'Expand', 'access-monitor' ),
 				'collapse'  => __( 'Collapse', 'access-monitor' ),
-				'view'      => __( 'View', 'access-monitor' ),
+				'view'      => __( 'View Error', 'access-monitor' ),
 				'updating'  => __( 'Updating', 'access-monitor' ),
 				'completed' => __( 'Completed', 'access-monitor' ),
 			)
