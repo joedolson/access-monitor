@@ -196,14 +196,14 @@ button.close:hover, button.close:focus {
 
 .toggle-view {
 	padding: .1em!important;
-	font-size: 28px!important;
-	width: 28px !important;
-	max-width: 28px !important;
-	height: 28px !important;
+	font-size: 24px!important;
+	width: 24px !important;
+	max-width: 24px !important;
+	height: 24px !important;
 	z-index: 5;
 	position: absolute;
 	top: 0px !important;
-	left: -1.6em !important;
+	left: -34px !important;
 	color: #fff !important;
 	background-color: #900 !important;
 	border-radius: 4px !important;
