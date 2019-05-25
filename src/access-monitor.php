@@ -1171,12 +1171,12 @@ function am_settings() {
 			<label for='tenon_multisite_key'>" . __( 'Tenon API Key (Network-wide)', 'access-monitor' ) . "</label> <input type='text' name='tenon_multisite_key' id='tenon_multisite_key' size='40' value='" . esc_attr( $multisite ) . "' />
 		</p>";
 	}
-	$message = ( 1 == $settings['tenon_pre_publish'] ) ? '<span class="am-alert">' . __( 'Pre-publication checks are not compatible with the Gutenberg editor.', 'access-monitor' ) . '</span>' : '';
+	$message = ( true === (bool) $settings['tenon_pre_publish'] ) ? '<span class="am-alert">' . __( 'Pre-publication checks are not compatible with the Gutenberg editor.', 'access-monitor' ) . '</span>' : '';
 	echo "
 	<p class='checkbox'>
 		<input type='checkbox' name='tenon_pre_publish' id='tenon_pre_publish' value='1'" . checked( $settings['tenon_pre_publish'], 1, false ) . " /> <label for='tenon_pre_publish'>" . __( 'Prevent inaccessible posts from being published', 'access-monitor' ) . $message . '</label>
 	</p>';
-	if ( 1 == $settings['tenon_pre_publish'] ) {
+	if ( true === (bool) $settings['tenon_pre_publish'] ) {
 		?>
 		<fieldset>
 			<legend><?php _e( 'Test these post types before publishing:', 'my-tickets' ); ?></legend>
@@ -1251,7 +1251,7 @@ function am_report() {
 	$settings  = array_merge( array( 'tenon_api_key' => '' ), $settings );
 	$multisite = get_site_option( 'tenon_multisite_key' );
 
-	if ( '' == $settings['tenon_api_key'] && '' == $multisite ) {
+	if ( false === (bool) $settings['tenon_api_key'] && false === (bool) $multisite ) {
 		$disabled = " disabled='disabled'";
 		$message  = "<p><strong><a href='https://tenon.io/pricing.php'>" . __( 'Sign up with Tenon to get an API key', 'access-monitor' ) . "</a></strong> &bull; <a href='#settings'>" . __( 'Add your API key', 'access-monitor' ) . '</a></p>';
 	} else {
