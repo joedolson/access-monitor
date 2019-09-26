@@ -108,7 +108,7 @@ jQuery( document ).ready( function( $ ) {
 			'user'    : amn.user,
 			'post_ID' : amn.post_ID, 
 			'security': amn.security
-		};	
+		};
 
 		$.ajax( {
 			type: 'POST',
@@ -124,9 +124,8 @@ jQuery( document ).ready( function( $ ) {
 				$( '#am_notified' ).html( amn.error );
 			}
 		});
-			
-	});	
-	
+	});
+
 	/*
 		$(document).ajaxError( function( event, requests, settings ) {
 			console.log( event );
@@ -144,5 +143,5 @@ jQuery( document ).ready( function( $ ) {
 		} else {
 			$( this ).text( am.show ).attr( 'aria-expanded', 'false' );			
 		}
-	});	
+	});
 });
