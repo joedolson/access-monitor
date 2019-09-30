@@ -1639,7 +1639,7 @@ add_action( 'admin_menu', 'am_add_support_page' );
 function am_add_support_page() {
 	if ( function_exists( 'add_submenu_page' ) ) {
 		$permissions   = apply_filters( 'am_use_monitor', 'manage_options' );
-		$plugin_page   = add_submenu_page( 'edit.php?post_type=tenon-report', __( 'Access Monitor > Add New Report', 'access-monitor' ), __( 'Add New Report', 'access-monitor' ), $permissions, 'am-report-page', 'am_report_page', 'am-report-page' );
+		$plugin_page   = add_submenu_page( 'edit.php?post_type=tenon-report', __( 'Access Monitor > Add New Report', 'access-monitor' ), __( 'Add New Report', 'access-monitor' ), $permissions, 'am-report-page', 'am_report_page' );
 		$settings_page = add_submenu_page( 'edit.php?post_type=tenon-report', __( 'Access Monitor > Access Monitor Settings', 'access-monitor' ), __( 'Access Monitor Settings', 'access-monitor' ), $permissions, 'am-support-page', 'am_support_page' );
 		add_action( 'load-' . $plugin_page, 'am_load_admin_styles' );
 		add_action( 'load-' . $settings_page, 'am_load_admin_styles' );

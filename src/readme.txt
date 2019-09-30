@@ -56,6 +56,11 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 == Changelog ==
 
+= 1.4.1 =
+
+* Bug fix: Extra argument in add_submenu_page threw warning.
+* 
+
 = 1.4.0 =
 
 * Disable adminbar on frontend tests
