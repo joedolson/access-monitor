@@ -7,7 +7,7 @@ Tested up to: 5.2
 Requires PHP: 5.3
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.4.0
+Stable tag: 1.4.1
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -59,7 +59,6 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 = 1.4.1 =
 
 * Bug fix: Extra argument in add_submenu_page threw warning.
-* 
 
 = 1.4.0 =
 
