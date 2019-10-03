@@ -478,6 +478,29 @@ function am_posttypes() {
 	register_post_type( 'tenon-report', $args );
 }
 
+/**
+ * Register taxonomies on Access Monitor custom post type
+ */
+function am_taxonomies() {
+	$enabled = array( 'tenon-report' );
+	if ( is_array( $enabled ) ) {
+		foreach ( $enabled as $key ) {
+			register_taxonomy(
+				'tenon-report-tag',
+				// Internal name = machine-readable taxonomy name.
+				array( $key ),
+				array(
+					'hierarchical' => true,
+					'label'        => __( 'Report Tags', 'access-monitor' ),
+					'query_var'    => true,
+					'rewrite'      => 'tenon-report-tag',
+				)
+			);
+		}
+	}
+}
+add_action( 'init', 'am_taxonomies', 0 );
+
 
 add_action( 'admin_menu', 'am_add_outer_box' );
 /**
@@ -616,7 +639,12 @@ function am_add_about_box() {
 	echo "<p class='error-total'>" . sprintf( __( '%s unique errors', 'access-monitor' ), "<span>$total</span>" ) . '</p>';
 	if ( is_array( $pages ) ) {
 		foreach ( $pages as $url ) {
-			$page  = str_replace( array( 'http://', 'https://', 'http://www.', 'https://www.' ), '', $url );
+			if ( is_numeric( $url ) ) {
+				$page = get_the_title( $url );
+				$url  = get_the_permalink( $url );
+			} else {
+				$page = str_replace( array( 'http://', 'https://', 'http://www.', 'https://www.' ), '', $url );
+			}
 			$urls .= "<li><a href='$url'>$page</a></li>";
 		}
 		unset( $params['url'] );
@@ -740,7 +768,8 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 
 	foreach ( $pages as $page ) {
 		if ( is_numeric( $page ) ) {
-			$url = get_permalink( $page );
+			$url       = get_permalink( $page );
+			$set_terms = true;
 		} else {
 			$url = $page;
 		}
@@ -749,6 +778,10 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 			$report        = am_query_tenon( $params );
 			$report        = $report['results'];
 			$saved[ $url ] = $report;
+			if ( $set_terms ) {
+				wp_set_object_terms( $report_id, get_the_modified_author( $page ), 'tenon-report-tag' );
+			}
+
 		} else {
 			continue;
 		}
