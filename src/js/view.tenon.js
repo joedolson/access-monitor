@@ -17,8 +17,9 @@
 		}
 
 		$( path )
+			.attr( 'id', 'path-' + noteID )
 			.wrap( '<div class="tenon-error ' + priority + ' ' + certainty + '" style="display: ' + display + ';" id="source-tenon-' + noteID + '" tabindex="-1"></div>' )
-			.attr( 'aria-describedby', id ).css( { 'outline' : '2px solid red' } )
+			.attr( 'aria-describedby', id ).css( { 'outline' : '2px solid red', 'outline-offset' : '6px' } )
 			.after( '<button class="toggle-view" aria-controls="' + id + '" data-notes="tenon-notes-' + noteID + '"><span class="dashicons dashicons-plus" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.expand + '</span></button><div role="tooltip" class="tenon-error-comment" id="' + id + '"><p>' + notes + '</p></div>' );
 	});
 	$( '.tenon-error-comment' ).hide();
@@ -48,11 +49,15 @@
 		var controls = $( this ).attr( 'aria-controls' );
 		var expanded = $( this ).attr( 'aria-expanded' );
 		var noteID   = $( this ).attr( 'data-notes' );
-
+		var reference = $ ( this ).attr( 'data-notes' );
+		var path = reference.replace( 'tenon-notes-', 'path-' );
+		console.log( path );
 		if ( expanded == 'true' ) {
+			$( '#' + path ).css( { 'outline' : '0px dotted currentColor' } );
 			$( '#' + controls ).hide();
 			$( this ).attr( 'aria-expanded', 'false' ).html( '<span class="dashicons dashicons-plus" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.expand+ '</span>' );
 		} else {
+			$( '#' + path ).css( { 'outline' : '1px dotted currentColor' } );
 			$( '#' + controls ).show();
 			$( this ).attr( 'aria-expanded', 'true' ).html( '<span class="dashicons dashicons-minus" aria-hidden="true"></span> <span class="screen-reader-text">' + ami18n.collapse + '</span>' );
 			$( '#' + noteID ).addClass( 'highlight-error' );
