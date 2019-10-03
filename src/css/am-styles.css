@@ -297,8 +297,8 @@ button.close:hover, button.close:focus {
 .tenon-error-comment {
 	position: absolute;
 	display: block;
-	left: 0;
-	top: 0;
+	left: 3px;
+	top: 1.5em;
 	width: 20em;
 	padding: 1em;
 	background: #f3f3f3;
