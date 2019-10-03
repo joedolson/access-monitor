@@ -427,12 +427,14 @@ function am_admin_bar() {
 
 	if ( false !== (bool) $api_key || false !== (bool) $multisite ) {
 		global $wp_admin_bar;
+		global $wp;
 		if ( is_admin() ) {
 			$url = '#tenon';
 		} else {
 			global $post_id;
 			$nonce = wp_create_nonce( 'public-tenon-query' );
-			$url   = add_query_arg( 'tenon', $nonce, get_permalink( $post_id ) );
+			$base  = home_url( add_query_arg( array(), $wp->request ) );
+			$url   = add_query_arg( 'tenon', $nonce, $base );
 		}
 		$args = array(
 			'id'    => 'tenonCheck',
@@ -781,7 +783,6 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 			if ( $set_terms ) {
 				wp_set_object_terms( $report_id, get_the_modified_author( $page ), 'tenon-report-tag' );
 			}
-
 		} else {
 			continue;
 		}
