@@ -141,7 +141,7 @@ jQuery( document ).ready( function( $ ) {
 		if ( expanded == 'false' ) {
 			$( this ).text( am.hide ).attr( 'aria-expanded', 'true' );
 		} else {
-			$( this ).text( am.show ).attr( 'aria-expanded', 'false' );			
+			$( this ).text( am.show ).attr( 'aria-expanded', 'false' );
 		}
 	});
 });
