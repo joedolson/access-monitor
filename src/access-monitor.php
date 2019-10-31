@@ -431,7 +431,6 @@ function am_admin_bar() {
 		if ( is_admin() ) {
 			$url = '#tenon';
 		} else {
-			global $post_id;
 			$nonce = wp_create_nonce( 'public-tenon-query' );
 			$base  = home_url( add_query_arg( array(), $wp->request ) );
 			$url   = add_query_arg( 'tenon', $nonce, $base );
