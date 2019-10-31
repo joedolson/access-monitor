@@ -299,7 +299,7 @@ function am_format_tenon_array( $results, $errors ) {
 						<div class='tenon-standards'>
 							$standards
 						</div>
-						<p><a class='find-error' href='#source-tenon-$xpathid' aria-describedby='error-title=$xpathid'>Find error $i</a></p>
+						<p><a class='find-error' href='#source-tenon-$xpathid' aria-describedby='error-title-$xpathid'>Find error $i</a></p>
 					</div>
 				</div>";
 		}
@@ -406,7 +406,7 @@ function am_admin_footer() {
 	echo "<div aria-live='assertive' class='feedback' id='tenon' style='color: #333;background:#fff;padding: 2em 2em 4em 14em;clear:both;border-top:1px solid #333'></div>";
 }
 
-add_action( 'init', 'am_disable_admin_bar' );
+add_action( 'init', 'am_disable_admin_bar', 0 );
 /**
  * If Tenon is run on the front end, disable the admin bar so it isn't incorporated in tests.
  */
@@ -432,7 +432,7 @@ function am_admin_bar() {
 			$url = '#tenon';
 		} else {
 			$nonce = wp_create_nonce( 'public-tenon-query' );
-			$base  = home_url( add_query_arg( array(), $wp->request ) );
+			$base  = home_url( add_query_arg( array(), trailingslashit( $wp->request ) ) );
 			$url   = add_query_arg( 'tenon', $nonce, $base );
 		}
 		$args = array(
