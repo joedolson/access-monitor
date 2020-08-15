@@ -3,8 +3,8 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, section508, tenon
 Requires at least: 4.2
-Tested up to: 5.3
-Requires PHP: 5.3
+Tested up to: 5.5
+Requires PHP: 5.6
 License: GPLv2 or later
 Text domain: access-monitor
 Stable tag: 1.4.1
