@@ -4,7 +4,7 @@
  *
  * @package     AccessMonitor
  * @author      Joe Dolson
- * @copyright   2014-2019 Joe Dolson
+ * @copyright   2014-2020 Joe Dolson
  * @license     GPL-2.0+
  *
  * @wordpress-plugin
@@ -21,7 +21,7 @@
  */
 
 /*
-	Copyright 2014-2019  Joe Dolson (email : joe@joedolson.com)
+	Copyright 2014-2020  Joe Dolson (email : joe@joedolson.com)
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -157,7 +157,7 @@ function am_query_tenon( $post ) {
 		$body      = $tenon->tenon_response['body'];
 		$formatted = am_format_tenon( $body );
 		$object    = json_decode( $body );
-		if ( property_exists( $object, 'resultSet' ) ) {
+		if ( is_object( $object ) && property_exists( $object, 'resultSet' ) ) {
 			$array   = (array) $object;
 			$results = $array['resultSet'];
 			$errors  = $array['clientScriptErrors'];
@@ -209,7 +209,7 @@ function am_format_tenon( $body ) {
 		$errors = 0;
 	}
 
-	if ( property_exists( $object, 'resultSet' ) ) {
+	if ( is_object( $object ) && property_exists( $object, 'resultSet' ) ) {
 		$array   = (array) $object;
 		$results = $array['resultSet'];
 	} else {
@@ -280,6 +280,7 @@ function am_format_tenon_array( $results, $errors ) {
 			$error_snippet = $result['errorSnippet'];
 			$error_title   = $result['errorTitle'];
 			$error_desc    = ( isset( $result['errorDescription'] ) ) ? $result['errorDescription'] : '';
+			$error_desc    = htmlentities( $error_desc );
 			$return       .= "
 				<div class='tenon-result' id='tenon-notes-$xpathid'>
 					<div class='tenon-result-details'>
@@ -526,7 +527,7 @@ function am_post_reports_data( $type ) {
 		$access_options_enabled = ( true === (bool) $settings['tenon_pre_publish'] ) ? true : false;
 		if ( $access_options_enabled ) {
 			// Disable Gutenberg if this option is enabled.
-			add_meta_box( 'am_public_report', __( 'Accessibility Reports', 'access-monitor' ), 'am_show_public_report', $type, 'normal', 'high', array( '__block_editor_compatible_meta_box' => false ) );
+			add_meta_box( 'am_public_report', __( 'Accessibility Reports', 'access-monitor' ), 'am_show_public_report', $type, 'normal', 'high', array( '__block_editor_compatible_meta_box' => false, '__back_compat_meta_box' => true ) );
 		} else {
 			add_meta_box( 'am_public_report', __( 'Accessibility Reports', 'access-monitor' ), 'am_show_public_report', $type );
 		}
