@@ -65,12 +65,12 @@ function am_pre_publish( $hook ) {
 					'priority'  => ( isset( $args['priority'] ) ) ? $args['priority'] : '20',
 					'container' => ( isset( $args['container'] ) && ! empty( $args['container'] ) ) ? $args['container'] : '.access-monitor-content',
 					'store'     => ( isset( $args['store'] ) ) ? $args['store'] : '0',
-					'grade'     => ( isset( $args['grade'] ) ) ? $args['grade'] : '90',
 					'hide'      => __( 'Hide issues', 'access-monitor' ),
 					'show'      => __( 'Show issues', 'access-monitor' ),
 					'failed'    => __( 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.', 'access-monitor' ),
 					'error'     => __( '<strong>Post may not be published</strong>: does not meet minimum accessibility requirements.', 'access-monitor' ),
-					'pass'      => __( '<strong>Post may be published!</strong>: meets your accessibility requirements.', 'access-monitor' ),
+					'pass'      => __( '<strong>Post may be published!</strong> This post meets your accessibility requirements.', 'access-monitor' ),
+					'fail'      => __( '<strong>Post may not be published.</strong> This post does not meet your accessibility requirements.', 'access-monitor' ),
 					'ajaxerror' => __( '<strong>There was an error sending your post to Tenon.io</strong>.', 'access-monitor' ),
 				);
 				wp_localize_script( 'tenon.inspector', 'am', $settings );
@@ -121,7 +121,7 @@ add_action( 'edit_form_top', 'am_edit_form_after_title' );
 function am_edit_form_after_title( $post ) {
 	if ( am_in_post_type( $post->ID ) ) {
 		// Translators: Score container, message container, toggle to show results.
-		echo '<div class="am-errors"><p>' . sprintf( __( 'Score: %1$s / %2$s %3$s', 'access-monitor' ), '<strong class="score"></strong>', '<span class="am-message"></span>', '<a href="#am-errors" class="am-toggle" aria-expanded="false">Show Results</a>' )
+		echo '<div class="am-errors"><p>' . sprintf( __( '%1$s %2$s', 'access-monitor' ), '<span class="am-message"></span>', '<a href="#am-errors" class="am-toggle" aria-expanded="false">Show Results</a>' )
 			. "</p><div class='am-errors-display' id='am-errors'></div>
 		</div>";
 	}
@@ -158,6 +158,77 @@ function am_percentage( $results ) {
 	}
 
 	return apply_filters( 'am_modify_grade', $return, $results );
+}
+
+/**
+ * Return Tenon.io error counts.
+ *
+ * @param object $results Tenon results object.
+ *
+ * @return mixed float/boolean Percentage or false.
+ */
+function am_score( $results ) {
+	$status  = $results->status;
+	$results = (array) $results;
+	if ( 200 === absint( $status ) ) {
+
+		// test against all errors & warnings.
+		$issues   = (array) $results['resultSummary']->issues;
+		$errors   = $issues['totalErrors'];
+		$warnings = $issues['totalWarnings'];
+
+		$bylevel  = (array) $results['resultSummary']->issuesByLevel;
+		$levela   = $bylevel['A']->count;
+		$levelaa  = $bylevel['AA']->count;
+		$levelaaa = $bylevel['AAA']->count;
+
+		$return = array(
+			'errors'   => $errors,
+			'warnings' => $warnings,
+			'levela'   => $levela,
+			'levelaa'  => $levelaa,
+			'levelaaa' => $levelaaa,
+		);
+
+	} else {
+		$return = false;
+	}
+
+	return apply_filters( 'am_tenon_score', $return, $results );
+}
+
+/**
+ * Parse grade information into pass/fail.
+ *
+ * @param array $grade Array of error information.
+ *
+ * @return bool
+ */
+function am_parse_grade( $grade ) {
+	$options     = get_option( 'am_settings' );
+	$maxerrors   = ( isset( $options['maxerrors'] ) ? $options['maxerrors'] : 5 );
+	$maxwarnings = ( isset( $options['maxwarnings'] ) ? $options['maxwarnings'] : 10 );
+	$maxa        = ( isset( $options['maxa'] ) ? $options['maxa'] : 1 );
+	$maxaa       = ( isset( $options['maxaa'] ) ? $options['maxaa'] : 5 );
+	$maxaaa      = ( isset( $options['maxaaa'] ) ? $options['maxaaa'] : 10 );
+	$pass        = true;
+	if ( $grade['errors'] >= $maxerrors ) {
+		$pass = false;
+	}
+	if ( $grade['warnings'] >= $maxerrors ) {
+		$pass = false;
+	}
+	if ( $grade['levela'] >= $maxa ) {
+		$pass = false;
+	}
+	if ( $grade['levelaa'] >= $maxa ) {
+		$pass = false;
+	}
+	if ( $grade['levelaaa'] >= $maxa ) {
+		$pass = false;
+	}
+
+	return $pass;
 }
 
 add_action( 'wp_ajax_am_ajax_notify', 'am_ajax_notify' );

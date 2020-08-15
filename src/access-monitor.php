@@ -165,7 +165,7 @@ function am_query_tenon( $post ) {
 			$results = array();
 			$errors  = '';
 		}
-		$grade = am_percentage( $object );
+		$grade = am_score( $object );
 		if ( false === $grade ) {
 			if ( trim( $object->message ) === 'Bad Request - Either src or url parameter must be supplied' ) {
 				$message = __( 'Save your post as a draft in order to test for accessibility.', 'access-monitor' );
@@ -388,12 +388,16 @@ function am_ajax_query_tenon() {
 
 		$results = am_query_tenon( $args );
 
+		// Parse grade into pass/fail.
+		$grade = ( am_parse_grade( $results['grade'] ) ) ? 1 : 0;
+
 		wp_send_json(
 			array(
 				'response'  => 1,
 				'results'   => $results['results'],
 				'formatted' => $results['formatted'],
-				'grade'     => $results['grade'],
+				'grade'     => $grade,
+				'errors'    => $results['grade'],
 			)
 		);
 	}

@@ -62,9 +62,8 @@ jQuery( document ).ready( function( $ ) {
 							response_content = data.formatted;
 							var err = response_content.search( 'Tenon error' );
 							grade = data.grade;
-							if ( grade < am.grade ) {
+							if ( grade == '0' ) {
 								$( '#am-errors' ).html( response_content );
-								$( '.am-errors .score' ).text( grade.toFixed(2) + '%' );
 								$( '.am-errors .am-message' ).html( am.error );	
 								if ( err > -1 ) {
 									$( '.am-errors' ).addClass( 'updated error' ).html( response_content ).show().attr( 'tabindex', '-1' ).focus();
