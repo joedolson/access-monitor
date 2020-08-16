@@ -1237,10 +1237,6 @@ function am_settings() {
 				'label'   => __( 'Minimum priority', 'access-monitor' ),
 				'default' => '20',
 			),
-			'grade'     => array(
-				'label'   => __( 'Minimum percentage grade to publish', 'access-monitor' ),
-				'default' => '90',
-			),
 			'store'     => array(
 				'label'   => __( 'Store data at Tenon.io?', 'access-monitor' ),
 				'default' => '0',
@@ -1249,22 +1245,61 @@ function am_settings() {
 				'label'   => __( 'Post content container', 'access-monitor' ),
 				'default' => '.access-monitor-content',
 			),
+			'fieldset' => array(
+				'legend' => __( 'Post Publication Criteria', 'access-monitor' ),
+				'fields' => array(
+					'maxerrors'   => array(
+						'label'   => __( 'Maximum Total Errors Allowed', 'access-monitor' ),
+						'default' => 2,
+					),
+					'maxwarnings' => array(
+						'label'   => __( 'Maximum Warnings Allowed', 'access-monitor' ),
+						'default' => 10,
+					),
+					'maxa'        => array(
+						'label'   => __( 'Maximum Level A criteria', 'access-monitor' ),
+						'default' => 1,
+					),
+					'maxaa'       => array(
+						'label'   => __( 'Maximum Level AA criteria', 'access-monitor' ),
+						'default' => 5,
+					),
+					'maxaaa'      => array(
+						'label'   => __( 'Maximum Level AAA criteria', 'access-monitor' ),
+						'default' => 10,
+					),
+				),
+			),
 		);
-		echo '<ul>';
+		echo '<div>';
 		foreach ( $criteria as $key => $values ) {
-			$label = $values['label'];
-			$value = ( isset( $am_criteria[ $key ] ) && '' !== $am_criteria[ $key ] ) ? $am_criteria[ $key ] : $values['default'];
-			if ( 'store' === $key ) {
-				echo "<li><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . '>' . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . '>' . __( 'No', 'access-monitor' ) . '</option></select></li>';
+			if ( 'fieldset' === $key ) {
+				$fields = $values['fields'];
+				echo '<fieldset><legend>' . $values['legend'] . '</legend>';
+				foreach( $fields as $subkey => $subvalues ) {
+					$sublabel = $subvalues['label'];
+					$subvalue = ( isset( $am_criteria[ $subkey ] ) && '' !== $am_criteria[ $subkey ] ) ? $am_criteria[ $subkey ] : $subvalues['default'];
+					if ( is_numeric( $subvalue ) ) {
+						echo "<p><label for='am_$subkey'>$sublabel</label> <input type='number' min='0' max='100' name='am_criteria[$subkey]' id='am_$subkey' value='" . intval( $subvalue ) . "' /></p>";
+					} else {
+						echo "<p><label for='am_$subkey'>$sublabel</label> <input type='text' name='am_criteria[$subkey]' id='am_$subkey' value='" . esc_attr( $subvalue ) . "' /></p>";
+					}
+				}
 			} else {
-				if ( is_numeric( $value ) ) {
-					echo "<li><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='" . intval( $value ) . "' /></li>";
+				$label = $values['label'];
+				$value = ( isset( $am_criteria[ $key ] ) && '' !== $am_criteria[ $key ] ) ? $am_criteria[ $key ] : $values['default'];
+				if ( 'store' === $key ) {
+					echo "<p><label for='am_$key'>$label</label> <select name='am_criteria[$key]' id='am_$key'><option value='1' " . selected( $value, 1, false ) . '>' . __( 'Yes', 'access-monitor' ) . "</option><option value='0' " . selected( $value, 0, false ) . '>' . __( 'No', 'access-monitor' ) . '</option></select></p>';
 				} else {
-					echo "<li><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='" . esc_attr( $value ) . "' /></li>";
+					if ( is_numeric( $value ) ) {
+						echo "<p><label for='am_$key'>$label</label> <input type='number' min='0' max='100' name='am_criteria[$key]' id='am_$key' value='" . intval( $value ) . "' /></p>";
+					} else {
+						echo "<p><label for='am_$key'>$label</label> <input type='text' name='am_criteria[$key]' id='am_$key' value='" . esc_attr( $value ) . "' /></p>";
+					}
 				}
 			}
 		}
-		echo '</ul>
+		echo '</div>
 		</fieldset>';
 		?>
 	<p>
