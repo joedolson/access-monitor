@@ -342,10 +342,19 @@ button.close:hover, button.close:focus {
 }
 
 .screen-reader-text {
+	border: 0;
 	clip: rect(1px, 1px, 1px, 1px);
-	position: absolute !important;
+	clip-path: inset(50%);
 	height: 1px;
-	width: 1px;
+	margin: -1px;
 	overflow: hidden;
-	word-wrap: normal !important;
+	padding: 0;
+	position: absolute !important;
+	width: 1px;
+	word-wrap: normal !important; /* Many screen reader and browser combinations announce broken words as they would appear visually. */
+}
+
+.inspect-a11y .dashicons,
+.inspect-a11y .dashicons:before {
+	vertical-align: text-top;
 }
