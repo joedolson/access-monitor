@@ -72,6 +72,7 @@ function am_pass_query() {
 		$results = am_query_tenon( $args );
 		$format  = $results['formatted'];
 		$post_id = get_the_ID();
+		$perma   = get_the_permalink( $post_id );
 		$hash    = md5( $format );
 		$past    = get_post_meta( $post_id, '_tenon_test_hash' );
 		$exists  = false;
@@ -92,7 +93,7 @@ function am_pass_query() {
 			);
 			add_post_meta( $post_id, '_tenon_test_hash', $hash );
 		}
-		echo "<div class='tenon-results' id='tenon-results'><button class='toggle-results' aria-expanded='true'><span class='dashicons dashicons-minus' aria-hidden='true'></span> Collapse</button>" . $format . '</div>';
+		echo "<div class='tenon-results' id='tenon-results'><button class='toggle-results' aria-expanded='true'><span class='dashicons dashicons-minus' aria-hidden='true'></span> Collapse</button> <a href='$perma'>Clear Results</a>" . $format . '</div>';
 	}
 }
 
