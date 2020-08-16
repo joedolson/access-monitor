@@ -124,6 +124,7 @@ function am_edit_form_after_title( $post ) {
 		echo '<div class="am-errors"><p>' . sprintf( __( '%1$s %2$s', 'access-monitor' ), '<span class="am-message"></span>', '<a href="#am-errors" class="am-toggle" aria-expanded="false">Show Results</a>' )
 			. "</p><div class='am-errors-display' id='am-errors'></div>
 		</div>";
+		// Add list with requirements for each marker, e.g. '<span class='levela'></span> found; 4 allowed.'
 	}
 }
 
@@ -206,12 +207,14 @@ function am_score( $results ) {
  */
 function am_parse_grade( $grade ) {
 	$options     = get_option( 'am_settings' );
-	$maxerrors   = ( isset( $options['maxerrors'] ) ? $options['maxerrors'] : 5 );
-	$maxwarnings = ( isset( $options['maxwarnings'] ) ? $options['maxwarnings'] : 10 );
-	$maxa        = ( isset( $options['maxa'] ) ? $options['maxa'] : 1 );
-	$maxaa       = ( isset( $options['maxaa'] ) ? $options['maxaa'] : 5 );
-	$maxaaa      = ( isset( $options['maxaaa'] ) ? $options['maxaaa'] : 10 );
+	$criteria    = $options['am_criteria'];
+	$maxerrors   = ( isset( $criteria['maxerrors'] ) ? $criteria['maxerrors'] : 3 );
+	$maxwarnings = ( isset( $criteria['maxwarnings'] ) ? $criteria['maxwarnings'] : 10 );
+	$maxa        = ( isset( $criteria['maxa'] ) ? $criteria['maxa'] : 1 );
+	$maxaa       = ( isset( $criteria['maxaa'] ) ? $criteria['maxaa'] : 5 );
+	$maxaaa      = ( isset( $criteria['maxaaa'] ) ? $criteria['maxaaa'] : 10 );
 	$pass        = true;
+	// If any of these criteria are failed, fail the document.
 	if ( $grade['errors'] >= $maxerrors ) {
 		$pass = false;
 	}
@@ -304,3 +307,14 @@ function am_testable_post_content( $content ) {
 	return $content;
 }
 
+/**
+ * Prototype for block editor implementation.
+ */
+function enqueue_block_editor_assets() {
+	wp_enqueue_script(
+		'pre-publish-check',
+		plugins_url( 'js/pre-publish-check/build/index.js', __FILE__ ),
+		array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'wp-edit-post', 'word-count' )
+	);
+}
+add_action( 'enqueue_block_editor_assets', 'enqueue_block_editor_assets' );
