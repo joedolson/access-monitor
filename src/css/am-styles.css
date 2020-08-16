@@ -220,8 +220,8 @@ button.close:hover, button.close:focus {
 }
 
 .toggle-view {
-	padding: .1em!important;
-	font-size: 24px!important;
+	padding: 0px !important;
+	font-size: 24px !important;
 	width: 24px !important;
 	max-width: 24px !important;
 	height: 24px !important;
@@ -238,10 +238,12 @@ button.close:hover, button.close:focus {
 
 .toggle-view .dashicons {
 	position: relative;
-	left: -3px;
+	left: -2px;
 	display: inline-block;
-	min-width: 1em !important;
-	margin: 0;
+	margin: 0 !important;
+	width: 24px !important;
+	height: 24px !important;
+	font-size: 24px !important;
 }
 
 .tenon-updating {
@@ -288,12 +290,6 @@ button.close:hover, button.close:focus {
 	border: 1px solid #111 !important;
 }
 
-.toggle-view .dashicons {
-	width: 24px !important;
-	height: 24px !important;
-	font-size: 24px !important;
-}
-
 .tenon-error-comment {
 	position: absolute;
 	display: block;
@@ -311,11 +307,20 @@ button.close:hover, button.close:focus {
 	margin: 0;
 	padding: 0;
 	line-height: 1.4;
+	text-align: left !important;
 }
 
 .tenon-error-comment p * {
-	padding: 2px;
-	margin: 2px;
+	padding: 2px 0 !important;
+	margin: 2px 0 !important;
+	text-align: left !important;
+	font-weight: 400 !important;
+	font-size: 1.4rem !important;;
+	text-transform: none !important;
+}
+
+.rtl .tenon-error-comment p {
+	text-align: right !important;
 }
 
 /* Xpath Data is intentionally hidden to make this view more compact */
