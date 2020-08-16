@@ -87,7 +87,7 @@ function am_pass_query() {
 				$post_id,
 				'_tenon_test_results',
 				array(
-					'date'    => current_time( 'timestamp' ),
+					'date'    => current_time( 'timestamp' ), // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
 					'results' => $results,
 				)
 			);
@@ -532,7 +532,18 @@ function am_post_reports_data( $type ) {
 		$access_options_enabled = ( true === (bool) $settings['tenon_pre_publish'] ) ? true : false;
 		if ( $access_options_enabled ) {
 			// Disable Gutenberg if this option is enabled.
-			add_meta_box( 'am_public_report', __( 'Accessibility Reports', 'access-monitor' ), 'am_show_public_report', $type, 'normal', 'high', array( '__block_editor_compatible_meta_box' => false, '__back_compat_meta_box' => true ) );
+			add_meta_box(
+				'am_public_report',
+				__( 'Accessibility Reports', 'access-monitor' ),
+				'am_show_public_report',
+				$type,
+				'normal',
+				'high',
+				array(
+					'__block_editor_compatible_meta_box' => false,
+					'__back_compat_meta_box' => true
+				)
+		);
 		} else {
 			add_meta_box( 'am_public_report', __( 'Accessibility Reports', 'access-monitor' ), 'am_show_public_report', $type );
 		}
@@ -689,7 +700,7 @@ function am_remove_menu_item() {
  * @return Post ID.
  */
 function am_set_report( $name = false ) {
-	$date = date_i18n( 'Y-m-d H:i', current_time( 'timestamp' ) );
+	$date = date_i18n( 'Y-m-d H:i', current_time( 'timestamp' ) ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
 	if ( ! $name ) {
 		$name = $date;
 	} else {
@@ -759,7 +770,7 @@ function am_generate_report( $name, $pages = false, $schedule = 'none', $params 
 	}
 	if ( 'none' !== $schedule ) {
 		if ( ! is_numeric( $schedule ) ) {
-			$timestamp = ( 'weekly' === $schedule ) ? current_time( 'timestamp' ) + 60 * 60 * 24 * 7 : current_time( 'timestamp' ) + ( 60 * 60 * 24 * 30.5 );
+			$timestamp = ( 'weekly' === $schedule ) ? current_time( 'timestamp' ) + 60 * 60 * 24 * 7 : current_time( 'timestamp' ) + ( 60 * 60 * 24 * 30.5 ); // phpcs:ignore WordPress.DateTime.CurrentTimeTimestamp.Requested
 			$args      = array(
 				'report_id' => $report_id,
 				'pages'     => $pages,
@@ -1246,7 +1257,7 @@ function am_settings() {
 				'label'   => __( 'Post content container', 'access-monitor' ),
 				'default' => '.access-monitor-content',
 			),
-			'fieldset' => array(
+			'fieldset'  => array(
 				'legend' => __( 'Post Publication Criteria', 'access-monitor' ),
 				'fields' => array(
 					'maxerrors'   => array(
@@ -1277,7 +1288,7 @@ function am_settings() {
 			if ( 'fieldset' === $key ) {
 				$fields = $values['fields'];
 				echo '<fieldset><legend>' . $values['legend'] . '</legend>';
-				foreach( $fields as $subkey => $subvalues ) {
+				foreach ( $fields as $subkey => $subvalues ) {
 					$sublabel = $subvalues['label'];
 					$subvalue = ( isset( $am_criteria[ $subkey ] ) && '' !== $am_criteria[ $subkey ] ) ? $am_criteria[ $subkey ] : $subvalues['default'];
 					if ( is_numeric( $subvalue ) ) {
