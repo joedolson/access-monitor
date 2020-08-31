@@ -123,15 +123,20 @@ function am_edit_form_after_title( $post ) {
 	if ( am_in_post_type( $post->ID ) ) {
 		$options  = get_option( 'am_settings' );
 		$criteria = $options['am_criteria'];
-		$errors   = ( isset( $criteria['maxerrors'] ) ? $criteria['maxerrors'] : 3);
+		$errors   = ( isset( $criteria['maxerrors'] ) ? $criteria['maxerrors'] : 3 );
 		$warnings = ( isset( $criteria['maxwarnings'] ) ? $criteria['maxwarnings'] : 5 );
 		$levela   = ( isset( $criteria['maxa'] ) ? $criteria['maxa'] : 1 );
 		$levelaa  = ( isset( $criteria['maxaa'] ) ? $criteria['maxaa'] : 3 );
 		$levelaaa = ( isset( $criteria['maxaaa'] ) ? $criteria['maxaaa'] : 5 );
-		$errors   = sprintf( __( '<strong>Errors:</strong> <span class="errors"></span> found; %s allowed.', 'access-monitor' ), $errors );
+		// Translators: number of permitted errors.
+		$errors = sprintf( __( '<strong>Errors:</strong> <span class="errors"></span> found; %s allowed.', 'access-monitor' ), $errors );
+		// Translators: number of permitted warnings.
 		$warnings = sprintf( __( '<strong>Warnings:</strong> <span class="warnings"></span> found; %s allowed.', 'access-monitor' ), $warnings );
-		$levela   = sprintf( __( '<strong>Level A:</strong> <span class="levela"></span> found; %s allowed.', 'access-monitor' ), $levela );
-		$levelaa  = sprintf( __( '<strong>Level AA:</strong> <span class="levelaa"></span> found; %s allowed.', 'access-monitor' ), $levelaa );
+		// Translators: number of permitted Level A warnings/errors.
+		$levela = sprintf( __( '<strong>Level A:</strong> <span class="levela"></span> found; %s allowed.', 'access-monitor' ), $levela );
+		// Translators: number of permitted Level AA warnings/errors.
+		$levelaa = sprintf( __( '<strong>Level AA:</strong> <span class="levelaa"></span> found; %s allowed.', 'access-monitor' ), $levelaa );
+		// Translators: number of permitted Level AAA warnings/errors.
 		$levelaaa = sprintf( __( '<strong>Level AAA:</strong> <span class="levelaaa"></span> found; %s allowed.', 'access-monitor' ), $levelaaa );
 		// Translators: Score container, message container, toggle to show results.
 		echo '<div class="am-errors"><p>' . sprintf( __( '%1$s %2$s', 'access-monitor' ), '<span class="am-message"></span>', '<a href="#am-errors" class="am-toggle" aria-expanded="false">Show Results</a>' )
@@ -218,14 +223,14 @@ function am_score( $results ) {
  * @return bool
  */
 function am_parse_grade( $grade ) {
-	$options     = get_option( 'am_settings' );
-	$criteria    = $options['am_criteria'];
-	$errors   = ( isset( $criteria['maxerrors'] ) ? $criteria['maxerrors'] : 3);
+	$options  = get_option( 'am_settings' );
+	$criteria = $options['am_criteria'];
+	$errors   = ( isset( $criteria['maxerrors'] ) ? $criteria['maxerrors'] : 3 );
 	$warnings = ( isset( $criteria['maxwarnings'] ) ? $criteria['maxwarnings'] : 5 );
 	$levela   = ( isset( $criteria['maxa'] ) ? $criteria['maxa'] : 1 );
 	$levelaa  = ( isset( $criteria['maxaa'] ) ? $criteria['maxaa'] : 3 );
 	$levelaaa = ( isset( $criteria['maxaaa'] ) ? $criteria['maxaaa'] : 5 );
-	$pass        = true;
+	$pass     = true;
 	// If any of these criteria are failed, fail the document.
 	if ( $grade['errors'] >= $maxerrors ) {
 		$pass = false;

@@ -551,7 +551,7 @@ function am_post_reports_data( $type ) {
 				'high',
 				array(
 					'__block_editor_compatible_meta_box' => false,
-					'__back_compat_meta_box'             => true
+					'__back_compat_meta_box'             => true,
 				)
 			);
 		} else {
