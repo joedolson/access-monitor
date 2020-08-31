@@ -58,6 +58,9 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 = 1.4.1 =
 
+* Fix bug in metabox flags for block/classic editor.
+* Change scoring mechanism for post publication blocking.
+* Add 'Clear Results' option in front-end viewing.
 * Bug fix: Extra argument in add_submenu_page threw warning.
 * Bug fix: If post IDs entered, report URLs not valid in admin.
 * Add: support for tagging reports.

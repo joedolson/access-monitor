@@ -8,15 +8,18 @@
 		var noteID   = id.replace( 'tenon-', '' );
 		var notes    = "<a href='#tenon-notes-" + noteID + "'>" + title + "</a>";
 		var path     = xPathToCss( xpath );
-		var display  = $( path ).css( 'display' );
+		path         = $( path );
 		var priority = $( this ).attr( 'data-priority' );
 		var certainty = 'cert-' + $( this ).attr( 'data-certainty' );
 
-		if  ( $( path ).width() < 20 ) {
-			$( path ).css( 'width', '1.2em' ).css( 'display', 'inline-block' );
+		if ( path.parents( 'button, a, input, select, textarea' ).length == 1 ) {
+			path = path.closest( 'div, span, p' );
 		}
-
-		$( path )
+		if ( path.width() < 20 ) {
+			path.css( 'width', '1.2em' ).css( 'display', 'inline-block' );
+		}
+		var display  = path.css( 'display' );
+		path
 			.attr( 'id', 'path-' + noteID )
 			.wrap( '<div class="tenon-error ' + priority + ' ' + certainty + '" style="display: ' + display + ';" id="source-tenon-' + noteID + '" tabindex="-1"></div>' )
 			.attr( 'aria-describedby', id ).css( { 'outline' : '2px solid red', 'outline-offset' : '6px' } )
@@ -51,7 +54,7 @@
 		var noteID   = $( this ).attr( 'data-notes' );
 		var reference = $ ( this ).attr( 'data-notes' );
 		var path = reference.replace( 'tenon-notes-', 'path-' );
-		console.log( path );
+
 		if ( expanded == 'true' ) {
 			$( '#' + path ).css( { 'outline' : '0px dotted currentColor' } );
 			$( '#' + controls ).hide();
