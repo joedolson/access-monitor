@@ -57,7 +57,16 @@ define( 'AM_DEBUG', false );
 require_once( 't/class-tenon.php' );
 require_once( 'am-post-inspection.php' );
 
-$am_version = '1.4.1';
+/**
+ * Return current Access Monitor version.
+ *
+ * @return string
+ */
+function am_get_version() {
+	$am_version = '1.4.1';
+
+	return $am_version;
+}
 
 add_action( 'wp_footer', 'am_pass_query' );
 /**
@@ -1749,10 +1758,10 @@ function am_admin_styles() {
  * Display Access Monitor get support form.
  */
 function am_get_support_form() {
-	global $current_user, $am_version;
+	global $current_user;
 	$current_user = wp_get_current_user();
 	// send fields for Access Monitor.
-	$version = $am_version;
+	$version = am_get_version();
 	// send fields for all plugins.
 	$wp_version = get_bloginfo( 'version' );
 	$home_url   = home_url();
