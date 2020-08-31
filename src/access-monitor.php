@@ -337,6 +337,7 @@ function am_admin_enqueue_scripts() {
 		wp_localize_script( 'am.functions', 'am_plugin_name', __( 'Access Monitor', 'access-monitor' ) );
 
 		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
+
 		wp_localize_script(
 			'am.view',
 			'ami18n',
@@ -550,9 +551,9 @@ function am_post_reports_data( $type ) {
 				'high',
 				array(
 					'__block_editor_compatible_meta_box' => false,
-					'__back_compat_meta_box' => true
+					'__back_compat_meta_box'             => true
 				)
-		);
+			);
 		} else {
 			add_meta_box( 'am_public_report', __( 'Accessibility Reports', 'access-monitor' ), 'am_show_public_report', $type );
 		}

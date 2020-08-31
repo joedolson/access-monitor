@@ -72,11 +72,14 @@ jQuery( document ).ready( function( $ ) {
 								}
 							} else {
 								if ( e.target.nodeName == 'INPUT' ) {
-									console.log( "Am here" );
 									$( '#ampublish' ).click();
 								} else {
 									$( '#am-errors' ).html( response_content );
-									$( '.am-errors .score' ).text( grade.toFixed(2) + '%' );
+									$( '.am-errors .warnings' ).text( am.warnings );
+									$( '.am-errors .errors' ).text( am.errors );
+									$( '.am-errors .levela' ).text( am.levela );
+									$( '.am-errors .levelaa' ).text( am.levelaa );
+									$( '.am-errors .levelaaa' ).text( am.levelaaa );
 									$( '.am-errors .am-message' ).html( am.pass );
 									$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).focus();
 								}
