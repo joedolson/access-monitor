@@ -59,13 +59,6 @@ function am_pre_publish( $hook ) {
 		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
 			if ( am_in_post_type( $post->ID ) ) {
 				wp_enqueue_script( 'tenon.inspector', plugins_url( 'js/inspector.js', __FILE__ ), array( 'jquery' ), '', true );
-				$options     = get_option( 'am_settings' );
-				$criteria    = $options['am_criteria'];
-				$maxerrors   = ( isset( $criteria['maxerrors'] ) ? $criteria['maxerrors'] : 3 );
-				$maxwarnings = ( isset( $criteria['maxwarnings'] ) ? $criteria['maxwarnings'] : 10 );
-				$maxa        = ( isset( $criteria['maxa'] ) ? $criteria['maxa'] : 1 );
-				$maxaa       = ( isset( $criteria['maxaa'] ) ? $criteria['maxaa'] : 5 );
-				$maxaaa      = ( isset( $criteria['maxaaa'] ) ? $criteria['maxaaa'] : 10 );
 
 				$settings = array(
 					'level'     => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
@@ -80,11 +73,6 @@ function am_pre_publish( $hook ) {
 					'pass'      => __( '<strong>Post may be published!</strong> This post meets your accessibility requirements.', 'access-monitor' ),
 					'fail'      => __( '<strong>Post may not be published.</strong> This post does not meet your accessibility requirements.', 'access-monitor' ),
 					'ajaxerror' => __( '<strong>There was an error sending your post to Tenon.io</strong>.', 'access-monitor' ),
-					'errors'    => $maxerrors,
-					'warnings'  => $maxwarnings,
-					'levela'    => $maxa,
-					'levelaa'   => $maxaa,
-					'levelaaa'  => $maxaaa,
 				);
 				wp_localize_script( 'tenon.inspector', 'am', $settings );
 				wp_localize_script( 'tenon.inspector', 'am_ajax_notify', 'am_ajax_notify' );
@@ -133,11 +121,18 @@ add_action( 'edit_form_top', 'am_edit_form_after_title' );
  */
 function am_edit_form_after_title( $post ) {
 	if ( am_in_post_type( $post->ID ) ) {
-		$errors   = '<span class="errors"></span> found; %s allowed.';
-		$warnings = '<span class="warnings"></span> found; %s allowed.';
-		$levela   = '<span class="levela"></span> found; %s allowed.';
-		$levelaa  = '<span class="levelaa"></span> found; %s allowed.';
-		$levelaaa = '<span class="levelaaa"></span> found; %s allowed.';
+		$options  = get_option( 'am_settings' );
+		$criteria = $options['am_criteria'];
+		$errors   = ( isset( $criteria['maxerrors'] ) ? $criteria['maxerrors'] : 3);
+		$warnings = ( isset( $criteria['maxwarnings'] ) ? $criteria['maxwarnings'] : 5 );
+		$levela   = ( isset( $criteria['maxa'] ) ? $criteria['maxa'] : 1 );
+		$levelaa  = ( isset( $criteria['maxaa'] ) ? $criteria['maxaa'] : 3 );
+		$levelaaa = ( isset( $criteria['maxaaa'] ) ? $criteria['maxaaa'] : 5 );
+		$errors   = sprintf( __( '<strong>Errors:</strong> <span class="errors"></span> found; %s allowed.', 'access-monitor' ), $errors );
+		$warnings = sprintf( __( '<strong>Warnings:</strong> <span class="warnings"></span> found; %s allowed.', 'access-monitor' ), $warnings );
+		$levela   = sprintf( __( '<strong>Level A:</strong> <span class="levela"></span> found; %s allowed.', 'access-monitor' ), $levela );
+		$levelaa  = sprintf( __( '<strong>Level AA:</strong> <span class="levelaa"></span> found; %s allowed.', 'access-monitor' ), $levelaa );
+		$levelaaa = sprintf( __( '<strong>Level AAA:</strong> <span class="levelaaa"></span> found; %s allowed.', 'access-monitor' ), $levelaaa );
 		// Translators: Score container, message container, toggle to show results.
 		echo '<div class="am-errors"><p>' . sprintf( __( '%1$s %2$s', 'access-monitor' ), '<span class="am-message"></span>', '<a href="#am-errors" class="am-toggle" aria-expanded="false">Show Results</a>' )
 			. "</p><ul><li>$errors</li><li>$warnings</li><li>$levela</li><li>$levelaa</li><li>$levelaaa</li></ul><div class='am-errors-display' id='am-errors'></div>
@@ -225,11 +220,11 @@ function am_score( $results ) {
 function am_parse_grade( $grade ) {
 	$options     = get_option( 'am_settings' );
 	$criteria    = $options['am_criteria'];
-	$maxerrors   = ( isset( $criteria['maxerrors'] ) ? $criteria['maxerrors'] : 3 );
-	$maxwarnings = ( isset( $criteria['maxwarnings'] ) ? $criteria['maxwarnings'] : 10 );
-	$maxa        = ( isset( $criteria['maxa'] ) ? $criteria['maxa'] : 1 );
-	$maxaa       = ( isset( $criteria['maxaa'] ) ? $criteria['maxaa'] : 5 );
-	$maxaaa      = ( isset( $criteria['maxaaa'] ) ? $criteria['maxaaa'] : 10 );
+	$errors   = ( isset( $criteria['maxerrors'] ) ? $criteria['maxerrors'] : 3);
+	$warnings = ( isset( $criteria['maxwarnings'] ) ? $criteria['maxwarnings'] : 5 );
+	$levela   = ( isset( $criteria['maxa'] ) ? $criteria['maxa'] : 1 );
+	$levelaa  = ( isset( $criteria['maxaa'] ) ? $criteria['maxaa'] : 3 );
+	$levelaaa = ( isset( $criteria['maxaaa'] ) ? $criteria['maxaaa'] : 5 );
 	$pass        = true;
 	// If any of these criteria are failed, fail the document.
 	if ( $grade['errors'] >= $maxerrors ) {

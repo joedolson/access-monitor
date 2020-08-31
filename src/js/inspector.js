@@ -64,7 +64,13 @@ jQuery( document ).ready( function( $ ) {
 							grade = data.grade;
 							if ( grade == '0' ) {
 								$( '#am-errors' ).html( response_content );
-								$( '.am-errors .am-message' ).html( am.error );	
+								$( '.am-errors .am-message' ).html( am.error );
+								console.log( data.errors );
+								$( '.am-errors .warnings' ).text( data.errors.warnings );
+								$( '.am-errors .errors' ).text( data.errors.errors );
+								$( '.am-errors .levela' ).text( data.errors.levela );
+								$( '.am-errors .levelaa' ).text( data.errors.levelaa );
+								$( '.am-errors .levelaaa' ).text( data.errors.levelaaa );
 								if ( err > -1 ) {
 									$( '.am-errors' ).addClass( 'updated error' ).html( response_content ).show().attr( 'tabindex', '-1' ).focus();
 								} else {
@@ -74,6 +80,7 @@ jQuery( document ).ready( function( $ ) {
 								if ( e.target.nodeName == 'INPUT' ) {
 									$( '#ampublish' ).click();
 								} else {
+									console.log( am );
 									$( '#am-errors' ).html( response_content );
 									$( '.am-errors .warnings' ).text( am.warnings );
 									$( '.am-errors .errors' ).text( am.errors );
