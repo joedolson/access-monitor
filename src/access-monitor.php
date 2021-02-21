@@ -142,10 +142,11 @@ function am_get_arguments() {
  * Send test query to Tenon.io API
  *
  * @param array $post Posted data.
+ * @param bool  $raw Whether to return the raw response data for use by external sources.
  *
  * @return mixed boolean/array results.
  */
-function am_query_tenon( $post ) {
+function am_query_tenon( $post, $raw = false ) {
 	// creates the $opts array from the $post data.
 	// only sets items that are non-blank. This allows Tenon to revert to defaults.
 	$expected_post = array( 'src', 'url', 'level', 'certainty', 'priority', 'docID', 'projectID', 'viewPortHeight', 'viewPortWidth', 'uaString', 'fragment', 'store' );
@@ -162,8 +163,14 @@ function am_query_tenon( $post ) {
 	$key      = ( is_multisite() && false !== (bool) get_site_option( 'tenon_multisite_key' ) ) ? get_site_option( 'tenon_multisite_key' ) : $settings['tenon_api_key'];
 	if ( $key ) {
 		$opts['key'] = $key;
-		$tenon       = new tenon( TENON_API_URL, $opts );
+		$tenon       = new Tenon( TENON_API_URL, $opts );
 		$tenon->submit( AM_DEBUG );
+		if ( $raw ) {
+			return array(
+				'response' => $tenon->tenon_response,
+				'date'     => date( 'Y-m-d' ),
+			);
+		}
 		$body      = $tenon->tenon_response['body'];
 		$formatted = am_format_tenon( $body );
 		$object    = json_decode( $body );
