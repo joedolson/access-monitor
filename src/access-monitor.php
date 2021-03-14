@@ -168,7 +168,7 @@ function am_query_tenon( $post, $raw = false ) {
 		if ( $raw ) {
 			return array(
 				'response' => $tenon->tenon_response,
-				'date'     => date( 'Y-m-d' ),
+				'date'     => date( 'Y-m-d' ), // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 			);
 		}
 		$body      = $tenon->tenon_response['body'];
