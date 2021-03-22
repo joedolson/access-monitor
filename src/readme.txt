@@ -60,10 +60,12 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 * Bug fix: Improper use of wp_localize_script.
 * Bug fix: Convert HTML entities in error titles.
+* Bug fix: Throw error if Tenon response is empty.
 * Change: Collapse localization into single object per script.
 * Change: Prevent flash of unstyled content in post testing notice.
 * Change: Additional baseline styles for Tenon results.
-* Change: Toggle buttons: Use background param to override images & gradients.
+* Change: Toggle buttons: Use background param to override images & gradients.]
+* Change: Improved xPath to CSS selector parsing.
 
 = 1.4.1 =
 
