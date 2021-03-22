@@ -324,14 +324,3 @@ function am_testable_post_content( $content ) {
 	return $content;
 }
 
-/**
- * Prototype for block editor implementation.
- */
-function enqueue_block_editor_assets() {
-	wp_enqueue_script(
-		'pre-publish-check',
-		plugins_url( 'js/pre-publish-check/build/index.js', __FILE__ ),
-		array( 'wp-blocks', 'wp-i18n', 'wp-element', 'wp-editor', 'wp-edit-post', 'word-count' )
-	);
-}
-add_action( 'enqueue_block_editor_assets', 'enqueue_block_editor_assets' );
