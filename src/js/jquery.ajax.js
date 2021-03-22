@@ -2,11 +2,11 @@
 
 	$(function() {
 
-		$( 'a.menu-icon-tenon-report .wp-menu-name' ).text( am_plugin_name );
+		$( 'a.menu-icon-tenon-report .wp-menu-name' ).text( am.plugin_name );
 
 		var src = document.documentElement.outerHTML;
 		var query = {
-				'action' : am_ajax_action,
+				'action' : am.ajax_action,
 				'tenon' : src
 			};
 		$( '#wp-admin-bar-tenonCheck a' ).attr( 'aria-live', 'polite' ).append( ' <span class="tenon-updating dashicons dashicons-update" aria-hidden="true"></span><span class="screen-reader-text"></span>' );
@@ -17,7 +17,7 @@
 			$( this ).find( '.screen-reader-text' ).text( ami18n.updating );
 			$.ajax({
 				type: 'POST',
-				url: am_ajax_url,
+				url: am.ajax_url,
 				data: query,
 				dataType: "json",
 				success: function( data ) {
