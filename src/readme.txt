@@ -3,11 +3,11 @@ Contributors: joedolson
 Donate link: http://www.joedolson.com/donate/
 Tags: a11y, accessibility, wcag, section508, tenon
 Requires at least: 4.2
-Tested up to: 5.5
+Tested up to: 5.7
 Requires PHP: 5.6
 License: GPLv2 or later
 Text domain: access-monitor
-Stable tag: 1.4.1
+Stable tag: 1.4.2
 
 Test your WordPress site for accessibility compliance. Run on-demand tests or schedule a weekly accessibility check.
 
@@ -55,6 +55,15 @@ Help [translate Access Monitor](https://translate.wordpress.org/projects/wp-plug
 
 
 == Changelog ==
+
+= 1.4.2 =
+
+* Bug fix: Improper use of wp_localize_script.
+* Bug fix: Convert HTML entities in error titles.
+* Change: Collapse localization into single object per script.
+* Change: Prevent flash of unstyled content in post testing notice.
+* Change: Additional baseline styles for Tenon results.
+* Change: Toggle buttons: Use background param to override images & gradients.
 
 = 1.4.1 =
 
