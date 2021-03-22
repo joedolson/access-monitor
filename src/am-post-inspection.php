@@ -58,36 +58,36 @@ function am_pre_publish( $hook ) {
 	if ( 1 === absint( $check ) ) {
 		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
 			if ( am_in_post_type( $post->ID ) ) {
-				wp_enqueue_script( 'tenon.inspector', plugins_url( 'js/inspector.js', __FILE__ ), array( 'jquery' ), '', true );
-
-				$settings = array(
-					'level'     => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
-					'certainty' => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '60',
-					'priority'  => ( isset( $args['priority'] ) ) ? $args['priority'] : '20',
-					'container' => ( isset( $args['container'] ) && ! empty( $args['container'] ) ) ? $args['container'] : '.access-monitor-content',
-					'store'     => ( isset( $args['store'] ) ) ? $args['store'] : '0',
-					'hide'      => __( 'Hide issues', 'access-monitor' ),
-					'show'      => __( 'Show issues', 'access-monitor' ),
-					'failed'    => __( 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.', 'access-monitor' ),
-					'error'     => __( '<strong>Post may not be published</strong>: does not meet minimum accessibility requirements.', 'access-monitor' ),
-					'pass'      => __( '<strong>Post may be published!</strong> This post meets your accessibility requirements.', 'access-monitor' ),
-					'fail'      => __( '<strong>Post may not be published.</strong> This post does not meet your accessibility requirements.', 'access-monitor' ),
-					'ajaxerror' => __( '<strong>There was an error sending your post to Tenon.io</strong>.', 'access-monitor' ),
-				);
-				wp_localize_script( 'tenon.inspector', 'am', $settings );
-				wp_localize_script( 'tenon.inspector', 'am_ajax_notify', 'am_ajax_notify' );
-
 				$user_ID  = get_current_user_ID();
 				$post_ID  = isset( $_GET['post'] ) ? intval( $_GET['post'] ) : false;
 				$security = wp_create_nonce( 'am_notify_admin' );
-
-				$notify = array(
-					'user'     => $user_ID,
-					'post_ID'  => $post_ID,
-					'security' => $security,
-					'error'    => __( 'Accessibility Review Request failed to send.', 'access-monitor' ),
+				wp_enqueue_script( 'tenon.inspector', plugins_url( 'js/inspector.js', __FILE__ ), array( 'jquery' ), '', true );
+				$settings = array(
+					'level'       => ( isset( $args['level'] ) ) ? $args['level'] : 'AA',
+					'certainty'   => ( isset( $args['certainty'] ) ) ? $args['certainty'] : '60',
+					'priority'    => ( isset( $args['priority'] ) ) ? $args['priority'] : '20',
+					'container'   => ( isset( $args['container'] ) && ! empty( $args['container'] ) ) ? $args['container'] : '.access-monitor-content',
+					'store'       => ( isset( $args['store'] ) ) ? $args['store'] : '0',
+					'hide'        => __( 'Hide issues', 'access-monitor' ),
+					'show'        => __( 'Show issues', 'access-monitor' ),
+					'failed'      => __( 'Could not retrieve content from your content area. Set your content container in Access Monitor settings.', 'access-monitor' ),
+					'error'       => __( '<strong>Post may not be published</strong>: does not meet minimum accessibility requirements.', 'access-monitor' ),
+					'pass'        => __( '<strong>Post may be published!</strong> This post meets your accessibility requirements.', 'access-monitor' ),
+					'fail'        => __( '<strong>Post may not be published.</strong> This post does not meet your accessibility requirements.', 'access-monitor' ),
+					'ajaxerror'   => __( '<strong>There was an error sending your post to Tenon.io</strong>.', 'access-monitor' ),
+					'ajax_action' => 'am_ajax_notify',
+					'ajax_query'  => 'am_ajax_query_tenon',
+					'ajax_url'    => admin_url( 'admin-ajax.php' ),
+					'user'        => $user_ID,
+					'post_ID'     => $post_ID,
+					'security'    => $security,
+					'send_error'  => __( 'Accessibility Review Request failed to send.', 'access-monitor' ),
 				);
-				wp_localize_script( 'tenon.inspector', 'amn', $notify );
+				wp_localize_script(
+					'tenon.inspector',
+					'amp',
+					$settings
+				);
 			}
 		}
 	}
@@ -232,19 +232,19 @@ function am_parse_grade( $grade ) {
 	$levelaaa = ( isset( $criteria['maxaaa'] ) ? $criteria['maxaaa'] : 5 );
 	$pass     = true;
 	// If any of these criteria are failed, fail the document.
-	if ( $grade['errors'] >= $maxerrors ) {
+	if ( $grade['errors'] >= $errors ) {
 		$pass = false;
 	}
-	if ( $grade['warnings'] >= $maxerrors ) {
+	if ( $grade['warnings'] >= $errors ) {
 		$pass = false;
 	}
-	if ( $grade['levela'] >= $maxa ) {
+	if ( $grade['levela'] >= $levela ) {
 		$pass = false;
 	}
-	if ( $grade['levelaa'] >= $maxa ) {
+	if ( $grade['levelaa'] >= $levelaa ) {
 		$pass = false;
 	}
-	if ( $grade['levelaaa'] >= $maxa ) {
+	if ( $grade['levelaaa'] >= $levelaaa ) {
 		$pass = false;
 	}
 

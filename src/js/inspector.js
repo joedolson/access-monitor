@@ -1,6 +1,4 @@
 jQuery( document ).ready( function( $ ) {
-	$( '.am-errors' ).hide();
-	
 	var status = $( '#am_status' ).val();
 	if ( status == 'new' ) {
 		$( '#publish[name="publish"]' ).attr( 'disabled', 'disabled' ).removeClass( 'button-primary' ).addClass( 'button-secondary' );
@@ -29,10 +27,9 @@ jQuery( document ).ready( function( $ ) {
 		} else {
 			var preview_url = $( '#post-preview' ).attr( 'href' );
 			var preview_content = '';
-			var preview_container = ( am.container == '' ) ? 'body' : am.container;
+			var preview_container = ( amp.container == '' ) ? 'body' : amp.container;
 			var response_content = '';
 			var grade = 0;
-
 			e.preventDefault();
 
 			$.ajax({
@@ -40,23 +37,23 @@ jQuery( document ).ready( function( $ ) {
 			   type:'post',
 			   success: function(data){
 					preview_content = $(data).find( preview_container ).html();
-					if ( !preview_content || preview_content == '' ) {
-						preview_content = am.failed;
+					if ( ! preview_content || preview_content == '' ) {
+						preview_content = amp.failed;
 					}
 
 					var query = {
-						'action' : am_ajax_action,
+						'action' : amp.ajax_query,
 						'tenon' : preview_content,
-						'level' : am.level,
-						'certainty' : am.certainty,
-						'priority' : am.priority,
+						'level' : amp.level,
+						'certainty' : amp.certainty,
+						'priority' : amp.priority,
 						'fragment' : '1'
 					};
 
 					$.ajax({
 						type:'post',
 						data: query,
-						url: am_ajax_url,
+						url: amp.ajax_url,
 						dataType: 'json',
 						success: function( data ) {
 							response_content = data.formatted;
@@ -64,7 +61,7 @@ jQuery( document ).ready( function( $ ) {
 							grade = data.grade;
 							if ( grade == '0' ) {
 								$( '#am-errors' ).html( response_content );
-								$( '.am-errors .am-message' ).html( am.error );
+								$( '.am-errors .am-message' ).html( amp.error );
 								console.log( data.errors );
 								$( '.am-errors .warnings' ).text( data.errors.warnings );
 								$( '.am-errors .errors' ).text( data.errors.errors );
@@ -82,46 +79,43 @@ jQuery( document ).ready( function( $ ) {
 								} else {
 									console.log( am );
 									$( '#am-errors' ).html( response_content );
-									$( '.am-errors .warnings' ).text( am.warnings );
-									$( '.am-errors .errors' ).text( am.errors );
-									$( '.am-errors .levela' ).text( am.levela );
-									$( '.am-errors .levelaa' ).text( am.levelaa );
-									$( '.am-errors .levelaaa' ).text( am.levelaaa );
-									$( '.am-errors .am-message' ).html( am.pass );
+									$( '.am-errors .warnings' ).text( amp.warnings );
+									$( '.am-errors .errors' ).text( amp.errors );
+									$( '.am-errors .levela' ).text( amp.levela );
+									$( '.am-errors .levelaa' ).text( amp.levelaa );
+									$( '.am-errors .levelaaa' ).text( amp.levelaaa );
+									$( '.am-errors .am-message' ).html( amp.pass );
 									$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).focus();
 								}
 							}
 						},
 						error: function( data ) {
-							/* 
-								console.log(data.responseText); 
-							*/
 							if ( e.target.nodeName == 'INPUT' ) {
 								$( '#post' ).submit();
 							}
-						}	
+						}
 					});
 					
 					return false;
 			   },
 			   error: function( data ) {
-					$( '.am-errors' ).addClass( 'updated error' ).show().html( am.ajaxerror ).attr( 'tabindex', '-1' ).focus();
+					$( '.am-errors' ).addClass( 'updated error' ).show().html( amp.ajaxerror ).attr( 'tabindex', '-1' ).focus();
 			   }
 			});
 		}
 	});
-	
+
 	$( '#am_notify' ).on( 'click', function( e ) {
 		var query = {
-			'action'  : am_ajax_notify,
-			'user'    : amn.user,
-			'post_ID' : amn.post_ID, 
-			'security': amn.security
+			'action'  : amp.ajax_notify,
+			'user'    : amp.user,
+			'post_ID' : amp.post_ID, 
+			'security': amp.security
 		};
 
 		$.ajax( {
 			type: 'POST',
-			url: am_ajax_url,
+			url: amp.ajax_url,
 			data: query,
 			dataType: 'json',
 			success: function( data ) {
@@ -130,27 +124,19 @@ jQuery( document ).ready( function( $ ) {
 				$( '#am_notified' ).html( message );
 			},
 			error: function(data) {
-				$( '#am_notified' ).html( amn.error );
+				$( '#am_notified' ).html( amp.send_error );
 			}
 		});
 	});
 
-	/*
-		$(document).ajaxError( function( event, requests, settings ) {
-			console.log( event );
-			console.log( requests.responseText );
-			console.log( settings );
-		});
-	*/
-	
 	$( '.am-toggle' ).on( 'click', function(e) {
 		e.preventDefault();
 		$( '#am-errors' ).toggle();
 		var expanded = $( this ).attr( 'aria-expanded' );
 		if ( expanded == 'false' ) {
-			$( this ).text( am.hide ).attr( 'aria-expanded', 'true' );
+			$( this ).text( amp.hide ).attr( 'aria-expanded', 'true' );
 		} else {
-			$( this ).text( am.show ).attr( 'aria-expanded', 'false' );
+			$( this ).text( amp.show ).attr( 'aria-expanded', 'false' );
 		}
 	});
 });
