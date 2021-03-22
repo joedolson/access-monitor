@@ -171,7 +171,11 @@ function am_query_tenon( $post, $raw = false ) {
 				'date'     => date( 'Y-m-d' ), // phpcs:ignore WordPress.DateTime.RestrictedFunctions.date_date
 			);
 		}
-		$body      = $tenon->tenon_response['body'];
+		// If body is not set, this should be logged as an error.
+		$body      = isset( $tenon->tenon_response['body'] ) ? $tenon->tenon_response['body'] : false;
+		if ( ! $body ) {
+			return false;
+		}
 		$formatted = am_format_tenon( $body );
 		$object    = json_decode( $body );
 		if ( is_object( $object ) && property_exists( $object, 'resultSet' ) ) {
@@ -336,6 +340,7 @@ function am_admin_enqueue_scripts() {
 	if ( 'customize' === $current_screen->id || 'press-this' === $current_screen->id ) {
 		// We don't want any of this on these screens.
 	} else {
+		wp_register_script( 'xpathtocss', plugins_url( 'js/xPathToCss.js', __FILE__ ) );
 		// The customizer doesn't have an adminbar; so no reason to enqueue this. Also, it breaks the customizer.
 		wp_enqueue_script( 'am.functions', plugins_url( 'js/jquery.ajax.js', __FILE__ ), array( 'jquery' ) );
 		wp_localize_script(
@@ -347,7 +352,7 @@ function am_admin_enqueue_scripts() {
 				'plugin_name' => 'Access Monitor',
 			)
 		);
-		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery', 'xpathtocss' ), '1.0.0', true );
 		wp_localize_script(
 			'am.view',
 			'ami18n',
@@ -369,8 +374,9 @@ add_action( 'wp_enqueue_scripts', 'am_wp_enqueue_scripts' );
  */
 function am_wp_enqueue_scripts() {
 	if ( ! is_admin() && isset( $_GET['tenon'] ) ) {
+		wp_register_script( 'xpathtocss', plugins_url( 'js/xPathToCss.js', __FILE__ ) );
 		wp_enqueue_style( 'am.styles', plugins_url( 'css/am-styles.css', __FILE__ ), array( 'dashicons' ) );
-		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery' ), '1.0.0', true );
+		wp_enqueue_script( 'am.view', plugins_url( 'js/view.tenon.js', __FILE__ ), array( 'jquery', 'xpathtocss' ), '1.0.0', true );
 		wp_localize_script(
 			'am.view',
 			'ami18n',
