@@ -17,7 +17,7 @@
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/license/gpl-2.0.txt
  * Domain Path: lang
- * Version:     1.4.1
+ * Version:     1.4.2
  */
 
 /*
@@ -63,7 +63,7 @@ require_once( 'am-post-inspection.php' );
  * @return string
  */
 function am_get_version() {
-	$am_version = '1.4.1';
+	$am_version = '1.4.2';
 
 	return $am_version;
 }
@@ -295,14 +295,13 @@ function am_format_tenon_array( $results, $errors ) {
 				<ul>$standards</ul>";
 			}
 			$error_snippet = $result['errorSnippet'];
-			$error_title   = $result['errorTitle'];
-			$error_desc    = ( isset( $result['errorDescription'] ) ) ? $result['errorDescription'] : '';
-			$error_desc    = htmlentities( $error_desc );
+			$error_title   = htmlentities( $result['errorTitle'] );
+			$error_desc    = ( isset( $result['errorDescription'] ) ) ? htmlentities( $result['errorDescription'] ) : '';
 			$return       .= "
 				<div class='tenon-result' id='tenon-notes-$xpathid'>
 					<div class='tenon-result-details'>
 						<h3 id='error-title-$xpathid'>
-							<span>$i</span> . $result[errorTitle]
+							<span>$i</span> . $error_title
 						</h3>
 						<p class='am-meta'>
 							<span class='certainty $cert'>" . __( 'Certainty:', 'access-monitor' ) . " $result[certainty]%" . "</span>
