@@ -329,11 +329,6 @@ button.close:hover, button.close:focus {
 	text-align: right !important;
 }
 
-/* Xpath Data is intentionally hidden to make this view more compact */
-.tenon-results .xpath-data {
-	display: none; 
-}
-
 .tenon-results .tenon-standards ul {
 	margin: 0;
 	margin-left: 2em;

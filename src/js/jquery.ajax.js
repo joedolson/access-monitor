@@ -31,8 +31,7 @@
 						var id        = $( this ).attr( 'data-id' );
 						var noteID    = id.replace( 'tenon-', '' );
 						var notes     = "<a href='#tenon-notes-" + noteID + "'>" + title + "</a>";
-						var path      = xPathToCss( xpath ).replace( 'table:eq(0) > tr', 'table:eq(0) > tbody:eq(0) > tr' );
-
+						var path      = xPathToCss( xpath );
 						var display   = $( path ).css( 'display' );
 						var priority  = $( this ).attr( 'data-priority' );
 						var certainty = 'cert-' + $( this ).attr( 'data-certainty' );
