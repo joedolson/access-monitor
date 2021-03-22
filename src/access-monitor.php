@@ -52,7 +52,7 @@ function am_load_textdomain() {
 }
 
 define( 'TENON_API_URL', 'https://tenon.io/api/index.php' );
-define( 'AM_DEBUG', false );
+define( 'AM_DEBUG', true );
 
 require_once( 't/class-tenon.php' );
 require_once( 'am-post-inspection.php' );
