@@ -158,10 +158,12 @@ button.close:hover, button.close:focus {
 	padding: 1em;
 	text-align: left;
 	font-size: 12px;
+	line-height: 1.62;
 }
 
 .tenon-results p {
 	font-size: 1.2em;
+	margin-bottom: 1em;
 }
 
 .tenon-results h2 {
@@ -234,7 +236,7 @@ button.close:hover, button.close:focus {
 	top: 2px !important;
 	left: 2px !important;
 	color: #fff !important;
-	background-color: #900 !important;
+	background: #900 !important;
 	border-radius: 4px !important;
 	border: 1px solid transparent !important;
 	text-decoration: none !important;
@@ -281,12 +283,12 @@ button.close:hover, button.close:focus {
 }
 
 .toggle-view.medium {
-	background-color: yellow !important;
+	background: yellow !important;
 	color: #000 !important;
 }
 
 .toggle-view.low {
-	background-color: darkgreen !important;
+	background: darkgreen !important;
 	color: #fff !important;
 }
 
