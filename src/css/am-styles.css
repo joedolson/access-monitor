@@ -115,14 +115,16 @@ button.close:hover, button.close:focus {
 
 #access-monitor h1 .dashicons-universal-access { font-size: 1.3em; width: 1.3em; }
 
-.tenon-result code, .tenon-result pre { margin: 1em 0!important; padding: .5em!important; 
- white-space: pre-wrap;       /* css-3 */
- white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
- white-space: -pre-wrap;      /* Opera 4-6 */
- white-space: -o-pre-wrap;    /* Opera 7 */
- word-wrap: break-word;       /* Internet Explorer 5.5+ */
- background: #f9f9f9;
- color: #333;
+.tenon-result code, .tenon-result pre {
+	margin: 1em 0!important;
+	padding: .5em!important; 
+	white-space: pre-wrap;       /* css-3 */
+	white-space: -moz-pre-wrap;  /* Mozilla, since 1999 */
+	white-space: -pre-wrap;      /* Opera 4-6 */
+	white-space: -o-pre-wrap;    /* Opera 7 */
+	word-wrap: break-word;       /* Internet Explorer 5.5+ */
+	background: #f9f9f9;
+	color: #333;
 }
 
 .tenon-result h3,
@@ -139,7 +141,9 @@ button.close:hover, button.close:focus {
 	max-width: 56em;
 }
 
-#am-errors { display: none; }
+#am-errors {
+	display: none;
+}
 
 .tenon-results {
 	position: fixed;
@@ -362,4 +366,8 @@ button.close:hover, button.close:focus {
 .inspect-a11y .dashicons,
 .inspect-a11y .dashicons:before {
 	vertical-align: text-top;
+}
+
+.am-errors {
+	display: none;
 }
