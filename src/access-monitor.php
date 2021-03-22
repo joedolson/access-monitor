@@ -172,7 +172,7 @@ function am_query_tenon( $post, $raw = false ) {
 			);
 		}
 		// If body is not set, this should be logged as an error.
-		$body      = isset( $tenon->tenon_response['body'] ) ? $tenon->tenon_response['body'] : false;
+		$body = isset( $tenon->tenon_response['body'] ) ? $tenon->tenon_response['body'] : false;
 		if ( ! $body ) {
 			return false;
 		}
