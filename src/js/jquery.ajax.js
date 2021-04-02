@@ -84,7 +84,7 @@
 			e.preventDefault();
 			$( this ).parent( '.codepanel' ).hide();
 			var source = $( this ).parent( '.codepanel' ).attr( 'id' );
-			$( 'button[data-target="'+source+'"]' ).attr( 'aria-expanded', 'false' ).focus();
+			$( 'button[data-target="'+source+'"]' ).attr( 'aria-expanded', 'false' ).trigger('focus');
 		});
 	});
 

@@ -69,9 +69,9 @@ jQuery( document ).ready( function( $ ) {
 								$( '.am-errors .levelaa' ).text( data.errors.levelaa );
 								$( '.am-errors .levelaaa' ).text( data.errors.levelaaa );
 								if ( err > -1 ) {
-									$( '.am-errors' ).addClass( 'updated error' ).html( response_content ).show().attr( 'tabindex', '-1' ).focus();
+									$( '.am-errors' ).addClass( 'updated error' ).html( response_content ).show().attr( 'tabindex', '-1' ).trigger('focus');
 								} else {
-									$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).focus();
+									$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).trigger('focus');
 								}
 							} else {
 								if ( e.target.nodeName == 'INPUT' ) {
@@ -85,7 +85,7 @@ jQuery( document ).ready( function( $ ) {
 									$( '.am-errors .levelaa' ).text( amp.levelaa );
 									$( '.am-errors .levelaaa' ).text( amp.levelaaa );
 									$( '.am-errors .am-message' ).html( amp.pass );
-									$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).focus();
+									$( '.am-errors' ).addClass( 'updated error' ).show().attr( 'tabindex', '-1' ).trigger('focus');
 								}
 							}
 						},
@@ -99,7 +99,7 @@ jQuery( document ).ready( function( $ ) {
 					return false;
 			   },
 			   error: function( data ) {
-					$( '.am-errors' ).addClass( 'updated error' ).show().html( amp.ajaxerror ).attr( 'tabindex', '-1' ).focus();
+					$( '.am-errors' ).addClass( 'updated error' ).show().html( amp.ajaxerror ).attr( 'tabindex', '-1' ).trigger('focus');
 			   }
 			});
 		}
