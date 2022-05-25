@@ -4,7 +4,7 @@
  *
  * @package     AccessMonitor
  * @author      Joe Dolson
- * @copyright   2014-2021 Joe Dolson
+ * @copyright   2014-2022 Joe Dolson
  * @license     GPL-2.0+
  *
  * @wordpress-plugin
@@ -17,11 +17,11 @@
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/license/gpl-2.0.txt
  * Domain Path: lang
- * Version:     1.4.2
+ * Version:     1.4.3
  */
 
 /*
-	Copyright 2014-2021  Joe Dolson (email : joe@joedolson.com)
+	Copyright 2014-2022  Joe Dolson (email : joe@joedolson.com)
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ require_once( 'am-post-inspection.php' );
  * @return string
  */
 function am_get_version() {
-	$am_version = '1.4.2';
+	$am_version = '1.4.3';
 
 	return $am_version;
 }
@@ -454,7 +454,7 @@ add_action( 'admin_bar_menu', 'am_admin_bar', 200 );
  */
 function am_admin_bar() {
 	$settings  = get_option( 'am_settings' );
-	$api_key   = $settings['tenon_api_key'];
+	$api_key   = isset( $settings['tenon_api_key'] ) ? $settings['tenon_api_key'] : '';
 	$multisite = get_site_option( 'tenon_multisite_key' );
 
 	if ( false !== (bool) $api_key || false !== (bool) $multisite ) {
