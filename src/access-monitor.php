@@ -1430,7 +1430,7 @@ function am_report() {
 				<option value='monthly'>" . __( 'Monthly', 'access-monitor' ) . "</option>
 			</select>
 		</p>
-		<button type='button' class='toggle-options closed' aria-controls='report-options' aria-expanded='false'>" . __( 'Tenon report options', 'access-monitor' ) . " <span class='dashicons dashicons-plus-alt' aria-hidden='true'></span></button>
+		<button type='button' class='toggle-options button-secondary closed' aria-controls='report-options' aria-expanded='false'>" . __( 'Tenon report options', 'access-monitor' ) . " <span class='dashicons dashicons-plus-alt' aria-hidden='true'></span></button>
 		<div class='report-options' id='report-options'>
 			<fieldset>
 				<legend>" . __( 'Set Accessibility Test Options', 'access-monitor' ) . "</legend>
@@ -1573,7 +1573,7 @@ function am_support_page() {
 	<div class="wrap" id='access-monitor'>
 	<?php am_update_settings(); ?>
 		<h1><div class='dashicons dashicons-universal-access' aria-hidden="true"></div><?php _e( 'Access Monitor', 'access-monitor' ); ?></h1>
-		<div id="am_settings_page" class="postbox-container" style="width: 70%">
+		<div id="am_settings_page" class="postbox-container jcd-wide">
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="settings" tabindex='-1'>
@@ -1616,7 +1616,7 @@ function am_report_page() {
 	<div class="wrap" id='access-monitor'>
 	<?php am_update_settings(); ?>
 		<h1><div class='dashicons dashicons-universal-access' aria-hidden="true"></div><?php _e( 'Access Monitor', 'access-monitor' ); ?></h1>
-		<div id="am_settings_page" class="postbox-container" style="width: 70%">
+		<div id="am_settings_page" class="postbox-container jcd-wide">
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="report">
@@ -1656,7 +1656,7 @@ function am_report_page() {
  */
 function am_show_support_box() {
 	?>
-<div class="postbox-container" style="width:20%">
+<div class="postbox-container jcd-narrow">
 	<div class="metabox-holder">
 		<?php
 		if ( isset( $_GET['signup'] ) && 'dismiss' === $_GET['signup'] ) {
@@ -1768,7 +1768,8 @@ function am_load_admin_styles() {
  * Actually enqueue admin styles.
  */
 function am_admin_styles() {
-	wp_enqueue_style( 'am-admin-styles', plugins_url( 'css/am-admin-styles.css', __FILE__ ) );
+	$version = am_get_version();
+	wp_enqueue_style( 'am-admin-styles', plugins_url( 'css/am-admin-styles.css', __FILE__ ), array(), $version );
 }
 
 /**

@@ -12,6 +12,10 @@
 .report-options { padding: 1em; border: 1px solid #ddd; }
 #support_request { width: 100%; }
 
+.toggle-options.button-secondary .dashicons {
+	vertical-align: middle;
+}
+
 #tenon-signup img {
 	max-width: 100%;
 	height: auto;
@@ -82,4 +86,23 @@
 
 .am-support-me a:hover, .am-support-me a:focus {
 	text-decoration: none;
+}
+
+.jcd-wide {
+    width: 70%;
+}
+
+.jcd-narrow {
+    width: 20%;
+}
+
+@media (max-width: 782px) {
+
+    .jcd-narrow {
+        width: 100%;
+    }
+
+    .jcd-wide {
+        width: 100%;
+    }
 }
