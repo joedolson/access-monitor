@@ -111,9 +111,9 @@ function am_pass_query() {
  */
 function am_get_arguments() {
 	$permalink = get_the_permalink();
-	$level     = isset( $_GET['tenon-level'] ) ? $_GET['tenon-level'] : 'AA';
-	$priority  = isset( $_GET['tenon-priority'] ) ? $_GET['tenon-priority'] : '0';
-	$certainty = isset( $_GET['tenon-certainty'] ) ? $_GET['tenon-certainty'] : '';
+	$level     = isset( $_GET['tenon-level'] ) ? sanitize_text_field( $_GET['tenon-level'] ) : 'AA';
+	$priority  = isset( $_GET['tenon-priority'] ) ? sanitize_text_field( $_GET['tenon-priority'] ) : '0';
+	$certainty = isset( $_GET['tenon-certainty'] ) ? sanitize_text_field( $_GET['tenon-certainty'] ) : '';
 
 	switch ( $level ) {
 		case 'A':
@@ -608,7 +608,7 @@ function am_show_public_report() {
  */
 function am_add_inner_box() {
 	global $post;
-	$content = stripslashes( $post->post_content );
+	$content = wp_kses_post( stripslashes( $post->post_content ) );
 	echo '<div class="am_post_fields">' . $content . '</div>';
 }
 
@@ -678,7 +678,7 @@ function am_add_about_box() {
 	$parameters = '';
 	$pages      = get_post_meta( $post->ID, '_tenon_pages', true );
 	$params     = get_post_meta( $post->ID, '_tenon_params', true );
-	$total      = get_post_meta( $post->ID, '_tenon_total', true );
+	$total      = (int) get_post_meta( $post->ID, '_tenon_total', true );
 	// Translators: Number of unique errors on this post.
 	echo "<p class='error-total'>" . sprintf( __( '%s unique errors', 'access-monitor' ), "<span>$total</span>" ) . '</p>';
 	if ( is_array( $pages ) ) {
@@ -737,7 +737,7 @@ function am_set_report( $name = false ) {
 	$report_id = wp_insert_post(
 		array(
 			'post_content' => '',
-			'post_title'   => $name,
+			'post_title'   => wp_kses_post( $name ),
 			'post_status'  => 'draft',
 			'post_type'    => 'tenon-report',
 		)
@@ -887,7 +887,7 @@ function am_run_report( $id ) {
  * @param int $report_id Post ID for report.
  */
 function am_show_report( $report_id = false ) {
-	$report_id = ( isset( $_GET['report'] ) && is_numeric( $_GET['report'] ) ) ? $_GET['report'] : false;
+	$report_id = ( isset( $_GET['report'] ) && is_numeric( $_GET['report'] ) ) ? sanitize_text_field( $_GET['report'] ) : false;
 	$output    = '';
 	$name      = '';
 	if ( $report_id ) {
@@ -1139,12 +1139,12 @@ function am_update_settings() {
 		if ( ! wp_verify_nonce( $nonce, 'access-monitor-nonce' ) ) {
 			die( 'Security check failed' );
 		}
-		$tenon_api_key       = ( isset( $_POST['tenon_api_key'] ) ) ? $_POST['tenon_api_key'] : '';
-		$tenon_multisite_key = ( isset( $_POST['tenon_multisite_key'] ) ) ? $_POST['tenon_multisite_key'] : '';
+		$tenon_api_key       = ( isset( $_POST['tenon_api_key'] ) ) ? sanitize_text_field( $_POST['tenon_api_key'] ) : '';
+		$tenon_multisite_key = ( isset( $_POST['tenon_multisite_key'] ) ) ? sanitize_text_field( $_POST['tenon_multisite_key'] ) : '';
 		$tenon_pre_publish   = ( isset( $_POST['tenon_pre_publish'] ) ) ? 1 : 0;
-		$am_post_types       = ( isset( $_POST['am_post_types'] ) ) ? $_POST['am_post_types'] : array();
-		$am_criteria         = ( isset( $_POST['am_criteria'] ) ) ? $_POST['am_criteria'] : array();
-		$am_notify           = ( isset( $_POST['am_notify'] ) ) ? $_POST['am_notify'] : '';
+		$am_post_types       = ( isset( $_POST['am_post_types'] ) ) ? map_deep( $_POST['am_post_types'], 'sanitize_text_field' ) : array();
+		$am_criteria         = ( isset( $_POST['am_criteria'] ) ) ? map_deep( $_POST['am_criteria'], 'sanitize_text_field' ) : array();
+		$am_notify           = ( isset( $_POST['am_notify'] ) ) ? sanitize_text_field( $_POST['am_notify'] ) : '';
 
 		update_site_option( 'tenon_multisite_key', $tenon_multisite_key );
 
@@ -1507,15 +1507,15 @@ function am_report() {
 function am_setup_report() {
 	if ( isset( $_POST['am_generate'] ) ) {
 		$name     = ( isset( $_POST['am_report_name'] ) ) ? sanitize_text_field( $_POST['am_report_name'] ) : false;
-		$pages    = ( isset( $_POST['am_report_pages'] ) && ! empty( $_POST['am_report_pages'] ) ) ? $_POST['am_report_pages'] : false;
-		$schedule = ( isset( $_POST['report_schedule'] ) ) ? $_POST['report_schedule'] : 'none';
+		$pages    = ( isset( $_POST['am_report_pages'] ) && ! empty( $_POST['am_report_pages'] ) ) ? map_deep( $_POST['am_report_pages'], 'sanitize_text_field' ) : false;
+		$schedule = ( isset( $_POST['report_schedule'] ) ) ? sanitize_text_field( $_POST['report_schedule'] ) : 'none';
 
 		$store          = ( isset( $_POST['store'] ) ) ? 1 : 0;
 		$project_id     = ( isset( $_POST['projectID'] ) ) ? sanitize_text_field( $_POST['projectID'] ) : '';
-		$viewport       = ( isset( $_POST['viewport'] ) ) ? explode( 'x', $_POST['viewport'] ) : array( '1024', '768' );
+		$viewport       = ( isset( $_POST['viewport'] ) ) ? explode( 'x', sanitize_text_field( $_POST['viewport'] ) ) : array( '1024', '768' );
 		$viewportheight = $viewport[1];
 		$viewportwidth  = $viewport[0];
-		$level          = ( isset( $_POST['level'] ) ) ? $_POST['level'] : 'AA';
+		$level          = ( isset( $_POST['level'] ) ) ? sanitize_text_field( $_POST['level'] ) : 'AA';
 		$priority       = ( isset( $_POST['priority'] ) ) ? (int) $_POST['priority'] : 0;
 		$certainty      = ( isset( $_POST['certainty'] ) ) ? (int) $_POST['certainty'] : 0;
 
@@ -1837,7 +1837,7 @@ $plugins_string
 		if ( ! wp_verify_nonce( $nonce, 'access-monitor-nonce' ) ) {
 			die( 'Security check failed' );
 		}
-		$request      = stripslashes( $_POST['support_request'] );
+		$request      = wp_kses_post( stripslashes( $_POST['support_request'] ) );
 		$has_donated  = ( isset( $_POST['has_donated'] ) && 'on' === $_POST['has_donated'] ) ? 'Donor' : 'No donation';
 		$has_read_faq = ( isset( $_POST['has_read_faq'] ) && 'on' === $_POST['has_read_faq'] ) ? 'Read FAQ' : true; // has no faq, for now.
 		$subject      = "Access Monitor support request. $has_donated";
@@ -1872,7 +1872,7 @@ $plugins_string
 		<input type='checkbox' name='has_donated' id='has_donated' value='on' /> <label for='has_donated'>" . __( 'I have made a donation to help support this plug-in.', 'access-monitor' ) . "</label>
 		</p>
 		<p>
-		<label for='support_request'>" . __( 'Support Request', 'access-monitor' ) . ":</label><br /><textarea name='support_request' required aria-required='true' id='support_request' cols='80' rows='10'>" . stripslashes( $request ) . "</textarea>
+		<label for='support_request'>" . __( 'Support Request', 'access-monitor' ) . ":</label><br /><textarea name='support_request' required aria-required='true' id='support_request' cols='80' rows='10'>" . esc_textarea( stripslashes( $request ) ) . "</textarea>
 		</p>
 		<p>
 		<input type='submit' value='" . __( 'Send Support Request', 'access-monitor' ) . "' name='am_support' class='button-primary' />
