@@ -34,4 +34,4 @@ jobs:
       run: composer install --optimize-autoloader --prefer-dist
 
     - name: PHPCS check
-      run: ./vendor/bin/phpcs --ignore=*EDD_SL_Plugin_Updater.php*,*Authorizenet.php*,*/gateways/lib/*,*class.iCalReader.php*,*my-calendar-authnet.php*
+      run: ./vendor/bin/phpcs
