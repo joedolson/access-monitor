@@ -75,7 +75,7 @@ add_action( 'wp_footer', 'am_pass_query' );
 function am_pass_query() {
 	if ( isset( $_GET['tenon'] ) ) {
 		if ( ! wp_verify_nonce( $_GET['tenon'], 'public-tenon-query' ) ) {
-			die( __( 'Security verification failed', 'access-monitor' ) );
+			wp_die( __( 'Access Monitor: Security verification failed', 'access-monitor' ) );
 		}
 		$args    = am_get_arguments();
 		$results = am_query_tenon( $args );
@@ -1137,7 +1137,7 @@ function am_update_settings() {
 	if ( isset( $_POST['am_settings'] ) ) {
 		$nonce = $_REQUEST['_wpnonce'];
 		if ( ! wp_verify_nonce( $nonce, 'access-monitor-nonce' ) ) {
-			die( 'Security check failed' );
+			wp_die( 'Access Monitor: Security check failed' );
 		}
 		$tenon_api_key       = ( isset( $_POST['tenon_api_key'] ) ) ? sanitize_text_field( $_POST['tenon_api_key'] ) : '';
 		$tenon_multisite_key = ( isset( $_POST['tenon_multisite_key'] ) ) ? sanitize_text_field( $_POST['tenon_multisite_key'] ) : '';
@@ -1836,7 +1836,7 @@ $plugins_string
 	if ( isset( $_POST['am_support'] ) ) {
 		$nonce = $_REQUEST['_wpnonce'];
 		if ( ! wp_verify_nonce( $nonce, 'access-monitor-nonce' ) ) {
-			die( 'Security check failed' );
+			wp_die( 'Access Monitor: Security check failed' );
 		}
 		$request      = wp_kses_post( stripslashes( $_POST['support_request'] ) );
 		$has_donated  = ( isset( $_POST['has_donated'] ) && 'on' === $_POST['has_donated'] ) ? 'Donor' : 'No donation';
@@ -1844,7 +1844,7 @@ $plugins_string
 		$subject      = "Access Monitor support request. $has_donated";
 		$message      = $request . "\n\n" . $data;
 		// Get the site domain and get rid of www. from pluggable.php.
-		$sitename = strtolower( $_SERVER['SERVER_NAME'] );
+		$sitename = strtolower( sanitize_url( $_SERVER['SERVER_NAME'] ) );
 		if ( 'www.' === substr( $sitename, 0, 4 ) ) {
 			$sitename = substr( $sitename, 4 );
 		}
