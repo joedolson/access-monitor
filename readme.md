@@ -2,7 +2,7 @@
 
 Assessing the Accessibility of your WordPress site using the Tenon.io API.
 
-![PHP tests](https://github.com/joedolson/access-monitor/workflows/PHP%20tests/badge.svg) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://www.gnu.org/license/gpl-2.0.html)
+![PHP tests](https://github.com/joedolson/access-monitor/actions/workflows/main.yml/badge.svg) [![License](https://img.shields.io/badge/license-GPL--2.0%2B-green.svg)](https://www.gnu.org/license/gpl-2.0.html)
 
 ## Access Monitor Build Environment
 
