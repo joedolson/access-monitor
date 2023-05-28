@@ -4,7 +4,7 @@
  *
  * @package     AccessMonitor
  * @author      Joe Dolson
- * @copyright   2014-2022 Joe Dolson
+ * @copyright   2014-2023 Joe Dolson
  * @license     GPL-2.0+
  *
  * @wordpress-plugin
@@ -17,11 +17,11 @@
  * License:     GPL-2.0+
  * License URI: http://www.gnu.org/license/gpl-2.0.txt
  * Domain Path: lang
- * Version:     1.4.3
+ * Version:     1.4.4
  */
 
 /*
-	Copyright 2014-2022  Joe Dolson (email : joe@joedolson.com)
+	Copyright 2014-2023  Joe Dolson (email : joe@joedolson.com)
 
 	This program is free software; you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -63,7 +63,7 @@ require_once( 'am-post-inspection.php' );
  * @return string
  */
 function am_get_version() {
-	$am_version = '1.4.3';
+	$am_version = '1.4.4';
 
 	return $am_version;
 }
@@ -1574,30 +1574,58 @@ function am_support_page() {
 	<?php am_update_settings(); ?>
 		<h1><div class='dashicons dashicons-universal-access' aria-hidden="true"></div><?php _e( 'Access Monitor', 'access-monitor' ); ?></h1>
 		<div id="am_settings_page" class="postbox-container jcd-wide">
+			<div class='metabox-holder' tabindex='-1' id='support-form'>
+				<div class="am-settings meta-box-sortables">
+					<div class="postbox" id="get-support">
+						<h2 class="hndle"><?php _e( 'Access Monitor End-of-life', 'access-monitor' ); ?></h2>
+						<div class="inside">
+							<p>
+							<?php _e( 'There have been no updates with Tenon.io since it was acquired by Level Access in November 2021, and the ability to create new accounts has been disabled since at least May 2022.', 'access-monitor' ); ?>
+							</p>
+							<p>
+							<?php _e( 'Meanwhile, Equalize Digital has worked hard to create a plugin for accessibility testing that isn\'t dependent on an API. I recommend you switch to Accessibility Checker for future accessibility testing. Access Monitor will no longer be developed.', 'access-monitor' ); ?>
+							</p>
+							<div id="wpa-sidebar" class="postbox equalize-digital-promotion promotion">
+								<h2 class='hndle'><?php _e( 'Ready to fix your site?', 'wp-accessibility' ); ?></h2>
+								<?php
+								$pro  = false;
+								$edac = false;
+								if ( function_exists( 'edac_check_plugin_active' ) ) {
+									$pro  = edac_check_plugin_active( 'accessibility-checker-pro/accessibility-checker-pro.php' );
+									$edac = true;
+								}
+								if ( ! $pro ) {
+									$promo_text = ( $edac ) ? __( 'Finding Accessibility Checker useful? Go Pro for more advanced accessibility testing options!', 'wp-accessibility' ) : __( 'Try Accessibility Checker by Equalize Digital - fast and efficient accessibility testing for your site!', 'wp-accessibility' );
+									?>
+								<div class="inside">
+									<div class="wpa-flex">
+										<img src="<?php echo plugins_url( 'img/Equalize-Digital-Accessibility-Emblem-400x400-1.png', __FILE__ ); ?>" alt="Accessibility Checker" />
+										<p class="small">
+											<?php echo esc_html( $promo_text ); ?>
+										</p>
+									</div>
+									<p class="coupon small"><strong><?php _e( 'Use coupon code <code>WPAccessibility</code> for 20% off!', 'access-monitor' ); ?></strong></p>
+									<p class="wpa-affiliate">
+										<a href="https://equalizedigital.com/accessibility-checker/pricing/?ref=joedolson&discount=WPAccessibility&campaign=wpaccessibility" aria-describedby="wpa-affiliate-notice"><?php _e( 'Get Accessibility Checker', 'access-monitor' ); ?></a>
+									</p>
+									<p class="wpa-affiliate-notice" id="wpa-affiliate-notice">
+										(<?php _e( 'Affiliate Link', 'access-monitor' ); ?>)
+									</p>
+								</div>
+									<?php
+								}
+								?>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 			<div class='metabox-holder'>
 				<div class="am-settings meta-box-sortables">
 					<div class="postbox" id="settings" tabindex='-1'>
 						<h2 class="hndle"><?php _e( 'Access Monitor Settings', 'access-monitor' ); ?></h2>
 						<div class="inside">
 							<?php am_settings(); ?>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class='metabox-holder' tabindex='-1' id='support-form'>
-				<div class="am-settings meta-box-sortables">
-					<div class="postbox" id="get-support">
-						<h2 class="hndle"><?php _e( 'Get Plug-in Support', 'access-monitor' ); ?></h2>
-						<div class="inside">
-							<div class='am-support-me'>
-								<p>
-									<?php
-									// Translators: Donation URL.
-									printf( __( 'Please, <a href="%s">consider a donation</a> to support Access Monitor!', 'access-monitor' ), 'https://www.joedolson.com/donate/' );
-									?>
-								</p>
-							</div>
-							<?php am_get_support_form(); ?>
 						</div>
 					</div>
 				</div>
@@ -1658,30 +1686,39 @@ function am_show_support_box() {
 	?>
 <div class="postbox-container jcd-narrow">
 	<div class="metabox-holder">
-		<?php
-		if ( isset( $_GET['signup'] ) && 'dismiss' === $_GET['signup'] ) {
-			update_option( 'am-tenon-signup', 1 );
-		}
-		if ( '1' !== get_option( 'am-tenon-signup' ) ) {
-			?>
 		<div class="meta-box-sortables">
-			<div class="postbox" id="tenon-signup">
-				<a href="<?php echo admin_url( 'edit.php?post_type=tenon-report&page=am-support-page&signup=dismiss' ); ?>" class='am-dismiss'><span class='dashicons dashicons-no' aria-hidden='true'><span class="screen-reader-text"><?php _e( 'Dismiss', 'access-monitor' ); ?></span></a>
-				<h2 class="heading hndle"><?php _e( 'Sign-up with Tenon.io', 'access-monitor' ); ?></h2>
-				<div class="inside subscribe">
-					<a href="https://tenon.io/pricing.php"><img src="<?php echo plugins_url( 'img/tenon-logo-no-border-light.png', __FILE__ ); ?>" alt="<?php _e( 'Sign up for Tenon.io', 'access-monitor' ); ?>" /></a>
-					<p>
-						<?php
-						// Translators: Access Monitor subscribe URL.
-						printf( __( "Access Monitor can't exist without Tenon.io subscribers. <a href='%s'>Subscribe now!</a>", 'access-monitor' ), 'https://tenon.io/pricing.php' );
-						?>
+			<div id="wpa-sidebar" class="postbox equalize-digital-promotion promotion">
+				<h2 class='hndle'><?php _e( 'Ready to fix your site?', 'wp-accessibility' ); ?></h2>
+				<?php
+				$pro  = false;
+				$edac = false;
+				if ( function_exists( 'edac_check_plugin_active' ) ) {
+					$pro  = edac_check_plugin_active( 'accessibility-checker-pro/accessibility-checker-pro.php' );
+					$edac = true;
+				}
+				if ( ! $pro ) {
+					$promo_text = ( $edac ) ? __( 'Finding Accessibility Checker useful? Go Pro for more advanced accessibility testing options!', 'wp-accessibility' ) : __( 'Try Accessibility Checker by Equalize Digital - fast and efficient accessibility testing for your site!', 'wp-accessibility' );
+					?>
+				<div class="inside">
+					<div class="wpa-flex">
+						<img src="<?php echo plugins_url( 'img/Equalize-Digital-Accessibility-Emblem-400x400-1.png', __FILE__ ); ?>" alt="Accessibility Checker" />
+						<p class="small">
+							<?php echo esc_html( $promo_text ); ?>
+						</p>
+					</div>
+					<p class="coupon small"><strong><?php _e( 'Use coupon code <code>WPAccessibility</code> for 20% off!', 'access-monitor' ); ?></strong></p>
+					<p class="wpa-affiliate">
+						<a href="https://equalizedigital.com/accessibility-checker/pricing/?ref=joedolson&discount=WPAccessibility&campaign=wpaccessibility" aria-describedby="wpa-affiliate-notice"><?php _e( 'Get Accessibility Checker', 'access-monitor' ); ?></a>
+					</p>
+					<p class="wpa-affiliate-notice" id="wpa-affiliate-notice">
+						(<?php _e( 'Affiliate Link', 'access-monitor' ); ?>)
 					</p>
 				</div>
+					<?php
+				}
+				?>
 			</div>
 		</div>
-			<?php
-		}
-		?>
 
 		<div class="meta-box-sortables">
 			<div class="postbox">
@@ -1705,22 +1742,7 @@ function am_show_support_box() {
 					</form>
 				</li>
 				<li><a href="http://profiles.wordpress.org/joedolson/"><?php _e( 'Check out my other plug-ins', 'access-monitor' ); ?></a></li>
-				<li><a href="http://wordpress.org/extend/plugins/access-monitor/"><?php _e( 'Rate this plug-in', 'access-monitor' ); ?></a></li>
 			</ul>
-			</div>
-			</div>
-		</div>
-
-		<div class="meta-box-sortables">
-			<div class="postbox">
-			<h2 class="hndle"><?php _e( 'Get Help', 'access-monitor' ); ?></h2>
-			<div id="help" class="inside resources">
-				<p>
-					<?php
-					// Translators: Access Monitor support form.
-					printf( __( 'Access Monitor has two parts: the plug-in, and the API it interacts with. If your issue is in the plug-in, use the <a href="%s">support form</a>. If your issue is with the API or on tenon.io, <a href="mailto:support@tenon.io">email Tenon support</a>. Thanks!', 'access-monitor' ), '#support-form' );
-					?>
-				</p>
 			</div>
 			</div>
 		</div>
@@ -1770,119 +1792,6 @@ function am_load_admin_styles() {
 function am_admin_styles() {
 	$version = am_get_version();
 	wp_enqueue_style( 'am-admin-styles', plugins_url( 'css/am-admin-styles.css', __FILE__ ), array(), $version );
-}
-
-/**
- * Display Access Monitor get support form.
- */
-function am_get_support_form() {
-	global $current_user;
-	$current_user = wp_get_current_user();
-	// send fields for Access Monitor.
-	$version = am_get_version();
-	// send fields for all plugins.
-	$wp_version = get_bloginfo( 'version' );
-	$home_url   = home_url();
-	$wp_url     = site_url();
-	$language   = get_bloginfo( 'language' );
-	$charset    = get_bloginfo( 'charset' );
-	// server.
-	$php_version = phpversion();
-
-	// theme data.
-	$theme         = wp_get_theme();
-	$theme_name    = $theme->get( 'Name' );
-	$theme_uri     = $theme->get( 'ThemeURI' );
-	$theme_parent  = $theme->get( 'Template' );
-	$theme_version = $theme->get( 'Version' );
-
-	// plugin data.
-	$plugins        = get_plugins();
-	$plugins_string = '';
-	foreach ( array_keys( $plugins ) as $key ) {
-		if ( is_plugin_active( $key ) ) {
-			$plugin          =& $plugins[ $key ];
-			$plugin_name     = $plugin['Name'];
-			$plugin_uri      = $plugin['PluginURI'];
-			$plugin_version  = $plugin['Version'];
-			$plugins_string .= "$plugin_name: $plugin_version; $plugin_uri\n";
-		}
-	}
-	$data = "
-================ Installation Data ====================
-Version: $version
-
-==WordPress:==
-Version: $wp_version
-URL: $home_url
-Install: $wp_url
-Language: $language
-Charset: $charset
-
-==Extra info:==
-PHP Version: $php_version
-Server Software: $_SERVER[SERVER_SOFTWARE]
-User Agent: $_SERVER[HTTP_USER_AGENT]
-
-==Theme:==
-Name: $theme_name
-URI: $theme_uri
-Parent: $theme_parent
-Version: $theme_version
-
-==Active Plugins:==
-$plugins_string
-";
-	if ( isset( $_POST['am_support'] ) ) {
-		$nonce = $_REQUEST['_wpnonce'];
-		if ( ! wp_verify_nonce( $nonce, 'access-monitor-nonce' ) ) {
-			wp_die( 'Access Monitor: Security check failed' );
-		}
-		$request      = wp_kses_post( stripslashes( $_POST['support_request'] ) );
-		$has_donated  = ( isset( $_POST['has_donated'] ) && 'on' === $_POST['has_donated'] ) ? 'Donor' : 'No donation';
-		$has_read_faq = ( isset( $_POST['has_read_faq'] ) && 'on' === $_POST['has_read_faq'] ) ? 'Read FAQ' : true; // has no faq, for now.
-		$subject      = "Access Monitor support request. $has_donated";
-		$message      = $request . "\n\n" . $data;
-		// Get the site domain and get rid of www. from pluggable.php.
-		$sitename = strtolower( sanitize_url( $_SERVER['SERVER_NAME'] ) );
-		if ( 'www.' === substr( $sitename, 0, 4 ) ) {
-			$sitename = substr( $sitename, 4 );
-		}
-		$from_email = 'wordpress@' . $sitename;
-		$from       = "From: $current_user->display_name <$from_email>\r\nReply-to: $current_user->display_name <$current_user->user_email>\r\n";
-
-		if ( ! $has_read_faq ) {
-			echo "<div class='message error'><p>" . __( 'Please read the FAQ and other Help documents before making a support request.', 'access-monitor' ) . '</p></div>';
-		} else {
-			wp_mail( 'plugins@joedolson.com', $subject, $message, $from );
-
-			if ( 'Donor' === $has_donated ) {
-				echo "<div class='message updated'><p>" . __( 'Thank you for supporting the continuing development of this plug-in! I\'ll get back to you as soon as I can.', 'access-monitor' ) . '</p></div>';
-			} else {
-				echo "<div class='message updated'><p>" . __( 'I\'ll get back to you as soon as I can, after dealing with any support requests from plug-in supporters.', 'access-monitor' ) . '</p></div>';
-			}
-		}
-	} else {
-		$request = '';
-	}
-	echo "
-	<form method='post' action='" . admin_url( 'edit.php?post_type=tenon-report&page=am-support-page' ) . "'>
-		<div><input type='hidden' name='_wpnonce' value='" . wp_create_nonce( 'access-monitor-nonce' ) . "' /></div>
-		<div>
-		<p class='checkbox'>
-		<input type='checkbox' name='has_donated' id='has_donated' value='on' /> <label for='has_donated'>" . __( 'I have made a donation to help support this plug-in.', 'access-monitor' ) . "</label>
-		</p>
-		<p>
-		<label for='support_request'>" . __( 'Support Request', 'access-monitor' ) . ":</label><br /><textarea name='support_request' required aria-required='true' id='support_request' cols='80' rows='10'>" . esc_textarea( stripslashes( $request ) ) . "</textarea>
-		</p>
-		<p>
-		<input type='submit' value='" . __( 'Send Support Request', 'access-monitor' ) . "' name='am_support' class='button-primary' />
-		</p>
-		<p>" .
-		__( 'The following additional information will be sent with your support request:', 'access-monitor' ) . "</p>
-		<div class='am_support'>" . wpautop( $data ) . '</div>
-		</div>
-	</form>';
 }
 
 add_filter( 'gettext', 'am_change_publish_button', 10, 2 );

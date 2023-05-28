@@ -16,49 +16,68 @@
 	vertical-align: middle;
 }
 
-#tenon-signup img {
-	max-width: 100%;
+
+.promotion {
+	font-weight: 600;
+	text-align: center;
+}
+
+.promotion img {
+	max-width: 130px;
 	height: auto;
-}
-
-#tenon-signup .heading {
-	background: #2e6da4;
-	color: #fff;
-}
-
-#tenon-signup {
-	color: #f3f3f3;
-	background: #337ab7;
-}
-
-#tenon-signup .subscribe p {
-	font-size: 1.2em;
-}
-
-#tenon-signup .subscribe a {
-	color: #fff;
-	font-weight: 700;
+	margin: 0 auto;
 	display: block;
-	width: 100%;
-	padding: .5em 0;
-	font-size: 1.2em;
 }
 
-#tenon-signup .subscribe a:hover {
-	text-decoration: none;
+.postbox.promotion p.coupon {
+	padding: 1em;
+	border: 2px dashed #ccc;
+	text-align: center;
 }
 
-#tenon-signup .am-dismiss {
-	float: right;
-	padding: 8px;
-	color: #e6e6e6;
-	text-decoration: none;
+.promotion .coupon code {
+	font-size: 1em;
 }
 
-#tenon-signup .am-dismiss:hover, #tenon-signup .am-dismiss:focus {
-	outline: 1px solid #fff;
-	color: #fff;
+.wpa-support-me img {
+	max-width: 120px;
 }
+
+.wpa-support-me {
+	background: #007eb3;
+	text-shadow: 1px 1px rgb( 35, 60, 127 );
+}
+
+.wpa-flex {
+	display: flex;
+	align-items: center;
+}
+
+#wpa-sidebar.postbox .wpa-affiliate-notice {
+	font-size: 1rem;
+	padding: .5rem;
+	background: #0000000c;
+	font-weight: 400;
+	padding: .5em;
+	margin: 0 -12px -23px !important;
+}
+
+.promotion p {
+	font-size: 1.6em;
+	margin: 0 0 1em;
+	padding: 1em;
+}
+
+.promotion p.small {
+	font-size: 1.3em;
+	font-weight: 400;
+	text-align: left;
+}
+
+.postbox.promotion p {
+	padding: 0 1em;
+}
+
 
 .am-alert {
 	margin-top: .25em;
